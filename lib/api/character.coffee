@@ -1,3 +1,9 @@
+#
+# EVE API Service (http://wiki.eve-id.net/APIv2_Page_Index)
+#
+# Exposes EVE API to json
+#
+
 {Router}    = require "express"
 {EveClient} = require "neow"
 
@@ -10,7 +16,7 @@ api = new EveClient {
 
 # Returns character list
 # ======================
-router.route('/')
+router.route '/'
   .get (req, res, next)->
     api.fetch 'account:Characters'
       .then (result)->
@@ -20,7 +26,7 @@ router.route('/')
 
 # Returns character sheet
 # =======================
-router.route('/:id')
+router.route '/:id'
   .get (req, res, next)->
 
     unwrap = (value)->
@@ -41,6 +47,15 @@ router.route('/:id')
           character[key] = unwrap value
 
         res.json character
+      .done()
+
+router.route '/:id/skills/queue'
+  .get (req, res, next)->
+    api.fetch 'char:SkillQueue', {
+      characterID: req.params.id
+    }
+      .then (result)->
+        res.json result.skillqueue
       .done()
 
 module.exports = router

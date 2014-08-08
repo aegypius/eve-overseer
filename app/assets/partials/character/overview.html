@@ -52,6 +52,34 @@
               </dl>
             </div>
           </div>
+        </fieldset>
+      </div>
+
+      <div class="col-md-12" ng-controller="SkillQueueController" ng-show="skillQueue">
+        <fieldset>
+          <legend>Skill Queue</legend>
+
+          <div class="row" ng-repeat="skill in skillQueue">
+              <div class="col-md-1">
+                <span class="badge">{{ skill.level | roman_number }}</span>
+              </div>
+              <div class="col-md-3">
+                {{ skill.typeID }}
+              </div>
+              <div class="col-md-2">
+                {{ skill.startSP }}
+              </div>
+              <div class="col-md-2">
+                {{ skill.endSP }}
+              </div>
+              <div class="col-md-2">
+                {{ skill.startTime }}
+              </div>
+              <div class="col-md-2">
+                {{ skill.endTime }}
+              </div>
+              </div>
+          </div>
 
         </fieldset>
       </div>
