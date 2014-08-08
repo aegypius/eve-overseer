@@ -1,0 +1,24 @@
+{
+  "name": "eve-overseer",
+  "version": "0.0.0",
+  "description": "EVE Online Character Management",
+  "main": "index.js",
+  "scripts": {
+    "start":       "node index.js",
+    "brunch":      "$(npm bin)/brunch watch --server",
+    "postinstall": "$(npm bin)/bower install",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nicolas LAURENT <innercircle@aegypius.com>",
+  "license": "MIT",
+  "dependencies": {
+    "auto-reload-brunch": "^1.7.3",
+    "bower": "^1.3.9",
+    "brunch": "^1.7.14",
+    "coffee-script": "^1.7.1",
+    "express": "^4.8.2",
+    "javascript-brunch": "^1.7.1",
+    "less-brunch": "^1.7.2",
+    "neow": "^1.0.0"
+  }
+}
