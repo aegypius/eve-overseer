@@ -1,0 +1,61 @@
+<ol class="breadcrumb">
+  <li><a href="#/">Squad</a></li>
+  <li class="active">Identification Sheet {{ character.characterID }}</li>
+</ol>
+
+<div class="media">
+  <div class="pull-left">
+    <img ng-src="http://image.eveonline.com/Character/{{ character.characterID }}_256.jpg">
+  </div>
+  <div class="media-body">
+    <div class="row">
+      <div class="col-md-12">
+        <h1 class="media-heading">{{ character.name }}</h1>
+
+        <fieldset>
+          <legend>Lineage</legend>
+          <div class="row">
+            <div class="col-md-6">
+              <dl class="dl-horizontal">
+                <dt>Race<dt><dd>{{ character.race }}</dd>
+                <dt>Bloodline<dt><dd>{{ character.bloodLine }}</dd>
+                <dt>Ancestry<dt><dd>{{ character.ancestry }}</dd>
+                <dt>Birthdate<dt><dd>{{ character.DoB | date : 'mediumDate' }}</dd>
+              </dl>
+            </div>
+            <div class="col-md-6">
+              <dl class="dl-horizontal">
+                <dt>Corporation<dt><dd>{{ character.corporationName }}</dd>
+              </dl>
+            </div>
+          </div>
+        </fieldset>
+
+      </div>
+      <div class="col-md-12">
+        <fieldset>
+          <legend>Attributes</legend>
+
+          <div class="row">
+            <div class="col-md-6">
+              <dl class="dl-horizontal">
+                <dt>Intelligence</dt><dd>{{ character.attributes.intelligence }}</dd>
+                <dt>Memory</dt><dd>{{ character.attributes.memory }}</dd>
+                <dt>Perception</dt><dd>{{ character.attributes.perception }}</dd>
+              </dl>
+            </div>
+
+            <div class="col-md-6">
+              <dl class="dl-horizontal">
+                <dt>Charisma</dt><dd>{{ character.attributes.charisma }}</dd>
+                <dt>Willpower</dt><dd>{{ character.attributes.willpower }}</dd>
+              </dl>
+            </div>
+          </div>
+
+        </fieldset>
+      </div>
+
+    </div>
+  </div>
+</div>

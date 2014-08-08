@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="eve-overseer">
   <head>
     <title>EVE Online Overseer</title>
     <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Abel|Cabin+Condensed:500' type='text/css'>
@@ -7,5 +7,9 @@
     <script type="text/javascript" src="app.js"></script>
   </head>
   <body>
+    <div class="container-fluid">
+      <h1>EVE Online Overseer</h1>
+      <div ng-view ng-cloak></div>
+    </div>
   </body>
 </html>
