@@ -2,7 +2,8 @@ var app = angular.module('eve-overseer', [
   'ngRoute',
   'eve-overseer.filters',
   'eve-overseer.controllers',
-  'eve-overseer.services'
+  'eve-overseer.services',
+  'eve-overseer.directives'
 ]);
 
 app

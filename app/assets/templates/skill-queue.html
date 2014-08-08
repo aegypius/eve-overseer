@@ -1,0 +1,8 @@
+<div class="progress">
+  <div    class="progress-bar"
+       ng-class="{'progress-bar-success': status == 'running', 'progress-bar-warning': status == 'blocked'}"
+           role="progressbar"
+          style="width: {{ percent }}%">
+      {{ percent }} %
+  </div>
+</div>
