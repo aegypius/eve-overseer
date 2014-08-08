@@ -16,7 +16,6 @@ directives
       templateUrl: 'templates/skill-queue.html',
       link: function (scope, elem, attrs) {
         scope.$watch('startTime + dateTime', function() {
-          console.log(scope.skill);
           var start   = new Date(Date.parse(scope.skill.startTime)),
               end     = new Date(Date.parse(scope.skill.endTime))
           ;
@@ -30,7 +29,6 @@ directives
                 scope.status  = 'blocked';
                 scope.percent = 0;
               }
-              console.log('tick');
               scope.$apply();
           }, 1000);
 
