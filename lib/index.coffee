@@ -9,7 +9,7 @@ app     = express()
 server  = (require "http").createServer app
 
 app.set "port", process.env.PORT or 3333
-app.use morgan('combined')
+app.use morgan('short')
 app.use bodyParser.json()
 app.use bodyParser.urlencoded { extended: true }
 app.use express.static(path.join __dirname, "../public")
