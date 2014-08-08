@@ -12,6 +12,6 @@ This project aims to replace software like EVEMon in a browser.
   From your terminal:
 
     git clone https://github.com/aegypius/eve-overseer
-    cd overseer
+    cd eve-overseer
     npm install
     npm run brunch
