@@ -50,9 +50,11 @@ router.route '/:id'
           character[key] = unwrap value
 
         res.json character
+
       .fail (err)->
         console.error err
         next()
+
       .done()
 
 router.route '/:id/skills/queue'
@@ -61,7 +63,21 @@ router.route '/:id/skills/queue'
       characterID: req.params.id
     }
       .then (result)->
-        res.json result.skillqueue
+        skillqueue = result.skillqueue
+        ids = (job.typeID for id, job of skillqueue)
+
+        api.fetch 'eve:TypeName', {
+          ids: ids
+        }
+        .then (result)->
+          types = result.types
+          for id, job of skillqueue
+            job.typeName = v.typeName for k, v of types when k is job.typeID
+          return skillqueue
+
+      .then (skillqueue)->
+        res.json skillqueue
+
       .fail (err)->
         console.error err
         next()

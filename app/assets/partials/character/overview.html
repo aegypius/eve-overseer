@@ -55,7 +55,7 @@
         </fieldset>
       </div>
 
-      <div class="col-md-12" ng-controller="SkillQueueController" ng-show="skillQueue">
+      <div class="col-md-12" ng-controller="SkillQueueController">
         <fieldset>
           <legend>Skill Queue</legend>
 
@@ -64,7 +64,7 @@
                 <span class="badge">{{ skill.level | roman_number }}</span>
               </div>
               <div class="col-md-3">
-                {{ skill.typeID }}
+                {{ skill.typeName }}
               </div>
               <div class="col-md-2">
                 {{ skill.startSP }}

@@ -3,8 +3,10 @@ var filters = angular.module('eve-overseer.filters', []);
 filters
   .filter('roman_number', function () {
     return function (num) {
-       if (!+num)
-        return false;
+      num = parseInt(num, 10);
+      if (!num) {
+        return null;
+      }
       var digits = String(+num).split(""),
           key = ["","C","CC","CCC","CD","D","DC","DCC","DCCC","CM",
                  "","X","XX","XXX","XL","L","LX","LXX","LXXX","XC",
