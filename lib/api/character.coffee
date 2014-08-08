@@ -21,6 +21,9 @@ router.route '/'
     api.fetch 'account:Characters'
       .then (result)->
         res.json (character for id, character of result.characters)
+      .fail (err)->
+        console.error err
+        next()
       .done()
 
 
@@ -47,6 +50,9 @@ router.route '/:id'
           character[key] = unwrap value
 
         res.json character
+      .fail (err)->
+        console.error err
+        next()
       .done()
 
 router.route '/:id/skills/queue'
@@ -56,6 +62,9 @@ router.route '/:id/skills/queue'
     }
       .then (result)->
         res.json result.skillqueue
+      .fail (err)->
+        console.error err
+        next()
       .done()
 
 module.exports = router
