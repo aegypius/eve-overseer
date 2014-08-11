@@ -1,0 +1,18 @@
+doctype html
+html.app(lang="en", ng-app="eve-overseer")
+
+  head
+
+    block title
+      title EVE Online Overseer
+    base(href="/")
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Abel|Cabin+Condensed:500")
+    link(rel="stylesheet", href="/app.css")
+    script(type="text/javascript", src="/app.js")
+
+  body
+    .container-fluid
+      h1 EVE Online Overseer
+      hr
+      block content
+        div(ng-view)

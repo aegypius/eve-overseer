@@ -1,6 +1,5 @@
-var directives = angular.module('eve-overseer.directives', []);
-
-directives
+angular
+  .module('eve-overseer')
   .directive('skill', function() {
     return {
       controller: function ($scope) {}
