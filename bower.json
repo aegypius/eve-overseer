@@ -16,11 +16,11 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "~1.2.21",
-    "angular-route": "~1.2.21",
-    "angular-resource": "~1.2.21",
-    "bootstrap": "~3.2.0",
-    "angular-cookies": "~1.2.21",
-    "angular-sanitize": "~1.2.21"
+    "angular": "~1.2.23",
+    "angular-route": "~1.2.23",
+    "angular-resource": "~1.2.23",
+    "angular-cookies": "~1.2.23",
+    "angular-sanitize": "~1.2.23",
+    "bootstrap": "~3.2.0"
   }
 }
