@@ -35,6 +35,10 @@ app.use session {
     auto_reconnect: true
   })
 }
+
+passport = require "./config/passport"
+app.use passport.initialize()
+app.use passport.session()
 app.use flash()
 
 # View Engine

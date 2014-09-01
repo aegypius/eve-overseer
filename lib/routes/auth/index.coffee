@@ -1,7 +1,6 @@
-{Router}       = require "express"
-passport       = require "passport"
-{ensureAuthenticated} = require "../../middleware/authorization"
-
+{Router}              = require "express"
+passport              = require "passport"
+{ensureAuthenticated} = require "../../config/auth"
 
 auth = new Router
 

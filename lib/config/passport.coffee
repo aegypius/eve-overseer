@@ -1,7 +1,6 @@
-mongoose      = require "mongoose"
 passport      = require "passport"
 LocalStrategy = (require "passport-local").Strategy
-User          = mongoose.model('User')
+User          = require "../models/user"
 
 passport.serializeUser (user, done)->
   done null, user.id
@@ -11,23 +10,25 @@ passport.deserializeUser (user, done)->
     done err, user
 
 passport.use "local-signup", new LocalStrategy {
-  usernameField: email
-  passwordField: password
+  usernameField: "email"
+  passwordField: "password"
 }, (email, password, done)->
-  User.findOne { email: email }, (err, user) {
-    return done err if err
+  process.nextTick ()->
+    User.findOne { email: email }, (err, user)->
+      return done err if err
 
-    unless user
-      return done null, false, {
-        errors:
-          email: 'Email is not registered'
-      }
+      unless user
+        return done null, false, {
+          errors:
+            email: 'Email is not registered'
+        }
 
-    unless user.authentificate password
-      return done null, false, {
-        errors:
-          password: 'Password is incorrect'
-      }
+      unless user.authentificate password
+        return done null, false, {
+          errors:
+            password: 'Password is incorrect'
+        }
 
-    return done null, user
-  }
+      return done null, use0r
+
+module.exports = passport

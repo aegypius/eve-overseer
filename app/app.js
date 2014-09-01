@@ -29,19 +29,11 @@ app
     $locationProvider.html5Mode(true);
   }])
   .run(['$rootScope', '$location', 'Auth', function ($rootScope, $location, Auth) {
-    console.info('overseer started');
     $rootScope.$watch('user', function (user) {
       if (!user && ['/login', '/signup', '/logout'].indexOf($location.path()) === -1) {
-        console.log("Request a user");
-        Auth.currentUser();
+        user = Auth.currentUser()
+        undefined !== user || $location.path('/login');
       }
     });
-
-    $rootScope.$on('event:auth-loginRequired', (function() {
-      $location.path('/login');
-
-      return false;
-    }));
-
   }])
 ;

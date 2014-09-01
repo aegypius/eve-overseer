@@ -1,3 +1,5 @@
+{ensureAuthenticated} = require "../config/auth"
+
 module.exports = (app, passeport)->
 
   app.use "/auth", require "./auth"
