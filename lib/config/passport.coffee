@@ -9,7 +9,7 @@ passport.deserializeUser (user, done)->
   User.findOne { _id: id }, (err, user)->
     done err, user
 
-passport.use "local-signup", new LocalStrategy {
+passport.use "local", new LocalStrategy({
   usernameField: "email"
   passwordField: "password"
 }, (email, password, done)->
@@ -29,6 +29,7 @@ passport.use "local-signup", new LocalStrategy {
             password: 'Password is incorrect'
         }
 
-      return done null, use0r
+      return done null, user
+)
 
 module.exports = passport

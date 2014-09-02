@@ -24,17 +24,22 @@ app.use bodyParser.json()
 app.use bodyParser.urlencoded { extended: true }
 app.use express.static(path.join __dirname, "../public")
 
+mongo_url = process.env.MONGO_DATABASE_URL or "mongodb://localhost/#{pkg.name}"
+
 app.use cookieParser process.env.COOKIE_SECRET or pkg.name
 app.use session {
   resave:            true
   saveUninitialized: true
   secret:            process.env_SESSION_SECRET or pkg.name
   store: new MongoStore({
-    url: process.env.MONGO_DATABASE_URL or "mongodb://localhost/{#pkg.name}"
+    url: mongo_url
     collection: "sessions"
     auto_reconnect: true
   })
 }
+
+# Connect to database
+(require "mongoose").connect mongo_url
 
 passport = require "./config/passport"
 app.use passport.initialize()

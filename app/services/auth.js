@@ -20,7 +20,7 @@ angular
               return cb();
             }, function (err) {
               return cb(err.data);
-            })
+            });
           },
 
           logout: function (callback) {
@@ -31,19 +31,18 @@ angular
               return cb();
             }, function (err) {
               return cb(err.data);
-            })
+            });
           },
 
           createUser: function (userinfo, callback) {
             var cb = callback || angular.noop;
 
-            User.save(userinfo
-              , function(user) {
+            User.save(userinfo, function(user) {
                 $rootScope.user = user;
               }, function (err) {
                 return cb(err.data);
-              })
-            ;
+              }
+            );
           },
 
           currentUser: function () {
@@ -86,7 +85,6 @@ angular
             });
 
           }
-
-        }
+        };
     }]
   );

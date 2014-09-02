@@ -3,3 +3,4 @@ angular
   .factory('Session', ["$resource", function ($resource) {
     return $resource('/auth/session');
   }])
+;

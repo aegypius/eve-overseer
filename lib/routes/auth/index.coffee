@@ -11,19 +11,16 @@ auth.route '/session'
     res.json req.user.user_info
 
   .post (req, res, next)->
-    (->
-      passport.authentificate "locale", (err, user, info)->
-        error = err or info
+    passport.authenticate('local', (err, user, info)->
+      error = err or info
 
-        if error
-          return res.status 400
-             .json error
+      return res.status(400).json(error) if error
 
-        req.logIn user, (err)->
-          return res.send err if err
+      req.login user, (err)->
+        return res.send(err) if err
+        res.json req.user.user_info
 
-          res.json req.user.user_info
-    )(req, res, next)
+    )(req, res, next);
 
 
   .delete (req, res, next)->
