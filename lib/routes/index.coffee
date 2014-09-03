@@ -2,7 +2,8 @@
 
 module.exports = (app, passeport)->
 
-  app.use "/auth", require "./auth"
+  app.use "/auth",  require "./auth"
+  app.use "/users", require "./user"
 
   app.get "/", (req, res)->
     res.render "index"
@@ -14,7 +15,7 @@ module.exports = (app, passeport)->
 
   app.get "/signup", (req, res)->
     res.render "index", {
-      message: res.flash('signup-message')
+      message: req.flash('signup-message')
     }
 
   app.get "/profile", ensureAuthenticated, (req, res)->

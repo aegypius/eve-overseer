@@ -25,8 +25,10 @@ angular
           $location.path('/');
         } else {
           angular.forEach(err.errors, function (error, field) {
-            form[field].$setValidity('mongoose', false);
-            $scope.errors[field] = error;
+            if (form[field] !== undefined) {
+              form[field].$setValidity('mongoose', false);
+              $scope.errors[field] = error;
+            }
           });
           $scope.errors.other = err.message;
         }
@@ -34,7 +36,43 @@ angular
     };
 
   }])
-  .controller('SignupCtrl', ['$scope', function ($scope) {
+  .controller('SignupCtrl', ['$scope', 'md5', 'Auth', '$location', function ($scope, md5, Auth, $location) {
+    var gt;
+    $scope.user     = {};
+    $scope.errors   = {};
+    $scope.gravatar = "http://www.gravatar.com/avatar/";
+
+    $scope.$watch('user.email', function (email) {
+      clearTimeout(gt);
+      gt = setTimeout(function () {
+        $scope.gravatar = "http://www.gravatar.com/avatar/" + md5.hash(email || '');
+        $scope.$apply();
+      }, 500);
+    });
+
+    $scope.register = function (form) {
+      Auth.createUser({
+          email: $scope.user.email,
+          username: $scope.user.username,
+          password: $scope.user.password
+        },
+        function(err) {
+          $scope.errors = {};
+
+          if (!err) {
+            $location.path('/');
+          } else {
+            angular.forEach(err.errors, function(error, field) {
+              if (form[field] !== undefined) {
+                form[field].$setValidity('mongoose', false);
+                $scope.errors[field] = error;
+              }
+            });
+            $scope.errors.other = err.message;
+          }
+        }
+      );
+    };
 
   }])
 ;

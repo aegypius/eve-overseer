@@ -40,12 +40,22 @@ UserSchema.plugin Timestampable
 # ========
 UserSchema
   .virtual "password"
-  .set (password)=>
+  .set (password)->
     @_password = password
     @salt = @generateSalt()
     @hashed_password = @encryptPassword password
+    console.log @hashed_password, password, @salt
   .get ()=>
     @_password
+
+UserSchema
+  .virtual "user_info"
+  .get ()=>
+    {
+      "_id":      @_id
+      "username": @_username
+      "email":    @_email
+    }
 
 # Validations
 # ===========
@@ -54,11 +64,11 @@ validatePresenceOf = (value)->
 
 UserSchema
   .path "username"
-    .validate (username)=>
+    .validate (username)->
       return @doesNotRequireValidation() or username.length
     , "Username cannot be blank"
 
-    .validate (username, callback)=>
+    .validate (username, callback)->
       User = mongoose.model('User')
 
       return callback(true) if @doesNotRequireValidation()
@@ -74,11 +84,11 @@ UserSchema
 
 UserSchema
   .path "email"
-    .validate (email)=>
-      return @doesNotRequireValidation() or username.length
+    .validate (email)->
+      return @doesNotRequireValidation() or email.length
     , "Email cannot be blank"
 
-    .validate (email, callback)=>
+    .validate (email, callback)->
       User = mongoose.model('User')
 
       return callback(true) if @doesNotRequireValidation()
@@ -94,7 +104,7 @@ UserSchema
 
 UserSchema
   .path "hashed_password"
-    .validate (hashed_password)=>
+    .validate (hashed_password)->
       return @doesNotRequireValidation() or hashed_password.length
     , "Password cannot be blank"
 
@@ -114,15 +124,15 @@ UserSchema
 UserSchema.methods =
 
   # Authentificate - check if the passwords are the same
-  authentificate: (password)=>
-    @encryptPassword password is @hashed_password
+  authentificate: (password)->
+    @hashed_password is @encryptPassword password
 
   # Generate salt
   generateSalt: ()->
     '' + Math.round (new Date).valueOf() * Math.random()
 
   # Encrypt password
-  encryptPassword: (password)=>
+  encryptPassword: (password)->
     return '' unless password
 
     try
@@ -134,7 +144,7 @@ UserSchema.methods =
     catch err
       return ''
 
-  generateConfirmationToken: (password)=>
+  generateConfirmationToken: (password)->
     return '' unless password
 
     try
@@ -161,7 +171,8 @@ UserSchema.methods =
 
     return "https://gravatar.com/avatar/#{hash}?s=#{size}&d=identicon"
 
-  doesNotRequireValidation: =>
+  doesNotRequireValidation: ->
     return ~oAuthTypes.indexOf @provider
+
 
 module.exports = mongoose.model("User", UserSchema)

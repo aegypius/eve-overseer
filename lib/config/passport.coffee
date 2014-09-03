@@ -3,10 +3,10 @@ LocalStrategy = (require "passport-local").Strategy
 User          = require "../models/user"
 
 passport.serializeUser (user, done)->
-  done null, user.id
+  done null, user._id
 
-passport.deserializeUser (user, done)->
-  User.findOne { _id: id }, (err, user)->
+passport.deserializeUser (_id, done)->
+  User.findOne { _id: _id }, (err, user)->
     done err, user
 
 passport.use "local", new LocalStrategy({
