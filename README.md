@@ -7,6 +7,8 @@ This project aims to replace software like EVEMon in a browser.
 
   - nodejs: 0.10.x
   - npm
+  - MongoDB
+
 
 ### Configuration
 
@@ -21,9 +23,24 @@ You must **never** commit your .env file
 
 ### Hacking
 
-  From your terminal:
+From your terminal:
 
     git clone https://github.com/aegypius/eve-overseer
     cd eve-overseer
     npm install
     npm run brunch
+
+
+#### Hacking with docker
+
+If you intend to use docker to manage the mongodb database, you can run
+
+    sudo npm install -g decking
+    decking create dev
+    decking start dev
+
+This will create a development cluster with a persistent storage located in _.cache_
+directory, start mongodb cluster (first time can take a few minutes) and genghisapp
+container. You can access genghisapp web-ui at http://localhost:3344
+
+You still need to launch server with ```npm run brunch```

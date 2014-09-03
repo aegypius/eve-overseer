@@ -1,0 +1,32 @@
+{
+  "containers" : {
+    "eve-overseer.storage" : {
+      "image" : "busybox",
+      "mount" : [
+        "./.cache:/data"
+      ]
+    },
+    "eve-overseer.mongo" : {
+      "image" : "mongo",
+      "port": [
+        "27017:27017",
+        "28017:28017"
+      ],
+      "mount-from" : [
+        "eve-overseer.storage"
+      ]
+    },
+    "eve-overseer.genghis": {
+      "image" : "aegypius/genghis",
+      "port"  : [
+        "3344:5000"
+      ],
+      "dependencies" : [
+        "eve-overseer.mongo:db"
+      ]
+    }
+  },
+  "clusters" : {
+    "dev"    : ["eve-overseer.mongo", "eve-overseer.genghis"]
+  }
+}
