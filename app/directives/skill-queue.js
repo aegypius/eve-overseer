@@ -12,7 +12,7 @@ angular
       require: [
         '^skill'
       ],
-      templateUrl: 'templates/skill-queue.html',
+      templateUrl: '/templates/skill-queue.html',
       link: function (scope, elem, attrs) {
         scope.$watch('startTime + dateTime', function() {
           var start   = new Date(Date.parse(scope.skill.startTime)),
