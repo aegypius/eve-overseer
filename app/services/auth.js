@@ -2,7 +2,7 @@ angular
   .module('eve-overseer')
   .factory('Auth', ['$location', '$rootScope', 'Session', 'User', '$cookieStore',
     function ($location, $rootScope, Session, User, $cookieStore) {
-        $rootScope.user = $cookieStore.get('user') || null;
+        $rootScope._user = $cookieStore.get('user') || null;
         $cookieStore.remove('user');
 
         return {
@@ -16,7 +16,7 @@ angular
               password:   user.password,
               rememberMe: user.rememberMe,
             }, function (user) {
-              $rootScope.user = user;
+              $rootScope._user = user;
               return cb();
             }, function (err) {
               return cb(err.data);
@@ -27,7 +27,7 @@ angular
             var cb = callback || angular.noop;
 
             Session.delete(function (res) {
-              $rootScope.user = null;
+              $rootScope._user = null;
               return cb();
             }, function (err) {
               return cb(err.data);
@@ -38,7 +38,7 @@ angular
             var cb = callback || angular.noop;
 
             User.save(userinfo, function(user) {
-                $rootScope.user = user;
+                $rootScope._user = user;
               }, function (err) {
                 return cb(err.data);
               }
@@ -47,7 +47,7 @@ angular
 
           currentUser: function () {
             Session.get(function(user) {
-              $rootScope = user;
+              $rootScope._user = user;
             }, function (response) {
               console.log(response);
             }, function (error) {
