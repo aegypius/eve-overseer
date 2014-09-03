@@ -44,7 +44,6 @@ UserSchema
     @_password = password
     @salt = @generateSalt()
     @hashed_password = @encryptPassword password
-    console.log @hashed_password, password, @salt
   .get ()=>
     @_password
 
