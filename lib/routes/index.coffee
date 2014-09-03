@@ -2,8 +2,8 @@
 
 module.exports = (app, passeport)->
 
-  app.use "/auth",  require "./auth"
-  app.use "/users", require "./user"
+  app.use "/session", require "./session"
+  app.use "/users",   require "./user"
 
   app.get "/", (req, res)->
     res.render "index"

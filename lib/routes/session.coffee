@@ -1,10 +1,10 @@
 {Router}              = require "express"
 passport              = require "passport"
-{ensureAuthenticated} = require "../../config/auth"
+{ensureAuthenticated} = require "../config/auth"
 
-auth = new Router
+session = new Router
 
-auth.route '/session'
+session.route '/'
 
   .get ensureAuthenticated
   .get (req, res, next)->
@@ -29,4 +29,4 @@ auth.route '/session'
     req.logout()
     res.status 200
 
-module.exports = auth
+module.exports = session
