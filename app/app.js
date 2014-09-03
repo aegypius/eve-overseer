@@ -9,19 +9,19 @@ app
   .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: 'partials/characters.html',
+        templateUrl: '/partials/characters.html',
         controller:  'CharacterListController'
       })
       .when('/login', {
-        templateUrl: 'partials/user/login.html',
+        templateUrl: '/partials/user/login.html',
         controller:  'LoginCtrl',
       })
       .when('/signup', {
-        templateUrl: 'partials/user/signup.html',
+        templateUrl: '/partials/user/signup.html',
         controller:  'SignupCtrl',
       })
       .when('/character/:id', {
-        templateUrl: 'partials/character/overview.html',
+        templateUrl: '/partials/character/overview.html',
         controller:  'CharacterOverviewController'
       })
       .otherwise({ redirectTo: '/'});
