@@ -11,8 +11,5 @@ html.app(lang="en", ng-app="eve-overseer")
     script(type="text/javascript", src="/app.js")
 
   body
-    .container-fluid
-      h1 EVE Online Overseer
-      hr
-      block content
-        div(ng-view)
+    block content
+      div(ng-view)

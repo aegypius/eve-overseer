@@ -1,15 +1,19 @@
-<ol class="breadcrumb">
-  <li class="active">Squad</a></li>
-</ol>
+<nav ng-include="'/partials/navigation.html'"></nav>
 
-<div class="characters">
-  <div class="media" ng-repeat="character in characters">
-    <a class="pull-left" href="/character/{{ character.characterID }}">
-      <img ng-src="http://image.eveonline.com/Character/{{ character.characterID }}_128.jpg">
-    </a>
-    <div class="media-body">
-      <h4 class="media-heading"><a href="/character/{{ character.characterID }}">{{ character.name }}</a></h4>
-      <small class="text-muted">{{ character.corporationName }}</small>
+<div class="container-fluid">
+  <ol class="breadcrumb">
+    <li class="active">Squad</a></li>
+  </ol>
+
+  <div class="characters">
+    <div class="media" ng-repeat="character in characters">
+      <a class="pull-left" href="/character/{{ character.characterID }}">
+        <img ng-src="http://image.eveonline.com/Character/{{ character.characterID }}_128.jpg">
+      </a>
+      <div class="media-body">
+        <h4 class="media-heading"><a href="/character/{{ character.characterID }}">{{ character.name }}</a></h4>
+        <small class="text-muted">{{ character.corporationName }}</small>
+      </div>
     </div>
   </div>
 </div>
