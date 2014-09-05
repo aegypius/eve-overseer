@@ -17,7 +17,6 @@
       <div class="tab-pane active" id="personal-information">
         <div class="heading">
           <h4 class="h1">Personal information</h4>
-          <p class="lead">Complete or adjust your personal profile information</p>
         </div>
 
         <form role="form" ng-submit="update(form)">
@@ -48,33 +47,12 @@
                    disabled
             </input>
           </div>
-
-          <div class="form-group">
-            <label for="firstname">Firstname</label>
-            <input class="form-control"
-                   id="firstname"
-                   placeholder="Firstname"
-                   type="text"
-                   name="firstname"
-                   ng-model="user.firstname"
-            </input>
-          </div>
-
-          <div class="form-group">
-            <label for="lastname">Lastname</label>
-            <input class="form-control"
-                   id="lastname"
-                   placeholder="Firstname"
-                   type="text"
-                   name="lastname"
-                   ng-model="user.lastname"
-            </input>
-          </div>
         </div>
 
         <div class="tab-pane" id="password">
           <div class="heading">
             <h4 class="h1">Password</h4>
+            <p class="lead">Change your password</p>
           </div>
 
             <div class="form-group"
@@ -123,6 +101,12 @@
                   {{ errors.confirmation }}
               </p>
             </div>
+
+            <div class="form-group has-error">
+                <p class="help-block">{{ errors.other }}</p>
+            </div>
+
+            <button class="btn btn-lg btn-primary pull-right" type="submit">Update</button>
           </div>
 
           <div class="tab-pane" id="apikeys">
@@ -160,7 +144,7 @@
                 </div>
               </div>
 
-              <div class="col-md-8">
+              <div class="col-md-7">
                 <div class="form-group"
                   ng-class="{'has-warning': form.verification_code.$dirty,
                              'has-success': form.verification_code.$valid && form.verification_code.$dirty && !form.verification_code.$error.mongoose,
@@ -182,18 +166,12 @@
                 </div>
               </div>
 
-              <div class="col-md-1">
-                <button class="btn btn-info btn-block col-md-2"><span class="glyphicon glyphicon-save"></span></button>
+              <div class="col-md-2">
+                <button class="btn btn-primary btn-block">Save</button>
               </div>
 
             </div>
           </div>
-
-          <div class="form-group has-error">
-              <p class="help-block">{{ errors.other }}</p>
-          </div>
-
-          <button class="btn btn-lg btn-primary pull-right" type="submit">Update</button>
 
         </form>
       </div>

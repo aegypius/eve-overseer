@@ -40,6 +40,14 @@ app
       }
     });
 
+    $rootScope.logout = function () {
+      Auth.logout(function (err) {
+        if (!err) {
+          $location.path('/');
+        }
+      });
+    };
+
     // On catching 401 errors, redirect to the login page.
     $rootScope.$on('event:auth-loginRequired', function() {
       $location.path('/login');

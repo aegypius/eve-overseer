@@ -31,5 +31,6 @@ session.route '/'
 
     req.logout()
     res.status 200
+    res.end()
 
 module.exports = session
