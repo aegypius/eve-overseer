@@ -21,6 +21,10 @@ app
         templateUrl: '/partials/user/signup.html',
         controller:  'SignupCtrl',
       })
+      .when('/profile', {
+        templateUrl: '/partials/user/profile.html',
+        controller:  'ProfileCtrl',
+      })
       .when('/character/:id', {
         templateUrl: '/partials/character/overview.html',
         controller:  'CharacterOverviewController'

@@ -1,0 +1,203 @@
+<div class="container">
+  <div class="row">
+
+    <div class="col-md-4">
+      <h1>Profile</h1>
+
+      <p class="lead">{{ user.username | uppercase }}<p>
+
+      <ul class="nav nav-pills nav-stacked" role="tablist">
+        <li class="active"><a href="" role="tab" data-target="#personal-information" data-toggle="tab">Personal information</a></li>
+        <li><a href="" role="tab" data-target="#password" data-toggle="tab">Password</a></li>
+        <li><a href="" role="tab" data-target="#apikeys" data-toggle="tab">API Keys</a></li>
+      </ul>
+    </div>
+
+    <div class="tab-content col-md-8">
+      <div class="tab-pane active" id="personal-information">
+        <div class="heading">
+          <h4 class="h1">Personal information</h4>
+          <p class="lead">Complete or adjust your personal profile information</p>
+        </div>
+
+        <form role="form" ng-submit="update(form)">
+            <img class="img-circle" ng-src="{{ user.avatar }}">
+            <p class="help-block">Change your avatar using <a href="http://gravatar.com" target="_blank">Gravatar</a>.</p>
+
+
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input class="form-control"
+                   id="username"
+                   placeholder="Username"
+                   type="text"
+                   name="username"
+                   ng-model="user.username"
+                   disabled
+            </input>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input class="form-control"
+                   id="email"
+                   placeholder="Email"
+                   type="email"
+                   name="email"
+                   ng-model="user.email"
+                   disabled
+            </input>
+          </div>
+
+          <div class="form-group">
+            <label for="firstname">Firstname</label>
+            <input class="form-control"
+                   id="firstname"
+                   placeholder="Firstname"
+                   type="text"
+                   name="firstname"
+                   ng-model="user.firstname"
+            </input>
+          </div>
+
+          <div class="form-group">
+            <label for="lastname">Lastname</label>
+            <input class="form-control"
+                   id="lastname"
+                   placeholder="Firstname"
+                   type="text"
+                   name="lastname"
+                   ng-model="user.lastname"
+            </input>
+          </div>
+        </div>
+
+        <div class="tab-pane" id="password">
+          <div class="heading">
+            <h4 class="h1">Password</h4>
+          </div>
+
+            <div class="form-group"
+               ng-class="{'has-warning': form.password.$dirty,
+                          'has-success': form.password.$valid && form.password.$dirty && !form.password.$error.mongoose,
+                          'has-error': form.password.$invalid && form.password.$dirty || form.password.$error.mongoose
+                          }">
+              <input class="form-control"
+                     placeholder="Password"
+                     type="password"
+                     name="password"
+                     ng-model="user.password"
+                     ng-minlength="5"
+                     mongoose-error/>
+              <p class="help-block"
+                 ng-show="(form.password.$error.minlength || form.password.$invalid)
+                          && form.password.$dirty
+                          && !form.password.$error.required">
+                  Password must be at least 5 characters.
+              </p>
+              <p class="help-block"
+                 ng-show="form.password.$error.mongoose">
+                  {{ errors.password }}
+              </p>
+            </div>
+
+            <div class="form-group"
+               ng-class="{'has-warning': form.password.$dirty,
+                          'has-success': form.password.$valid && form.password.$dirty && !form.password.$error.mongoose,
+                          'has-error': form.password.$invalid && form.password.$dirty || form.password.$error.mongoose
+                          }">
+              <input class="form-control"
+                     placeholder="Confirm password"
+                     type="password"
+                     name="confirmation"
+                     ng-minlength="5"
+                     mongoose-error/>
+              <p class="help-block"
+                 ng-show="(form.confirmation.$error.minlength || form.confirmation.$invalid)
+                          && form.confirmation.$dirty
+                          && !form.confirmation.$error.required">
+                  Password must be at least 5 characters.
+              </p>
+              <p class="help-block"
+                 ng-show="form.password_confirmation.$error.mongoose">
+                  {{ errors.confirmation }}
+              </p>
+            </div>
+          </div>
+
+          <div class="tab-pane" id="apikeys">
+            <div class="heading">
+              <h4 class="h1">API Keys</h4>
+              <p class="lead">Manage and add new API Keys</p>
+            </div>
+            <div ng-repeat="key in user.apikeys">
+              {{ key.id }}
+              {{ key.verification_code }}
+              {{ key.access_mask }}
+            </div>
+
+            <div class="row">
+
+              <div class="col-md-3">
+                <div class="form-group"
+                  ng-class="{'has-warning': form.key.$dirty,
+                             'has-success': form.key.$valid && form.key.$dirty && !form.key.$error.mongoose,
+                             'has-error': form.key.$invalid && form.key.$dirty || form.key.$error.mongoose
+                             }">
+                  <input class="form-control"
+                         placeholder="Key ID"
+                         type="text"
+                         name="key"
+                         ng-minlength="5"
+                         mongoose-error/>
+
+                  <p class="help-block"
+                     ng-show="(form.key.$error.minlength || form.key.$invalid)
+                              && form.key.$dirty
+                              && !form.key.$error.required">
+                      Key ID must be at least 5 characters.
+                  </p>
+                </div>
+              </div>
+
+              <div class="col-md-8">
+                <div class="form-group"
+                  ng-class="{'has-warning': form.verification_code.$dirty,
+                             'has-success': form.verification_code.$valid && form.verification_code.$dirty && !form.verification_code.$error.mongoose,
+                             'has-error': form.verification_code.$invalid && form.verification_code.$dirty || form.verification_code.$error.mongoose
+                             }">
+                  <input class="form-control"
+                         placeholder="Verification Code"
+                         type="text"
+                         name="verification_code"
+                         ng-length="64"
+                         mongoose-error/>
+
+                  <p class="help-block"
+                     ng-show="(form.verification_code.$error.length || form.verification_code.$invalid)
+                              && form.verification_code.$dirty
+                              && !form.verification_code.$error.required">
+                      Verification Code must be 64 characters.
+                  </p>
+                </div>
+              </div>
+
+              <div class="col-md-1">
+                <button class="btn btn-info btn-block col-md-2"><span class="glyphicon glyphicon-save"></span></button>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="form-group has-error">
+              <p class="help-block">{{ errors.other }}</p>
+          </div>
+
+          <button class="btn btn-lg btn-primary pull-right" type="submit">Update</button>
+
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>

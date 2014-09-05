@@ -4,6 +4,8 @@ Timestampable = require "mongoose-timestamp"
 crypto        = require "crypto"
 oAuthTypes    = []
 
+ApiKeySchema  = require "./apikey"
+
 # User Schema
 # ===========
 UserSchema = new Schema {
@@ -22,6 +24,7 @@ UserSchema = new Schema {
     default: 'local'
   }
   tokens: []
+  apikeys: [ApiKeySchema]
   hashed_password: {
     type: String
     require: true
@@ -49,11 +52,13 @@ UserSchema
 
 UserSchema
   .virtual "user_info"
-  .get ()=>
+  .get ()->
     {
       "_id":      @_id
-      "username": @_username
-      "email":    @_email
+      "username": @username
+      "email":    @email
+      "apikeys":  @apikeys
+      "avatar":   @gravatar(120)
     }
 
 # Validations
@@ -158,10 +163,11 @@ UserSchema.methods =
   roleAdmin: ->
     return 1
 
-  gravatar: (size)->
+  gravatar: (size, alt)->
     size = 200 unless size?
+    alt  = "identicon" unless alt?
 
-    return "https://gravatar.com/avatar/?s=#{size}&d=identicon" unless @email
+    return "https://gravatar.com/avatar/?s=#{size}&d=#{alt}" unless @email
 
     hash = crypto
       .createHash 'md5'

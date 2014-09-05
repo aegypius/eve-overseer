@@ -20,7 +20,7 @@ module.exports = (app, passeport)->
 
   app.get "/profile", ensureAuthenticated, (req, res)->
     res.render "index", {
-      user: req.user
+      message: req.flash('user-profile')
     }
 
   app.get "/logout", (req, res)->

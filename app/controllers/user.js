@@ -73,6 +73,16 @@ angular
         }
       );
     };
+  }])
+  .controller('ProfileCtrl', ['$rootScope', '$scope', 'Auth', function ($rootScope, $scope, Auth) {
+    $rootScope.$watch('_user', function (user) {
+      $scope.user = user;
+    });
+
+    $scope.update = function (form) {
+      console.log(form);
+    };
+
 
   }])
 ;
