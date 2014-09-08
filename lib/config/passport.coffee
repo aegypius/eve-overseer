@@ -1,6 +1,6 @@
 passport      = require "passport"
 LocalStrategy = (require "passport-local").Strategy
-User          = require "../models/user"
+{User}        = require "../models/user"
 
 passport.serializeUser (user, done)->
   done null, user._id

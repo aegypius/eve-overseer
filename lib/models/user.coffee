@@ -1,10 +1,10 @@
-mongoose      = require "mongoose"
-{Schema}      = mongoose
-Timestampable = require "mongoose-timestamp"
-crypto        = require "crypto"
-oAuthTypes    = []
+mongoose       = require "mongoose"
+{Schema}       = mongoose
+Timestampable  = require "mongoose-timestamp"
+crypto         = require "crypto"
+oAuthTypes     = []
 
-ApiKeySchema  = require "./apikey"
+{ApiKeySchema} = require "./apikey"
 
 # User Schema
 # ===========
@@ -180,4 +180,6 @@ UserSchema.methods =
     return ~oAuthTypes.indexOf @provider
 
 
-module.exports = mongoose.model("User", UserSchema)
+module.exports =
+  User: mongoose.model("User", UserSchema)
+  UserSchema: UserSchema

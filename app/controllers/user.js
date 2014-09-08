@@ -74,13 +74,39 @@ angular
       );
     };
   }])
-  .controller('ProfileCtrl', ['$rootScope', '$scope', 'Auth', function ($rootScope, $scope, Auth) {
+  .controller('ProfileCtrl', ['$rootScope', '$scope', 'User', function ($rootScope, $scope, User) {
     $rootScope.$watch('_user', function (user) {
       $scope.user = user;
     });
 
-    $scope.update = function (form) {
-      console.log(form);
+    $scope.apikey = {};
+
+    $scope.addApiKey = function (form) {
+      // Add a new API Key to the user
+      if (form.$valid && form.$dirty) {
+        $scope.user.apikeys.push({
+          id: form.keyId,
+          verification: form.verificationCode
+        });
+
+        // Save current user
+        User.update({ id: $scope.user._id, apikeys: $scope.user.apikeys })
+          .$promise.then(function (user) {
+            $scope.user = user;
+          });
+      }
+    };
+
+    $scope.removeApiKey = function (id) {
+        $scope.user.apikeys = $scope.user.apikeys.filter(function (apikey) {
+          return apikey._id !== id;
+        });
+
+        // Save current user
+        User.update({ id: $scope.user._id, apikeys: $scope.user.apikeys })
+          .$promise.then(function (user) {
+            $scope.user = user;
+          });
     };
 
 

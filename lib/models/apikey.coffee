@@ -5,6 +5,7 @@ Timestampable = require "mongoose-timestamp"
 ApiKeySchema  = new Schema {
   id: {
     type:     String
+    unique:   true
     required: true
   }
   verification: {
@@ -15,4 +16,18 @@ ApiKeySchema  = new Schema {
 
 ApiKeySchema.plugin Timestampable
 
-module.exports = mongoose.model("ApiKey", ApiKeySchema)
+ApiKeySchema
+  .path "id"
+    .validate (id)->
+      return id.length
+    , "Key ID cannot be blank"
+
+ApiKeySchema
+  .path "verification"
+    .validate (verification)->
+      return verification.length
+    , "Verification Code cannot be blank"
+
+module.exports =
+  ApiKey:       mongoose.model("ApiKey", ApiKeySchema)
+  ApiKeySchema: ApiKeySchema

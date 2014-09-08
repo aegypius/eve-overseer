@@ -4,32 +4,37 @@
 # Exposes EVE API to json
 #
 
-{Router}    = require "express"
-{EveClient} = require "neow"
+{Router}              = require "express"
+{EveClient}           = require "neow"
+{ensureAuthenticated} = require "../config/auth"
 
 router = new Router
-
-api = new EveClient {
-  keyID: process.env.EVE_API_KEY_ID
-  vCode: process.env.EVE_API_VERIFICATION_CODE
-}
 
 # Returns character list
 # ======================
 router.route '/'
+  .get ensureAuthenticated
   .get (req, res, next)->
-    api.fetch 'account:Characters'
-      .then (result)->
-        res.json (character for id, character of result.characters)
-      .fail (err)->
-        console.error err
-        next()
-      .done()
+
+    for apikey in req.user.apikeys
+      api = new EveClient {
+        keyID: apikey.id
+        vCode: apikey.verification
+      }
+
+      api.fetch 'account:Characters'
+        .then (result)->
+          res.json (character for id, character of result.characters)
+        .fail (err)->
+          console.error err
+          next()
+        .done()
 
 
 # Returns character sheet
 # =======================
 router.route '/:id'
+  .get ensureAuthenticated
   .get (req, res, next)->
 
     unwrap = (value)->
@@ -39,48 +44,60 @@ router.route '/:id'
           value[key] = unwrap dict
       return value
 
+    for apikey in req.user.apikeys
+      api = new EveClient {
+        keyID: apikey.id
+        vCode: apikey.verification
+      }
 
-    api.fetch 'char:CharacterSheet', {
-      characterID: req.params.id
-    }
-      .then (result)->
-        character = {}
+      api.fetch 'char:CharacterSheet', {
+        characterID: req.params.id
+      }
+        .then (result)->
+          character = {}
 
-        for key, value of result
-          character[key] = unwrap value
+          for key, value of result
+            character[key] = unwrap value
 
-        res.json character
+          res.json character
 
-      .fail (err)->
-        console.error err
-        next()
+        .fail (err)->
+          console.error err
+          next()
 
-      .done()
+        .done()
 
 router.route '/:id/skills/queue'
+  .get ensureAuthenticated
   .get (req, res, next)->
-    api.fetch 'char:SkillQueue', {
-      characterID: req.params.id
-    }
-      .then (result)->
-        skillqueue = result.skillqueue
-        ids = (job.typeID for id, job of skillqueue)
+    for apikey in req.user.apikeys
+      api = new EveClient {
+        keyID: apikey.id
+        vCode: apikey.verification
+      }
 
-        api.fetch 'eve:TypeName', {
-          ids: ids
-        }
+      api.fetch 'char:SkillQueue', {
+        characterID: req.params.id
+      }
         .then (result)->
-          types = result.types
-          for id, job of skillqueue
-            job.typeName = v.typeName for k, v of types when k is job.typeID
-          return skillqueue
+          skillqueue = result.skillqueue
+          ids = (job.typeID for id, job of skillqueue)
 
-      .then (skillqueue)->
-        res.json skillqueue
+          api.fetch 'eve:TypeName', {
+            ids: ids
+          }
+          .then (result)->
+            types = result.types
+            for id, job of skillqueue
+              job.typeName = v.typeName for k, v of types when k is job.typeID
+            return skillqueue
 
-      .fail (err)->
-        console.error err
-        next()
-      .done()
+        .then (skillqueue)->
+          res.json skillqueue
+
+        .fail (err)->
+          console.error err
+          next()
+        .done()
 
 module.exports = router
