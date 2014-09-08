@@ -1,4 +1,6 @@
 box: wercker/nodejs
+services:
+  - wercker/mongodb
 # Build definition
 build:
   # The steps that will be executed on build
@@ -15,7 +17,3 @@ build:
         code: |
           echo "node version $(node -v) running"
           echo "npm version $(npm -v) running"
-deploy:
-  steps:
-    - heroku-deploy:
-      key-name: RADIANT-BASTION-3939.HEROKUAPP.COM

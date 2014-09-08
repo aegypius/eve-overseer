@@ -1,6 +1,7 @@
-mongoose      = require "mongoose"
-{Schema}      = mongoose
-Timestampable = require "mongoose-timestamp"
+mongoose          = require "mongoose"
+{Schema}          = mongoose
+Timestampable     = require "mongoose-timestamp"
+{CharacterSchema} = require "./character"
 
 ApiKeySchema  = new Schema {
   id: {
@@ -12,6 +13,7 @@ ApiKeySchema  = new Schema {
     type:     String
     required: true
   }
+  characters: [CharacterSchema]
 }
 
 ApiKeySchema.plugin Timestampable

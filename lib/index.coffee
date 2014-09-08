@@ -6,6 +6,8 @@ bodyParser   = require "body-parser"
 morgan       = require "morgan"
 path         = require "path"
 
+config       = require "./config"
+
 # Session management
 cookieParser = require "cookie-parser"
 session      = require "express-session"
@@ -19,15 +21,13 @@ server  = (require "http").createServer app
 app.set "port", process.env.PORT     or 3333
 app.set "env",  process.env.NODE_ENV or "development"
 
-app.use morgan('short')
+app.use morgan('short') unless process.env.NODE_ENV is "test"
 app.use bodyParser.json()
 app.use bodyParser.urlencoded { extended: true }
 app.use express.static(path.join __dirname, "../public")
 
-mongo_url = process.env.MONGO_DATABASE_URL or "mongodb://localhost/#{pkg.name}"
-
 # Connect to database
-(require "mongoose").connect mongo_url
+(require "mongoose").connect config.database.url
 
 app.use cookieParser process.env.COOKIE_SECRET or pkg.name
 app.use session {
@@ -35,13 +35,13 @@ app.use session {
   saveUninitialized: true
   secret:            process.env.SESSION_SECRET or pkg.name
   store: new MongoStore({
-    url: mongo_url
+    url: config.database.url
     collection: "sessions"
     auto_reconnect: true
   })
 }
 
-passport = require "./config/passport"
+passport = config.passport
 app.use passport.initialize()
 app.use passport.session()
 app.use flash()
