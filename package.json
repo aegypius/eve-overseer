@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "EVE Online Character Management",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "start": "node index.js",
     "brunch": "$(npm bin)/brunch watch --server",
