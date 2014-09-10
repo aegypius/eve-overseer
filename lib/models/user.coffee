@@ -115,7 +115,7 @@ UserSchema
 # Pre-Save hook
 # =============
 UserSchema
-  .pre "save", (next)=>
+  .pre "save", (next)->
     next() unless @isNew
 
     if validatePresenceOf @password and oAuthTypes.indexOf @provider is -1

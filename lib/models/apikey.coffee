@@ -1,7 +1,7 @@
-mongoose          = require "mongoose"
-{Schema}          = mongoose
-Timestampable     = require "mongoose-timestamp"
-{CharacterSchema} = require "./character"
+mongoose                     = require "mongoose"
+{Schema}                     = mongoose
+Timestampable                = require "mongoose-timestamp"
+{EveClient}                  = require "neow"
 
 ApiKeySchema  = new Schema {
   id: {
@@ -13,7 +13,6 @@ ApiKeySchema  = new Schema {
     type:     String
     required: true
   }
-  characters: [CharacterSchema]
 }
 
 ApiKeySchema.plugin Timestampable
@@ -31,5 +30,4 @@ ApiKeySchema
     , "Verification Code cannot be blank"
 
 module.exports =
-  ApiKey:       mongoose.model("ApiKey", ApiKeySchema)
   ApiKeySchema: ApiKeySchema

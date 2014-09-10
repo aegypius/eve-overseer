@@ -1,6 +1,6 @@
-mongoose      = require "mongoose"
-{Schema}      = mongoose
-Timestampable = require "mongoose-timestamp"
+mongoose       = require "mongoose"
+{Schema}       = mongoose
+Timestampable  = require "mongoose-timestamp"
 
 CharacterSchema  = new Schema {
   id: {

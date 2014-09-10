@@ -22,6 +22,8 @@ or use a ```.env```. (Remember to **never** commit you ```.env``` file)
   - ```production```  - Environment for production (live)
 - ```COOKIE_SECRET```:  secret phrase used for cookies
 - ```SESSION_SECRET```: secret phrase used for sessions
+- ```TEST_EVEONLINE_API_ID```: Eve Online Key Id used for tests
+- ```TEST_EVEONLINE_VERIFICATION_CODe```: Eve Online Verification Code used for tests
 
 ### Hacking
 
