@@ -20,10 +20,15 @@ user
     User.findById req.params.id, (err, user)->
       return res.status(400).json(err) if err
 
-      if req.body.apikeys?
-        user.apikeys = []
-        for id, apikey in req.body.apikeys
-          user.apikeys.push apikey
+      if req.body.email?
+        err = {message: "Email is read-only"}
+        return res.status(400).json err
+
+      if req.body.username?
+        user.username = req.body.username
+
+      if req.body.password?
+        user.password = req.body.password
 
       user.save (err, user)->
         return res.status(400).json(err) if err
@@ -38,5 +43,34 @@ user
       req.login user, (err)->
         return next(err) if err
         res.json user.user_info
+
+user
+  .get "/:id/apikey", (req, res, next)->
+    User
+      .findById req.params.id, (err, user)->
+        return res.status(400).json(err) if err
+        res.json user.apikeys
+
+  .post "/:id/apikey", (req, res, next)->
+    User.findById req.params.id, (err, user)->
+      return res.status(400).json(err) if err
+
+      user.apikeys.push req.body
+
+      user.save (err, user)->
+        return res.status(400).json(err) if err
+        res.status(200).end()
+
+  .delete "/:id/apikey/:apikey_id", (req, res, next)->
+    User.findById req.params.id, (err, user)->
+      return res.status(400).json(err) if err
+
+      user.apikeys = user.apikeys.filter (apikey)->
+        apikey._id is req.params.apikey_id
+
+      user.save (err)->
+        return res.status(400).json(err) if err
+        res.status(200).end()
+
 
 module.exports = user
