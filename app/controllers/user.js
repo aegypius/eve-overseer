@@ -74,39 +74,36 @@ angular
       );
     };
   }])
-  .controller('ProfileCtrl', ['$rootScope', '$scope', 'User', function ($rootScope, $scope, User) {
+  .controller('ProfileCtrl', ['$rootScope', '$scope', 'User', 'ApiKey', function ($rootScope, $scope, User, ApiKey) {
     $rootScope.$watch('_user', function (user) {
       $scope.user = user;
     });
 
-    $scope.apikey = {};
+    ApiKey.query(function (apikeys) {
+      $scope.apikeys = apikeys;
+    });
 
     $scope.addApiKey = function (form) {
       // Add a new API Key to the user
       if (form.$valid && form.$dirty) {
-        $scope.user.apikeys.push({
-          id: form.keyId,
+        apikey = new ApiKey({
+          id:           form.keyId,
           verification: form.verificationCode
         });
 
         // Save current user
-        User.update({ id: $scope.user._id, apikeys: $scope.user.apikeys })
-          .$promise.then(function (user) {
-            $scope.user = user;
-          });
+        apikey.$save(function () {
+          $scope.apikeys.push(apikey);
+          $scope.apikey = {};
+          form.$setPristine(true);
+        });
       }
     };
 
     $scope.removeApiKey = function (id) {
-        $scope.user.apikeys = $scope.user.apikeys.filter(function (apikey) {
-          return apikey._id !== id;
+        ApiKey.delete({ id: id }, function (user) {
+          console.log($scope.apikeys);
         });
-
-        // Save current user
-        User.update({ id: $scope.user._id, apikeys: $scope.user.apikeys })
-          .$promise.then(function (user) {
-            $scope.user = user;
-          });
     };
 
 

@@ -125,12 +125,12 @@
                 </tr>
               </thead>
               <tbody>
-                <tr ng-repeat="key in user.apikeys">
+                <tr ng-repeat="key in apikeys">
                   <td>{{ key.id }}</td>
                   <td>{{ key.verification }}</td>
                   <td><button class="btn btn-danger pull-right" ng-click="removeApiKey(key._id)"><span class="glyphicon glyphicon-trash"></span></button></td>
                 </tr>
-                <tr ng-if="user.apikeys.length == 0">
+                <tr ng-if="apikeys.length == 0">
                   <td colspan="3"><em>No API Key defined</em></td>
                 </tr>
               </tbody>
