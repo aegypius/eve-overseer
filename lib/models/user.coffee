@@ -1,10 +1,9 @@
-mongoose       = require "mongoose"
-{Schema}       = mongoose
-Timestampable  = require "mongoose-timestamp"
-crypto         = require "crypto"
-oAuthTypes     = []
-
-{ApiKeySchema} = require "./apikey"
+mongoose        = require "mongoose"
+{Schema}        = mongoose
+Timestampable   = require "mongoose-timestamp"
+UniqueValidator = require "mongoose-unique-validator"
+crypto          = require "crypto"
+oAuthTypes      = []
 
 # User Schema
 # ===========
@@ -24,7 +23,10 @@ UserSchema = new Schema {
     default: 'local'
   }
   tokens: []
-  apikeys: [ApiKeySchema]
+  apikeys: [{
+    type: Schema.ObjectId
+    ref: 'ApiKey'
+  }]
   hashed_password: {
     type: String
     require: true
@@ -37,6 +39,7 @@ UserSchema = new Schema {
 }
 
 UserSchema.plugin Timestampable
+UserSchema.plugin UniqueValidator
 
 
 # Virtuals
@@ -57,7 +60,6 @@ UserSchema
       "_id":      @_id
       "username": @username
       "email":    @email
-      "apikeys":  @apikeys
       "avatar":   @gravatar(120)
     }
 
@@ -72,39 +74,11 @@ UserSchema
       return @doesNotRequireValidation() or username.length
     , "Username cannot be blank"
 
-    .validate (username, callback)->
-      User = mongoose.model('User')
-
-      return callback(true) if @doesNotRequireValidation()
-
-      if @isNew or @isModified "username"
-        User
-          .find { username: username }
-          .exec (err, users)->
-            callback(!err && users.length is 0)
-      else
-        callback(true)
-    , "Username already exists"
-
 UserSchema
   .path "email"
     .validate (email)->
       return @doesNotRequireValidation() or email.length
     , "Email cannot be blank"
-
-    .validate (email, callback)->
-      User = mongoose.model('User')
-
-      return callback(true) if @doesNotRequireValidation()
-
-      if @isNew or @isModified "email"
-        User
-          .find { email: email }
-          .exec (err, users)->
-            callback(!err && users.length is 0)
-      else
-        callback(true)
-    , "Email already exists"
 
 UserSchema
   .path "hashed_password"

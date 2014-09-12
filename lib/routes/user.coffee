@@ -46,31 +46,46 @@ user
 
 user
   .get "/:id/apikey", (req, res, next)->
-    User
-      .findById req.params.id, (err, user)->
-        return res.status(400).json(err) if err
-        res.json user.apikeys
+    ApiKey.find {_user: req.params.id} , (err, apikeys)->
+      return res.status(400).json(err) if err
+      res.json apikeys
 
   .post "/:id/apikey", (req, res, next)->
-    User.findById req.params.id, (err, user)->
+    apikey = new ApiKey {
+      _user:            req.params.id
+      keyId:            req.body.keyId
+      verificationCode: req.body.verificationCode
+    }
+
+    apikey.save (err, apikey)->
       return res.status(400).json(err) if err
 
-      user.apikeys.push req.body
+      User
+        .findById req.params.id
+        .exec (err, user)->
 
-      user.save (err, user)->
-        return res.status(400).json(err) if err
-        res.status(200).end()
+          user.apikeys.push apikey
+          user.save (err, user)->
+            return res.status(400).json(err) if err
+
+            res.status(200).json apikey
 
   .delete "/:id/apikey/:apikey_id", (req, res, next)->
-    User.findById req.params.id, (err, user)->
+    ApiKey.remove {
+      _user: req.params.id,
+      _id: req.params.apikey_id
+    }, (err)->
       return res.status(400).json(err) if err
 
-      user.apikeys = user.apikeys.filter (apikey)->
-        apikey._id is req.params.apikey_id
+      User
+        .findById req.params.id
+        .exec (err, user)->
 
-      user.save (err)->
-        return res.status(400).json(err) if err
-        res.status(200).end()
+          user.apikeys = user.apikeys.filter (id)->
+            id is req.params.apikey_id
 
+          user.save (err, user)->
+            return res.status(400).json(err) if err
+            res.status(200).end()
 
 module.exports = user

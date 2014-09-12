@@ -158,25 +158,31 @@ describe "Account Management", ->
           user_id = res.body._id
           done()
 
+    it "should be able to add a new apikey", (done)->
+      agent
+        .post "/user/#{user_id}/apikey"
+        .send {
+          keyId:            process.env.TEST_EVEONLINE_API_ID
+          verificationCode: process.env.TEST_EVEONLINE_VERIFICATION_CODE
+        }
+        .expect 200
+        .end (err, res)->
+          should.not.exist err
+
+          res.body.should.have.property "_id"
+          res.body.should.have.property "_user"
+          res.body.should.have.property "keyId",            process.env.TEST_EVEONLINE_API_ID
+          res.body.should.have.property "verificationCode", process.env.TEST_EVEONLINE_VERIFICATION_CODE
+
+          done()
+
     it "should be able to list apikeys", (done)->
       agent
         .get "/user/#{user_id}/apikey"
         .expect 200
         .end (err, res)->
           should.not.exist err
-          res.body.should.have.length 0
-          done()
-
-    it "should be able to add a new apikey", (done)->
-      agent
-        .post "/user/#{user_id}/apikey"
-        .send {
-          id:           process.env.TEST_EVEONLINE_API_ID
-          verification: process.env.TEST_EVEONLINE_VERIFICATION_CODE
-        }
-        .expect 200
-        .end (err, res)->
-          should.not.exist err
+          res.body.should.have.length 1
           done()
 
     it "should be able to delete an apikey", (done)->
@@ -186,11 +192,10 @@ describe "Account Management", ->
         .end (err, res)->
           should.not.exist err
           res.body.should.have.length 1
-          res.body[0].should.have.property "id"
-          apikey_id = res.body[0]._id
+          apikey = res.body[0]
 
           agent
-            .delete "/user/#{user_id}/apikey/#{apikey_id}"
+            .delete "/user/#{user_id}/apikey/#{apikey._id}"
             .expect 200
             .end (err, res)->
               should.not.exist err
