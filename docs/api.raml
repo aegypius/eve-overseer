@@ -1,0 +1,183 @@
+#%RAML 0.8
+title:     EVE Overseer
+version:   v1
+baseUri:   http://example.com/api
+mediaType: application/json
+securitySchemes:
+  - http_basic:
+      description: Http Basic Authentification
+      type: "Basic Authentication"
+
+/users:
+  /{userId}:
+    get:
+      description: Get current user info
+      securedBy: [ http_basic ]
+    post:
+      description: Create a new user
+      securedBy: [ http_basic ]
+    put:
+      description: Update user profile
+      securedBy: [ http_basic ]
+    delete:
+      description: Delete permanently the user
+      securedBy: [ http_basic ]
+    /apikeys:
+      get:
+        description: Get list of apikeys
+        securedBy: [ http_basic ]
+      post:
+        description: Add a new EVE Online ApiKey
+        securedBy: [ http_basic ]
+      delete:
+        description: Delete an ApiKey
+        securedBy: [ http_basic ]
+
+
+/characters:
+  get:
+    description: Get a list of characters
+    securedBy: [ http_basic ]
+    responses:
+      200:
+        body:
+          example: |
+            [
+              {
+                "id":       1365215823,
+                "name":     "Alexis Prey",
+                "corporation": {
+                  "id":   238510404,
+                  "name": "Puppies To the Rescue"
+                },
+                "alliance": {
+                  "id":   9999,
+                  "name": "Eve-ID Puppies Inc."
+                },
+                "faction": {
+                  "id":   666,
+                  "name": "Eve-ID Faction"
+                },
+                "picture":  "http://img.eveonline.com/avatar/001_512.jpg"
+              },
+              {
+                "id":       2,
+                "name":     "Jane Doe",
+                "picture":  "http://img.eveonline.com/avatar/002_512.jpg"
+              }
+            ]
+
+  /{characterId}:
+    get:
+      description: Get detailed informations for a character
+      securedBy: [ http_basic ]
+      responses:
+        200:
+          body:
+            example: |
+              {
+                "characterId": 1365215823,
+                "name":        "Alexis Prey",
+                "corporation": {
+                  "id":   238510404,
+                  "name": "Puppies To the Rescue"
+                },
+                "alliance": {
+                  "id":   9999,
+                  "name": "Eve-ID Puppies Inc."
+                },
+                "faction": {
+                  "id":   666,
+                  "name": "Eve-ID Faction"
+                },
+                "birthdate":   "2006-01-01 00:00:00",
+                "race":        "Brutor",
+                "ancestry":    "Slave Child",
+                "clone": {
+                    "name":        "Clone Grade Pi",
+                    "skillPoints": "54600000"
+                },
+                "attributes": {
+                  "intelligence" : {
+                    "value": 6,
+                    "enhancer": {
+                      "name": "Memory Augmentation - Basic",
+                      "value": 3
+                    }
+                  },
+                  "memory" : {
+                    "value": 4,
+                    "enhancer": {
+                      "name": "Memory Augmentation - Basic",
+                      "value": 3
+                    }
+                  },
+                  "charisma" : {
+                    "value": 7,
+                    "enhancer": {
+                      "name": "Limited Social Adaptation Chip",
+                      "value": 1
+                    }
+                  },
+                  "perception" : {
+                    "value": 12,
+                    "enhancer": {
+                      "name": "Ocular Filter - Basic",
+                      "value": 3
+                    }
+                  },
+                  "willpower" : {
+                    "value": 10,
+                    "enhancer": {
+                      "name": "Neural Boost - Basic",
+                      "value": 3
+                    }
+                  }
+                },
+                "balance":     "190210393.87",
+                "gender":      "Male",
+                "picture":     "http://img.eveonline.com/avatar/001_512.jpg"
+              }
+
+    /skills:
+      get:
+        description: Get list of learned/learning skills
+        securedBy: [ http_basic ]
+        queryParameters:
+          queued:
+            description: Filter for skill queue only
+            type:        boolean
+            default:     false
+        responses:
+          200:
+            body:
+              example: |
+                [
+                  {
+                    "id":          3431,
+                    "name":        "Anchoring",
+                    "description": "Skill at Anchoring Deployables. Can not be trained on Trial Accounts.",
+                    "group": {
+                      "id": 266,
+                      "id": "Corporation Management",
+                    },
+                    "queue": {
+                      "position": 1,
+                      "skillPoints": {
+                        "start": 7072,
+                        "end":   40000
+                      },
+                      "timeRange": {
+                        "start": "2009-03-18 02:01:06",
+                        "end":   "2009-03-18 15:19:21"
+                      },
+                      "percentage": "17"
+                    },
+                    "points": 40000,
+                    "level": 1
+                  }
+                ]
+    /certificates:
+      get:
+        description: Get list of learned certificates
+        securedBy: [ http_basic ]
