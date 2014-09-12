@@ -4,6 +4,9 @@
   "description": "EVE Online Character Management",
   "main": "index.js",
   "private": true,
+  "engines": {
+    "node": "0.10.x"
+  },
   "scripts": {
     "start": "node index.js",
     "brunch": "$(npm bin)/brunch watch --server",
