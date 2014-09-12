@@ -176,6 +176,20 @@ describe "Account Management", ->
 
           done()
 
+    it "should throw an error id the same apikey allready exists for user", (done)->
+      agent
+        .post "/user/#{user_id}/apikey"
+        .send {
+          keyId:            process.env.TEST_EVEONLINE_API_ID
+          verificationCode: process.env.TEST_EVEONLINE_VERIFICATION_CODE
+        }
+        .expect 400
+        .end (err, res)->
+          should.not.exist err
+          res.body.should.have.property "message", "Validation failed"
+          done()
+
+
     it "should be able to list apikeys", (done)->
       agent
         .get "/user/#{user_id}/apikey"
