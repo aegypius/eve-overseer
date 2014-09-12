@@ -126,8 +126,8 @@
               </thead>
               <tbody>
                 <tr ng-repeat="key in apikeys">
-                  <td>{{ key.id }}</td>
-                  <td>{{ key.verification }}</td>
+                  <td>{{ key.keyId }}</td>
+                  <td>{{ key.verificationCode }}</td>
                   <td><button class="btn btn-danger pull-right" ng-click="removeApiKey(key._id)"><span class="glyphicon glyphicon-trash"></span></button></td>
                 </tr>
                 <tr ng-if="apikeys.length == 0">

@@ -87,8 +87,8 @@ angular
       // Add a new API Key to the user
       if (form.$valid && form.$dirty) {
         apikey = new ApiKey({
-          id:           form.keyId,
-          verification: form.verificationCode
+          keyId: form.keyId,
+          verificationCode: form.verificationCode,
         });
 
         // Save current user
@@ -102,7 +102,9 @@ angular
 
     $scope.removeApiKey = function (id) {
         ApiKey.delete({ id: id }, function (user) {
-          console.log($scope.apikeys);
+          ApiKey.query(function (apikeys) {
+            $scope.apikeys = apikeys;
+          });
         });
     };
 
