@@ -2,12 +2,12 @@
 
 <ol class="breadcrumb">
   <li><a href="/">Squad</a></li>
-  <li class="active">Identification Sheet {{ character.characterID }}</li>
+  <li class="active">Identification Sheet {{ character.id }}</li>
 </ol>
 
 <div class="media">
   <div class="pull-left">
-    <img ng-src="http://image.eveonline.com/Character/{{ character.characterID }}_256.jpg">
+    <img ng-src="{{ character.picture.medium }}">
   </div>
   <div class="media-body">
     <div class="row">

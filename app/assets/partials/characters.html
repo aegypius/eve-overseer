@@ -7,12 +7,12 @@
 
   <div class="characters">
     <div class="media" ng-repeat="character in characters">
-      <a class="pull-left" href="/character/{{ character.characterID }}">
-        <img ng-src="http://image.eveonline.com/Character/{{ character.characterID }}_128.jpg">
+      <a class="pull-left" href="/character/{{ character.id }}">
+        <img ng-src="{{ character.picture.medium }}">
       </a>
       <div class="media-body">
-        <h4 class="media-heading"><a href="/character/{{ character.characterID }}">{{ character.name }}</a></h4>
-        <small class="text-muted">{{ character.corporationName }}</small>
+        <h4 class="media-heading"><a href="/character/{{ character.id }}">{{ character.name }}</a></h4>
+        <small class="text-muted">{{ character.corporation.name }}</small>
       </div>
     </div>
   </div>

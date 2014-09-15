@@ -9,32 +9,106 @@ securitySchemes:
       type: "Basic Authentication"
 
 /users:
+
+  post:
+    description: Create a new user
+    securedBy: [ http_basic ]
+    body:
+      application/json:
+        example: |
+          {
+            "email": "john@example.com",
+            "username": "John Doe",
+            "password": "super_secret"
+          }
+    responses:
+      200:
+        body:
+          example: |
+            {
+              "_id":      5416d356205631a938b8c967,
+              "username": "John Doe",
+              "email":    "john@example.com",
+              "avatar":   "https://gravatar.com/avatar/74d17098589adafe4e08b2a132e768d75?s=120&d=identicon"
+            }
+
   /{userId}:
+
     get:
       description: Get current user info
       securedBy: [ http_basic ]
-    post:
-      description: Create a new user
-      securedBy: [ http_basic ]
+      responses:
+        200:
+          body:
+            example: |
+              {
+                "_id":      5416d356205631a938b8c967,
+                "username": "john",
+                "email":    "john@example.com",
+                "avatar":   "https://gravatar.com/avatar/74d17098589adafe4e08b2a132e768d75?s=120&d=identicon"
+              }
+
     put:
       description: Update user profile
       securedBy: [ http_basic ]
+      body:
+        application/json:
+          example: |
+            {
+              "password": "new_password"
+            }
+      responses:
+        200:
+          body:
+            example: |
+              {
+                "_id":      5416d356205631a938b8c967,
+                "username": "John Doe",
+                "email":    "john@example.com",
+                "avatar":   "https://gravatar.com/avatar/74d17098589adafe4e08b2a132e768d75?s=120&d=identicon"
+              }
+
     delete:
       description: Delete permanently the user
       securedBy: [ http_basic ]
+
     /apikeys:
+
       get:
         description: Get list of apikeys
         securedBy: [ http_basic ]
+
       post:
         description: Add a new EVE Online ApiKey
         securedBy: [ http_basic ]
+        body:
+          application/json:
+            example: |
+              {
+                "keyId": "123456",
+                "verificationCode": "123456789123aze456sdf78989987sdfsdf",
+              }
+        responses:
+          200:
+            body:
+              example: |
+                {
+                  "keyId":            "123456",
+                  "verificationCode": "123456789123aze456sdf78989987sdfsdf",
+                  "accessMask":        1234567,
+                  "characters":        [
+                    "541dd56205631a938b8c967",
+                    "541dd56205631a938b8ccd7"
+                  ],
+                }
+
       delete:
         description: Delete an ApiKey
         securedBy: [ http_basic ]
 
 
 /characters:
+
   get:
     description: Get a list of characters
     securedBy: [ http_basic ]
@@ -68,6 +142,7 @@ securitySchemes:
             ]
 
   /{characterId}:
+
     get:
       description: Get detailed informations for a character
       securedBy: [ http_basic ]
@@ -76,7 +151,7 @@ securitySchemes:
           body:
             example: |
               {
-                "characterId": 1365215823,
+                "id":          1365215823,
                 "name":        "Alexis Prey",
                 "corporation": {
                   "id":   238510404,
@@ -95,7 +170,7 @@ securitySchemes:
                 "ancestry":    "Slave Child",
                 "clone": {
                     "name":        "Clone Grade Pi",
-                    "skillPoints": "54600000"
+                    "skillPoints": 54600000
                 },
                 "attributes": {
                   "intelligence" : {
@@ -140,6 +215,7 @@ securitySchemes:
               }
 
     /skills:
+
       get:
         description: Get list of learned/learning skills
         securedBy: [ http_basic ]
@@ -177,7 +253,9 @@ securitySchemes:
                     "level": 1
                   }
                 ]
+
     /certificates:
+
       get:
         description: Get list of learned certificates
         securedBy: [ http_basic ]

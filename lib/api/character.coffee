@@ -7,6 +7,8 @@
 {Router}              = require "express"
 {EveClient}           = require "neow"
 {ensureAuthenticated} = require "../config/auth"
+{ApiKey}              = require "../models/apikey"
+{Character}           = require "../models/character"
 
 router = new Router
 
@@ -15,20 +17,17 @@ router = new Router
 router.route '/'
   .get ensureAuthenticated
   .get (req, res, next)->
+    ApiKey.find { _user: req.user._id }, "characters"
+      .populate('characters')
+      .exec (err, apikeys)->
+        return res.status(400).json err if err
+        characters = []
 
-    for apikey in req.user.apikeys
-      api = new EveClient {
-        keyID: apikey.id
-        vCode: apikey.verification
-      }
+        for apikey in apikeys
+          for character in apikey.characters
+            characters.push character
 
-      api.fetch 'account:Characters'
-        .then (result)->
-          res.json (character for id, character of result.characters)
-        .fail (err)->
-          console.error err
-          next()
-        .done()
+        res.status(200).json characters
 
 
 # Returns character sheet
@@ -44,28 +43,13 @@ router.route '/:id'
           value[key] = unwrap dict
       return value
 
-    for apikey in req.user.apikeys
-      api = new EveClient {
-        keyID: apikey.id
-        vCode: apikey.verification
-      }
+    Character.findOne { id: req.params.id }
+      .populate "apikey"
+      .exec (err, character)->
+        return res.status(400).json err if err
+        res.status(200).json character
 
-      api.fetch 'char:CharacterSheet', {
-        characterID: req.params.id
-      }
-        .then (result)->
-          character = {}
 
-          for key, value of result
-            character[key] = unwrap value
-
-          res.json character
-
-        .fail (err)->
-          console.error err
-          next()
-
-        .done()
 
 router.route '/:id/skills/queue'
   .get ensureAuthenticated
