@@ -30,7 +30,7 @@ describe "Account Management", ->
       }
 
       agent
-        .post "/user"
+        .post "/api/users"
         .send user
         .expect 200
         .end (err, res)->
@@ -48,7 +48,7 @@ describe "Account Management", ->
       }
 
       agent
-        .post "/user"
+        .post "/api/users"
         .send user
         .expect 400
         .end (err, res)->
@@ -114,7 +114,7 @@ describe "Account Management", ->
     it "should be able to update its username", (done)->
 
       agent
-        .put "/user/#{user_id}"
+        .put "/api/users/#{user_id}"
         .send { username: "John F. Doe" }
         .expect 200
         .end (err, res)->
@@ -124,7 +124,7 @@ describe "Account Management", ->
 
     it "should be able to update its password", (done)->
       agent
-        .put "/user/#{user_id}"
+        .put "/api/users/#{user_id}"
         .send { password: "new-password" }
         .expect 200
         .end (err, res)->
@@ -140,7 +140,7 @@ describe "Account Management", ->
 
     it "should not be able to update its email", (done)->
       agent
-        .put "/user/#{user_id}"
+        .put "/api/users/#{user_id}"
         .send { email: "test2@example.com" }
         .expect 400
         .end (err, res)->
@@ -160,7 +160,7 @@ describe "Account Management", ->
 
     it "should be able to add a new apikey", (done)->
       agent
-        .post "/user/#{user_id}/apikey"
+        .post "/api/users/#{user_id}/apikey"
         .send {
           keyId:            process.env.TEST_EVEONLINE_API_ID
           verificationCode: process.env.TEST_EVEONLINE_VERIFICATION_CODE
@@ -178,7 +178,7 @@ describe "Account Management", ->
 
     it "should throw an error id the same apikey allready exists for user", (done)->
       agent
-        .post "/user/#{user_id}/apikey"
+        .post "/api/users/#{user_id}/apikey"
         .send {
           keyId:            process.env.TEST_EVEONLINE_API_ID
           verificationCode: process.env.TEST_EVEONLINE_VERIFICATION_CODE
@@ -192,7 +192,7 @@ describe "Account Management", ->
 
     it "should be able to list apikeys", (done)->
       agent
-        .get "/user/#{user_id}/apikey"
+        .get "/api/users/#{user_id}/apikey"
         .expect 200
         .end (err, res)->
           should.not.exist err
@@ -201,7 +201,7 @@ describe "Account Management", ->
 
     it "should be able to delete an apikey", (done)->
       agent
-        .get "/user/#{user_id}/apikey"
+        .get "/api/users/#{user_id}/apikey"
         .expect 200
         .end (err, res)->
           should.not.exist err
@@ -209,7 +209,7 @@ describe "Account Management", ->
           apikey = res.body[0]
 
           agent
-            .delete "/user/#{user_id}/apikey/#{apikey._id}"
+            .delete "/api/users/#{user_id}/apikey/#{apikey._id}"
             .expect 200
             .end (err, res)->
               should.not.exist err
