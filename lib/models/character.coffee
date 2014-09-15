@@ -1,6 +1,8 @@
-mongoose       = require "mongoose"
-{Schema}       = mongoose
-Timestampable  = require "mongoose-timestamp"
+mongoose        = require "mongoose"
+{Schema}        = mongoose
+Timestampable   = require "mongoose-timestamp"
+UniqueValidator = require "mongoose-unique-validator"
+{EveClient}     = require "neow"
 
 CharacterSchema  = new Schema {
   id: {
@@ -9,11 +11,23 @@ CharacterSchema  = new Schema {
     required: true
   }
   name:      String
-  birthdate: String
+  birthdate: Date
   race:      String
   bloodline: String
   ancestry:  String
   gender:    String
+  corporation: {
+    id: Number
+    name: String
+  }
+  alliance: {
+    id: Number
+    name: String
+  }
+  faction: {
+    id: Number
+    name: String
+  }
   apikey:    {
     type: Schema.ObjectId
     ref:  "ApiKey"
@@ -25,6 +39,7 @@ CharacterSchema  = new Schema {
 }
 
 CharacterSchema.plugin Timestampable
+CharacterSchema.plugin UniqueValidator
 
 CharacterSchema
   .virtual "picture"

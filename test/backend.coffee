@@ -7,8 +7,9 @@ mongoose  = require "mongoose"
 
 app      = require "../lib"
 
+agent = supertest.agent(app)
+
 describe "Account Management", ->
-  agent = supertest.agent(app)
 
   before (done)->
     if process.env.NODE_ENV is "test"
@@ -214,3 +215,68 @@ describe "Account Management", ->
             .end (err, res)->
               should.not.exist err
               done()
+
+describe "EVE API", ->
+  agent = supertest.agent(app)
+
+  describe "Characters", ->
+    characterId = ""
+
+    # Login
+    before (done)->
+      agent
+        .get "/session"
+        .expect 200
+        .end (err, res)->
+          res.body.should.have.property._id
+          user_id = res.body._id
+
+          # Add an api key
+          agent
+            .post "/api/users/#{user_id}/apikey"
+            .send {
+              keyId:            process.env.TEST_EVEONLINE_API_ID
+              verificationCode: process.env.TEST_EVEONLINE_VERIFICATION_CODE
+            }
+            .expect 200
+            .end (err, res)->
+              done()
+
+    it "should be able to list all characters", (done)->
+      agent
+        .get "/api/characters"
+        .expect 200
+        .end (err, res)->
+          should.not.exist err
+
+          res.body.should.be.an.array
+
+          res.body[0].should.have.property "id"
+          characterId = res.body[0].id
+
+          res.body[0].should.have.property "name"
+          res.body[0].should.have.property "picture"
+
+          done()
+
+    it "should be able to get character info", (done)->
+      agent
+        .get "/api/characters/#{characterId}"
+        .expect 200
+        .end (err, res)->
+          should.not.exist err
+          # console.log characterId, res.body
+          res.body.should.be.an.object
+
+          res.body.should.have.property "id"
+          res.body.should.have.property "name"
+          res.body.should.have.property "picture"
+          res.body.should.have.property "birthdate"
+          res.body.should.have.property "race"
+          res.body.should.have.property "ancestry"
+          res.body.should.have.property "clone"
+          res.body.should.have.property "attributes"
+          res.body.should.have.property "balance"
+          res.body.should.have.property "gender"
+
+          done()

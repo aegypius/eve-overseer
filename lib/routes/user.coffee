@@ -59,33 +59,15 @@ user
 
     apikey.save (err, apikey)->
       return res.status(400).json(err) if err
-
-      User
-        .findById req.params.id
-        .exec (err, user)->
-
-          user.apikeys.push apikey
-          user.save (err, user)->
-            return res.status(400).json(err) if err
-
-            res.status(200).json apikey
+      res.status(200).json apikey
 
   .delete "/:id/apikey/:apikey_id", (req, res, next)->
-    ApiKey.remove {
-      _user: req.params.id,
-      _id: req.params.apikey_id
-    }, (err)->
+    ApiKey.findOne {
+      _id:   req.params.apikey_id
+      _user: req.params.id
+    }, (err, apikey)->
       return res.status(400).json(err) if err
-
-      User
-        .findById req.params.id
-        .exec (err, user)->
-
-          user.apikeys = user.apikeys.filter (id)->
-            id is req.params.apikey_id
-
-          user.save (err, user)->
-            return res.status(400).json(err) if err
-            res.status(200).end()
+      apikey.remove().then ->
+        res.status(200).end()
 
 module.exports = user

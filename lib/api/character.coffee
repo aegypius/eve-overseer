@@ -35,21 +35,10 @@ router.route '/'
 router.route '/:id'
   .get ensureAuthenticated
   .get (req, res, next)->
-
-    unwrap = (value)->
-      value = value.content or value
-      if value is Object(value)
-        for key, dict of value
-          value[key] = unwrap dict
-      return value
-
     Character.findOne { id: req.params.id }
-      .populate "apikey"
       .exec (err, character)->
         return res.status(400).json err if err
         res.status(200).json character
-
-
 
 router.route '/:id/skills/queue'
   .get ensureAuthenticated
