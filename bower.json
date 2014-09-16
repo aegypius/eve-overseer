@@ -23,6 +23,7 @@
     "angular-sanitize": "~1.2.23",
     "bootstrap": "~3.2.0",
     "angular-http-auth": "~1.2.1",
-    "underscore.string": "#master"
+    "underscore.string": "#master",
+    "moment": "~2.8.3"
   }
 }

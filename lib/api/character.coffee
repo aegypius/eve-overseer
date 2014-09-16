@@ -48,34 +48,58 @@ router.route '/:id'
 router.route '/:id/skills/queue'
   .get ensureAuthenticated
   .get (req, res, next)->
-    for apikey in req.user.apikeys
-      api = new EveClient {
-        keyID: apikey.id
-        vCode: apikey.verification
-      }
+    Character
+      .findOne  { id: req.params.id }
+      .populate "apikey"
+      .exec (err, character)->
+        api = new EveClient {
+          keyID: character.apikey.keyId
+          vCode: character.apikey.verificationCode
+        }
 
-      api.fetch 'char:SkillQueue', {
-        characterID: req.params.id
-      }
-        .then (result)->
-          skillqueue = result.skillqueue
-          ids = (job.typeID for id, job of skillqueue)
-
-          api.fetch 'eve:TypeName', {
-            ids: ids
+        api
+          .fetch 'char:SkillQueue', {
+            characterID: character.id
           }
           .then (result)->
-            types = result.types
-            for id, job of skillqueue
-              job.typeName = v.typeName for k, v of types when k is job.typeID
-            return skillqueue
+            skillqueue = []
+            for id, job of result.skillqueue
+              skillqueue.push job
 
-        .then (skillqueue)->
-          res.json skillqueue
+            ids = (job.typeID for id, job of skillqueue)
 
-        .fail (err)->
-          console.error err
-          next()
-        .done()
+            api.fetch 'eve:TypeName', {
+              ids: ids
+            }
+            .then (result)->
+              types = result.types
+              for id, job of skillqueue
+                job.typeName = v.typeName for k, v of types when k is job.typeID
+              return skillqueue
+
+          .then (skillqueue)->
+            skillqueue.map (skill)->
+              {
+                id:       skill.typeID
+                name:     skill.typeName
+                level:    skill.level
+                position: skill.queuePosition
+                skillPoints: {
+                  start: skill.startSP
+                  end:   skill.endSP
+                }
+                timeRange: {
+                  start: skill.startTime
+                  end:   skill.endTime
+                }
+              }
+
+          .fail (err)->
+            console.error err
+            next()
+
+          .done (skillqueue)->
+            res.json skillqueue
+
 
 module.exports = router
