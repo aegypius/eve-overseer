@@ -1,8 +1,16 @@
-<div class="progress">
-  <div    class="progress-bar"
-       ng-class="{'progress-bar-success': status == 'running', 'progress-bar-warning': status == 'blocked'}"
-           role="progressbar"
-          style="width: {{ percent }}%">
-      {{ percent }} %
+<div class="skill-overview">
+
+  <div class="progress" ng-if="skills.length">
+    <div    class="progress-bar"
+         ng-class="{'progress-bar-success': status == 'running', 'progress-bar-warning': status == 'blocked'}"
+             role="progressbar"
+            style="width: {{ percent }}%">
+        {{ percent }} %
+    </div>
   </div>
+
+  <div class="alert alert-warning" ng-if="skills.length == 0">
+    <p><strong>Warning</strong> Your skill queue is empty !</p>
+  </div>
+
 </div>

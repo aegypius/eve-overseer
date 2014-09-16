@@ -5,78 +5,63 @@
   <li class="active">Identification Sheet {{ character.id }}</li>
 </ol>
 
-<div class="media">
-  <div class="pull-left">
-    <img ng-src="{{ character.picture.medium }}">
-  </div>
-  <div class="media-body">
-    <div class="row">
-      <div class="col-md-12">
+<div class="row">
+  <div class="col-sm-12">
+    <div class="media">
+      <div class="pull-left">
+        <img class="img-thumbnail hidden-xs" ng-src="{{ character.picture.large }}">
+      </div>
+      <div class="media-body">
         <h1 class="media-heading">{{ character.name }}</h1>
-
-        <fieldset>
-          <legend>Lineage</legend>
-          <div class="row">
-            <div class="col-md-6">
+        <div class="row">
+          <div class="col-sm-6">
+            <fieldset>
+              <legend>General</legend>
               <dl class="dl-horizontal">
                 <dt>Race<dt><dd>{{ character.race }}</dd>
-                <dt>Bloodline<dt><dd>{{ character.bloodLine }}</dd>
+                <dt>Bloodline<dt><dd>{{ character.bloodline }}</dd>
                 <dt>Ancestry<dt><dd>{{ character.ancestry }}</dd>
-                <dt>Birthdate<dt><dd>{{ character.DoB | date : 'mediumDate' }}</dd>
+                <dt>Birthdate<dt><dd>{{ character.birthdate | date : 'mediumDate' }}</dd>
+                <dt>Alliance<dt><dd>{{ character.alliance.name }}</dd>
+                <dt>Corporation<dt><dd>{{ character.corporation.name }}</dd>
+                <dt>Faction<dt><dd>{{ character.faction.name }}</dd>
               </dl>
-            </div>
-            <div class="col-md-6">
-              <dl class="dl-horizontal">
-                <dt>Corporation<dt><dd>{{ character.corporationName }}</dd>
-              </dl>
-            </div>
+            </fieldset>
+
           </div>
-        </fieldset>
-
-      </div>
-      <div class="col-md-12">
-        <fieldset>
-          <legend>Attributes</legend>
-
-          <div class="row">
-            <div class="col-md-6">
+          <div class="col-sm-6">
+            <fieldset>
+              <legend>Attributes</legend>
               <dl class="dl-horizontal">
-                <dt>Intelligence</dt><dd>{{ character.attributes.intelligence }}</dd>
-                <dt>Memory</dt><dd>{{ character.attributes.memory }}</dd>
-                <dt>Perception</dt><dd>{{ character.attributes.perception }}</dd>
+                <dt ng-repeat-start="(label, attribute) in character.attributes">{{ label | capitalize }}</dt>
+                <dd ng-repeat-end>
+                  {{ attribute.value + attribute.enhancer.value  }}
+                  <button
+                    class="btn btn-link btn-xs"
+                    title="{{ label | capitalize }} Enhancer"
+                    data-html="true"
+                    data-toggle="popover"
+                    data-content="<strong>{{ attribute.enhancer.name }}</strong> : &plus;{{ attribute.enhancer.value }}"
+                    data-exclusive="true"
+                    ng-if="attribute.enhancer.value">
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                  </button>
+                </dd>
               </dl>
-            </div>
-
-            <div class="col-md-6">
-              <dl class="dl-horizontal">
-                <dt>Charisma</dt><dd>{{ character.attributes.charisma }}</dd>
-                <dt>Willpower</dt><dd>{{ character.attributes.willpower }}</dd>
-              </dl>
-            </div>
-          </div>
-        </fieldset>
-      </div>
-
-      <div class="col-md-12" ng-controller="SkillQueueController">
-        <fieldset>
-          <legend>Skill Queue</legend>
-
-          <div class="row" ng-repeat="skill in skillQueue">
-              <div class="col-md-1">
-                <span class="badge">{{ skill.level | roman_number }}</span>
-              </div>
-              <div class="col-md-3">
-                {{ skill.typeName }}
-              </div>
-              <div class="col-md-8">
-                <skill-progress skill="{{ skill }}">
-              </div>
-              </div>
+            </fieldset>
           </div>
 
-        </fieldset>
-      </div>
+          <div class="col-sm-12">
+            <fieldset>
+              <legend>Skill Queue</legend>
 
+              <skill-queue ng-model="character" />
+
+            </fieldset>
+          </div>
+
+        </div>
+      </div>
     </div>
   </div>
 </div>

@@ -1,38 +1,21 @@
 angular
   .module('eve-overseer')
-  .directive('skill', function() {
+  .directive('skillQueue', function () {
     return {
-      controller: function ($scope) {}
-    };
-  })
-  .directive('skillProgress', function () {
-    return {
-      restrict: 'AE',
+      restrict: 'ACE',
       replace: true,
-      require: [
-        '^skill'
-      ],
+      require: '^ngModel',
+      scope: {
+        ngModel : '@'
+      },
       templateUrl: '/templates/skill-queue.html',
-      link: function (scope, elem, attrs) {
-        scope.$watch('startTime + dateTime', function() {
-          var start   = new Date(Date.parse(scope.skill.startTime)),
-              end     = new Date(Date.parse(scope.skill.endTime))
-          ;
-
-          setInterval(function () {
-            var current = new Date();
-              if (start < current) {
-                scope.status = 'running';
-                scope.percent = Math.round((current - start) / (end - start) * 100 * 100) / 100;
-              } else {
-                scope.status  = 'blocked';
-                scope.percent = 0;
-              }
-              scope.$apply();
-          }, 1000);
-
-        });
-      }
+      link: function (scope, element, attrs, ctrl) {
+        console.log(ctrl);
+      },
+      controller: ['$scope', 'SkillQueue', function ($scope, SkillQueue) {
+        console.log($scope.id);
+        $scope.skills = SkillQueue.query({id : $scope.id});
+      }]
     };
   })
 ;
