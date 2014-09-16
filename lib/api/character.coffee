@@ -38,8 +38,13 @@ router.route '/:id'
     Character.findOne { id: req.params.id }
       .exec (err, character)->
         return res.status(400).json err if err
-        res.status(200).json character
 
+        character.refresh()
+          .done (character)->
+            res.status(200).json character
+
+# Returns character skill queue
+# =============================
 router.route '/:id/skills/queue'
   .get ensureAuthenticated
   .get (req, res, next)->

@@ -273,6 +273,7 @@ describe "EVE API", ->
           res.body.should.have.property "picture"
           res.body.should.have.property "birthdate"
           res.body.should.have.property "race"
+          res.body.should.have.property "bloodline"
           res.body.should.have.property "ancestry"
           res.body.should.have.property "clone"
           res.body.should.have.property "attributes"
