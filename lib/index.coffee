@@ -58,14 +58,10 @@ app.use "/api", require "./api"
 
 # Handles Error Pages
 app.use (req, res, next)->
-  res.status 404
-
-  return res.render "error"              if req.accepts "html"
-  return res.json { error: "Not Found" } if req.accepts "json"
-  return res
-    .type "txt"
-    .send "Not Found"
-
+  if req.accepts("html") and /\/api\//.test(req.path) isnt true
+    return res.status(200).render "index"
+  return res.status(404).json { error: "Not Found" } if req.accepts "json"
+  return res.status(404).type("txt").send "Not Found"
 
 module.exports = server
 module.exports.startServer = (port, publicDir, callback)->
