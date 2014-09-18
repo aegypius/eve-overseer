@@ -12,7 +12,10 @@
       </a>
       <div class="media-body">
         <h4 class="media-heading"><a href="/character/{{ character.id }}">{{ character.name }}</a></h4>
-        <small class="text-muted">{{ character.corporation.name }}</small>
+        <ul class="list-unstyled text-muted">
+          <li>{{ character.corporation.name }}</li>
+          <li ng-if="character.balance">{{ character.balance | number }} ISK</li>
+        </ul>
       </div>
     </div>
   </div>
