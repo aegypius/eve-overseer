@@ -3,7 +3,7 @@
 <div class="container">
   <div class="row">
 
-    <div class="col-md-4">
+    <div class="col-xs-4">
       <h1>Profile</h1>
 
       <p class="lead">{{ user.username | uppercase }}<p>
@@ -16,7 +16,7 @@
     </div>
 
     <form name="form" role="form" ng-submit="update(form)">
-      <div class="tab-content col-md-8">
+      <div class="tab-content col-xs-8">
         <div class="tab-pane active" id="personal-information">
           <div class="heading">
             <h4 class="h1">Personal information</h4>
@@ -143,7 +143,7 @@
 
           <div ng-form="apikey" class="row">
 
-            <div class="col-md-3">
+            <div class="col-xs-3">
               <div class="form-group"
                 ng-class="{'has-warning': apikey.keyId.$dirty,
                            'has-success': apikey.keyId.$valid && apikey.keyId.$dirty,
@@ -164,7 +164,7 @@
               </div>
             </div>
 
-            <div class="col-md-7">
+            <div class="col-xs-7">
               <div class="form-group"
                 ng-class="{'has-warning': apikey.verificationCode.$dirty,
                            'has-success': apikey.verificationCode.$valid && apikey.verificationCode.$dirty,
@@ -186,7 +186,7 @@
               </div>
             </div>
 
-            <div class="col-md-2">
+            <div class="col-xs-2">
               <button class="btn btn-primary btn-block" ng-click="addApiKey(apikey)">Save</button>
             </div>
 
