@@ -4,83 +4,102 @@
 # Exposes EVE API to json
 #
 
-{Router}    = require "express"
-{EveClient} = require "neow"
+{Router}              = require "express"
+{EveClient}           = require "neow"
+{ensureAuthenticated} = require "../config/auth"
+{ApiKey}              = require "../models/apikey"
+{Character}           = require "../models/character"
 
 router = new Router
-
-api = new EveClient {
-  keyID: process.env.EVE_API_KEY_ID
-  vCode: process.env.EVE_API_VERIFICATION_CODE
-}
 
 # Returns character list
 # ======================
 router.route '/'
+  .get ensureAuthenticated
   .get (req, res, next)->
-    api.fetch 'account:Characters'
-      .then (result)->
-        res.json (character for id, character of result.characters)
-      .fail (err)->
-        console.error err
-        next()
-      .done()
+    ApiKey.find { _user: req.user._id }, "characters"
+      .populate('characters')
+      .exec (err, apikeys)->
+        return res.status(400).json err if err
+        characters = []
+
+        for apikey in apikeys
+          for character in apikey.characters
+            characters.push character
+
+        res.status(200).json characters
 
 
 # Returns character sheet
 # =======================
 router.route '/:id'
+  .get ensureAuthenticated
   .get (req, res, next)->
+    Character.findOne { id: req.params.id }
+      .exec (err, character)->
+        return res.status(400).json err if err
 
-    unwrap = (value)->
-      value = value.content or value
-      if value is Object(value)
-        for key, dict of value
-          value[key] = unwrap dict
-      return value
+        character.refresh()
+          .done (character)->
+            res.status(200).json character
 
-
-    api.fetch 'char:CharacterSheet', {
-      characterID: req.params.id
-    }
-      .then (result)->
-        character = {}
-
-        for key, value of result
-          character[key] = unwrap value
-
-        res.json character
-
-      .fail (err)->
-        console.error err
-        next()
-
-      .done()
-
+# Returns character skill queue
+# =============================
 router.route '/:id/skills/queue'
+  .get ensureAuthenticated
   .get (req, res, next)->
-    api.fetch 'char:SkillQueue', {
-      characterID: req.params.id
-    }
-      .then (result)->
-        skillqueue = result.skillqueue
-        ids = (job.typeID for id, job of skillqueue)
-
-        api.fetch 'eve:TypeName', {
-          ids: ids
+    Character
+      .findOne  { id: req.params.id }
+      .populate "apikey"
+      .exec (err, character)->
+        api = new EveClient {
+          keyID: character.apikey.keyId
+          vCode: character.apikey.verificationCode
         }
-        .then (result)->
-          types = result.types
-          for id, job of skillqueue
-            job.typeName = v.typeName for k, v of types when k is job.typeID
-          return skillqueue
 
-      .then (skillqueue)->
-        res.json skillqueue
+        api
+          .fetch 'char:SkillQueue', {
+            characterID: character.id
+          }
+          .then (result)->
+            skillqueue = []
+            for id, job of result.skillqueue
+              skillqueue.push job
 
-      .fail (err)->
-        console.error err
-        next()
-      .done()
+            ids = (job.typeID for id, job of skillqueue)
+
+            api.fetch 'eve:TypeName', {
+              ids: ids
+            }
+            .then (result)->
+              types = result.types
+              for id, job of skillqueue
+                job.typeName = v.typeName for k, v of types when k is job.typeID
+              return skillqueue
+
+          .then (skillqueue)->
+            skillqueue.map (skill)->
+              {
+                id:       skill.typeID
+                name:     skill.typeName
+                level:    skill.level
+                position: skill.queuePosition
+                skillPoints: {
+                  start: skill.startSP
+                  end:   skill.endSP
+                }
+                timeRange: {
+                  start: skill.startTime
+                  end:   skill.endTime
+                }
+              }
+
+          .fail (err)->
+            console.error err
+            next()
+
+          .done (skillqueue)->
+            res.json skillqueue
+
 
 module.exports = router

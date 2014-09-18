@@ -1,8 +1,26 @@
-<div class="progress">
-  <div    class="progress-bar"
-       ng-class="{'progress-bar-success': status == 'running', 'progress-bar-warning': status == 'blocked'}"
-           role="progressbar"
-          style="width: {{ percent }}%">
-      {{ percent }} %
+<div class="skill-overview">
+
+  <div class="row" ng-repeat="skill in skills track by $index | orderBy:position ">
+    <div class="col-xs-3">
+        {{ skill.name }} {{ skill.level | roman_number }}
+    </div>
+
+    <div class="col-xs-7">
+      <div class="progress">
+        <div class="progress-bar" ng-class="{'progress-bar-striped active': skill.state = 'running', 'progress-bar-info': skill.state = 'completed'}" style="width: {{ skill.percent }}%">
+            {{ skill.percent }}%
+        </div>
+        </timer>
+      </div>
+    </div>
+    <div class="col-xs-2">
+      <abbr title="{{ skill.timeRange.end | utc | date : 'MMM d, y HH:mm:ss' }}">{{ skill.timeRange.end | utc | countdown }}</a>
+    </div>
+
   </div>
+
+  <div class="alert alert-warning" ng-if="skills.length == 0">
+    <p><strong>Warning</strong> Your skill queue is empty !</p>
+  </div>
+
 </div>

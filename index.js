@@ -1,5 +1,8 @@
-require('coffee-script/register');
+if ('production' === process.env.NODE_ENV) {
+  require("newrelic");
+}
 
+require('coffee-script/register');
 var server = require('./lib'),
     port   = process.env.PORT || 3333
 ;

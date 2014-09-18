@@ -7,8 +7,6 @@ exports.config =
     javascripts:
       joinTo:
         'app.js'
-      #  'app.js'    : /^(app)/
-      #  'vendor.js' : /^(vendor|bower_components)/
 
     stylesheets:
       joinTo:

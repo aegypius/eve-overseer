@@ -1,6 +1,5 @@
-var filters = angular.module('eve-overseer.filters', []);
-
-filters
+angular
+  .module('eve-overseer')
   .filter('roman_number', function () {
     return function (num) {
       num = parseInt(num, 10);
