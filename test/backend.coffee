@@ -287,7 +287,7 @@ describe "EVE API", ->
       it "should be able to get skills for a character", (done)->
 
         agent
-          .get "/api/character/#{characterId}/skills"
+          .get "/api/characters/#{characterId}/skills"
           .expect 200
           .end (err, res)->
             should.not.exist err
@@ -299,9 +299,32 @@ describe "EVE API", ->
 
             skill.should.have.property "id"
             skill.should.have.property "name"
-            skill.should.have.property "description"
-            skill.should.have.property "group"
             skill.should.have.property "level"
             skill.should.have.property "points"
+
+            done()
+
+    describe "Certificates", ->
+
+      it "should be able to get certificates for a character", (done)->
+
+        agent
+          .get "/api/characters/#{characterId}/certificates"
+          .expect 200
+          .end (err, res)->
+            should.not.exist err
+
+            res.body.should.be.an.array
+
+            if res.body.length > 0
+              res.body[0].should.be.an.object
+              certificate = res.body[0]
+
+              certificate.should.have.property "id"
+              certificate.should.have.property "name"
+              certificate.should.have.property "description"
+              certificate.should.have.property "group"
+              certificate.should.have.property "level"
+              certificate.should.have.property "points"
 
             done()

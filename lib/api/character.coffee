@@ -42,6 +42,78 @@ router.route '/:id'
           .done (character)->
             res.status(200).json character
 
+router.route "/:id/skills"
+  .get ensureAuthenticated
+  .get (req, res, next)->
+    Character
+      .findOne {id : req.params.id }
+      .populate "apikey"
+      .exec (err, character)->
+        api = character.apikey.getClient()
+        api.fetch "char:CharacterSheet", {
+          characterID: character.id
+        }
+        .then (result)->
+          skills = []
+          for id, skill of result.skills
+            skills.push {
+              id:     id
+              level:  skill.level
+              points: skill.skillpoints
+            }
+
+          ids = (skill.id for id, skill of skills)
+
+          return api.fetch 'eve:TypeName', {
+            ids: ids
+          }
+          .then (result)->
+            types = result.types
+            for id, job of skills
+              for k, v of types when k is job.id
+                job.name = v.typeName
+            return skills
+
+        .done (skills)->
+          res.json skills
+
+router.route "/:id/certificates"
+  .get ensureAuthenticated
+  .get (req, res, next)->
+    Character
+      .findOne {id : req.params.id }
+      .populate "apikey"
+      .exec (err, character)->
+        api = character.apikey.getClient()
+        api.fetch "char:CharacterSheet", {
+          characterID: character.id
+        }
+        .then (result)->
+          certs = []
+          for id, cert of result.certificates
+            certs.push {
+              id: id
+            }
+
+          ids = (cert.id for id, cert of certs)
+          if ids.length > 0
+            return api.fetch 'eve:TypeName', {
+              ids: ids
+            }
+            .then (result)->
+              types = result.types
+              for id, job of certs
+                for k, v of types when k is job.id
+                  job.name = v.typeName
+              return certs
+          else
+            return certs
+
+        .done (certs)->
+          res.json certs
+
+
+
 # Returns character skill queue
 # =============================
 router.route '/:id/skills/queue'
@@ -51,7 +123,7 @@ router.route '/:id/skills/queue'
       .findOne  { id: req.params.id }
       .populate "apikey"
       .exec (err, character)->
-        api = apikey.getClient()
+        api = character.apikey.getClient()
 
         api
           .fetch 'char:SkillQueue', {
