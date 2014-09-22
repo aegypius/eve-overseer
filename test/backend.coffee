@@ -281,3 +281,27 @@ describe "EVE API", ->
           res.body.should.have.property "gender"
 
           done()
+
+    describe "Skills", ->
+
+      it "should be able to get skills for a character", (done)->
+
+        agent
+          .get "/api/character/#{characterId}/skills"
+          .expect 200
+          .end (err, res)->
+            should.not.exist err
+
+            res.body.should.be.an.array
+
+            res.body[0].should.be.an.object
+            skill = res.body[0]
+
+            skill.should.have.property "id"
+            skill.should.have.property "name"
+            skill.should.have.property "description"
+            skill.should.have.property "group"
+            skill.should.have.property "level"
+            skill.should.have.property "points"
+
+            done()
