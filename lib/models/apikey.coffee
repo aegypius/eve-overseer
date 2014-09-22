@@ -53,12 +53,15 @@ ApiKeySchema
     , "Verification Code cannot be blank"
 
 ApiKeySchema
-  .method "refresh", ->
-    # Perform a request to the api key to validate current api
-    api = new EveClient {
+  .method "getClient", ->
+    new EveClient {
       keyID: @keyId
       vCode: @verificationCode
     }
+
+  .method "refresh", ->
+    # Perform a request to the api key to validate current api
+    api = @getClient()
 
     Q()
       .then =>

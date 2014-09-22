@@ -5,7 +5,6 @@
 #
 
 {Router}              = require "express"
-{EveClient}           = require "neow"
 {ensureAuthenticated} = require "../config/auth"
 {ApiKey}              = require "../models/apikey"
 {Character}           = require "../models/character"
@@ -52,10 +51,7 @@ router.route '/:id/skills/queue'
       .findOne  { id: req.params.id }
       .populate "apikey"
       .exec (err, character)->
-        api = new EveClient {
-          keyID: character.apikey.keyId
-          vCode: character.apikey.verificationCode
-        }
+        api = apikey.getClient()
 
         api
           .fetch 'char:SkillQueue', {

@@ -2,7 +2,6 @@ mongoose        = require "mongoose"
 {Schema}        = mongoose
 Timestampable   = require "mongoose-timestamp"
 UniqueValidator = require "mongoose-unique-validator"
-{EveClient}     = require "neow"
 Q               = require "q"
 
 AttributeType  = {
@@ -77,10 +76,7 @@ CharacterSchema
     Q.ninvoke @, "populate", {path: "apikey"}
       .then =>
         # Perform a request to the api key to validate current api
-        new EveClient {
-          keyID: @apikey.keyId
-          vCode: @apikey.verificationCode
-        }
+        @apikey.getClient()
       .then (api)=>
         api
           .fetch "char:CharacterSheet", {
