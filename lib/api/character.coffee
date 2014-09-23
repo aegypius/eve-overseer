@@ -8,6 +8,7 @@
 {ensureAuthenticated} = require "../config/auth"
 {ApiKey}              = require "../models/apikey"
 {Character}           = require "../models/character"
+{SkillGroup}          = require "../models/skill-group"
 
 router = new Router
 
@@ -54,28 +55,51 @@ router.route "/:id/skills"
           characterID: character.id
         }
         .then (result)->
-          skills = []
+          skills = {}
           for id, skill of result.skills
-            skills.push {
+            skills[id] = {
               id:     id
               level:  skill.level
               points: skill.skillpoints
             }
+          return skills
+        .then (skills)->
+          ids = (parseInt skill.id for id, skill of skills)
+          SkillGroup
+            .find()
+            .select('name skills')
+            .populate({
+              path: 'skills'
+              select: 'id name description rank'
+              match: {
+                "id": {$in: ids}
+                "published": true
+              }
+            })
+            .exec()
+            .then (result)->
+              result
+                .map (group)->
+                  {
+                    _id:  group.id
+                    name: group.name
+                    skills: group.skills.map (skill)->
+                      {
+                        _id:         skill._id
+                        id:          skill.id
+                        name:        skill.name
+                        description: skill.description
+                        rank:        skill.rank
+                        level:       skills[skill.id].level
+                        points:      skills[skill.id].points
+                      }
+                    }
+                .filter (group)->
+                  return group.skills.length > 0
 
-          ids = (skill.id for id, skill of skills)
 
-          return api.fetch 'eve:TypeName', {
-            ids: ids
-          }
-          .then (result)->
-            types = result.types
-            for id, job of skills
-              for k, v of types when k is job.id
-                job.name = v.typeName
-            return skills
-
-        .done (skills)->
-          res.json skills
+          .then (response)->
+            res.json response
 
 router.route "/:id/certificates"
   .get ensureAuthenticated

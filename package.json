@@ -7,11 +7,14 @@
   "engines": {
     "node": "0.10.x"
   },
+  "bin": {
+    "overseer": "./bin/overseer"
+  },
   "scripts": {
     "start": "node index.js",
     "brunch": "$(npm bin)/brunch watch --server",
     "postinstall": "$(npm bin)/bower install",
-    "prestart": "$(npm bin)/brunch build --production",
+    "prestart": "$(npm bin)/brunch build --production && ./bin/overseer upgrade",
     "test": "mocha"
   },
   "author": "Nicolas LAURENT <innercircle@aegypius.com>",
@@ -23,6 +26,7 @@
     "brunch": "1.7.14",
     "chai": "^1.9.1",
     "coffee-script": "^1.7.1",
+    "commander": "^2.3.0",
     "connect-mongo": "^0.4.1",
     "cookie-parser": "^1.3.2",
     "dotenv": "^0.4.0",

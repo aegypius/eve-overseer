@@ -1,0 +1,5 @@
+#!/usr/bin/env node
+require('coffee-script/register');
+
+cli = require('../lib/cli');
+cli.parse(process.argv);

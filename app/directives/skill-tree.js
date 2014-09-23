@@ -9,8 +9,8 @@ angular
       controller: ['$scope', 'Skill', function ($scope, Skill) {
         $scope.$watch('character', function (character) {
           if (undefined !== character) {
-            Skill.query({id: character.id}, function (skills) {
-              $scope.skills = skills;
+            Skill.query({id: character.id}, function (groups) {
+              $scope.groups = groups;
             });
           }
         });

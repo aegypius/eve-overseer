@@ -1,22 +1,28 @@
-<div class="skill-overview">
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th class="col-xs-10">Name</th>
-        <th class="col-xs-2">Level</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-class="{'bg-success': skill.level == 5, 'text-muted': skill.level == 0}" ng-repeat="skill in skills | orderBy:'name'">
-        <td>{{ skill.name }}</th>
-        <td>
-          <span class="glyphicon" ng-class="{'glyphicon-star-empty': skill.level < 1, 'glyphicon-star' : skill.level >= 1 }" ng-if="skill.level > 0"></span>
-          <span class="glyphicon" ng-class="{'glyphicon-star-empty': skill.level < 2, 'glyphicon-star' : skill.level >= 2 }" ng-if="skill.level > 0"></span>
-          <span class="glyphicon" ng-class="{'glyphicon-star-empty': skill.level < 3, 'glyphicon-star' : skill.level >= 3 }" ng-if="skill.level > 0"></span>
-          <span class="glyphicon" ng-class="{'glyphicon-star-empty': skill.level < 4, 'glyphicon-star' : skill.level >= 4 }" ng-if="skill.level > 0"></span>
-          <span class="glyphicon" ng-class="{'glyphicon-star-empty': skill.level < 5, 'glyphicon-star' : skill.level >= 5 }" ng-if="skill.level > 0"></span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+<div id="skill-tree" class="skill-overview">
+
+  <div class="panel panel-default" ng-repeat="group in groups | orderBy:'name'" ng-if="group.skills.length">
+    <div class="panel-heading">
+      <div class="panel-title">
+        <h4 class="panel-title" data-toggle="collapse" data-parent="#skill-tree" data-target="#group-{{ $index }}">
+            {{ group.name }}
+        </h4>
+      </div>
+    </div>
+    <div id="group-{{ $index }}" class="panel-collapse collapse">
+      <div class="panel-body">
+        <div class="row" ng-repeat="skill in group.skills | orderBy:'rank'">
+          <div class="col-xs-10">
+            <strong>{{ skill.name }}</strong> <small class="text-muted">(&times;{{ skill.rank }})</span>
+            <p class="text-muted">{{ skill.description }}</p>
+          </div>
+          <div class="col-xs-2">
+            <div class="progress">
+              <div class="progress-bar progress-bar-info" style="width:{{ skill.level * 20 }}%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
