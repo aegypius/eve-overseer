@@ -6,7 +6,7 @@ build:
     - npm-install
 
     - script:
-        name: Load Database
+        name: Upgrade database
         code: ./bin/overseer upgrade
 
     - npm-test

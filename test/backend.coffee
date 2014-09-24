@@ -294,13 +294,13 @@ describe "EVE API", ->
 
             res.body.should.be.an.array
 
+            console.log res.body
             res.body[0].should.be.an.object
-            skill = res.body[0]
+            group = res.body[0]
 
-            skill.should.have.property "id"
-            skill.should.have.property "name"
-            skill.should.have.property "level"
-            skill.should.have.property "points"
+            group.should.have.property "id"
+            group.should.have.property "name"
+            group.should.have.property "skills"
 
             done()
 

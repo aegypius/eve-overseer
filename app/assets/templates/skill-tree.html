@@ -1,28 +1,27 @@
 <div id="skill-tree" class="skill-overview">
-
-  <div class="panel panel-default" ng-repeat="group in groups | orderBy:'name'" ng-if="group.skills.length">
-    <div class="panel-heading">
-      <div class="panel-title">
-        <h4 class="panel-title" data-toggle="collapse" data-parent="#skill-tree" data-target="#group-{{ $index }}">
-            {{ group.name }}
-        </h4>
-      </div>
+  <div class="row">
+    <div class="col-xs-3">
+      <ul class="nav nav-pills nav-stacked" role="tablist">
+        <li ng-class="{'active': $index == 0 }" ng-repeat="group in groups | orderBy:'name'" ng-if="group.skills.length">
+          <a role="tab" data-toggle="tab" data-target="#tab-{{ group.id }}" href>{{ group.name }}</a></li>
+      </ul>
     </div>
-    <div id="group-{{ $index }}" class="panel-collapse collapse">
-      <div class="panel-body">
-        <div class="row" ng-repeat="skill in group.skills | orderBy:'rank'">
-          <div class="col-xs-10">
-            <strong>{{ skill.name }}</strong> <small class="text-muted">(&times;{{ skill.rank }})</span>
-            <p class="text-muted">{{ skill.description }}</p>
-          </div>
-          <div class="col-xs-2">
-            <div class="progress">
-              <div class="progress-bar progress-bar-info" style="width:{{ skill.level * 20 }}%"></div>
+    <div class="col-xs-9">
+      <div class="tab-content">
+        <div class="tab-pane" ng-class="{'active': $index == 0 }" id="tab-{{ group.id }}" ng-repeat="group in groups | orderBy:'name'" ng-if="group.skills.length">
+          <div class="row" ng-repeat="skill in group.skills | orderBy:'rank'">
+            <div class="col-xs-9">
+              <strong>{{ skill.name }}</strong> <small class="text-muted">(&times;{{ skill.rank }})</span>
+              <p class="text-muted">{{ skill.description }}</p>
+            </div>
+            <div class="col-xs-3">
+              <div class="progress">
+                <div class="progress-bar progress-bar-info" style="width:{{ skill.level * 20 }}%"></div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-
 </div>

@@ -67,7 +67,7 @@ router.route "/:id/skills"
           ids = (parseInt skill.id for id, skill of skills)
           SkillGroup
             .find()
-            .select('name skills')
+            .select('id name skills')
             .populate({
               path: 'skills'
               select: 'id name description rank'
@@ -81,11 +81,10 @@ router.route "/:id/skills"
               result
                 .map (group)->
                   {
-                    _id:  group.id
+                    id:  group.id
                     name: group.name
                     skills: group.skills.map (skill)->
                       {
-                        _id:         skill._id
                         id:          skill.id
                         name:        skill.name
                         description: skill.description
