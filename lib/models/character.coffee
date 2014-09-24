@@ -72,6 +72,54 @@ CharacterSchema
     small:   "http://image.eveonline.com/Character/#{@id}_64.jpg"
 
 CharacterSchema
+  .method "getSkillTree", ->
+    api = @apikey.getClient()
+    return api.fetch "char:CharacterSheet", {
+      characterID: @id
+    }
+    .then (result)->
+      skills = {}
+      for id, skill of result.skills
+        skills[id] = {
+          id:     id
+          level:  skill.level
+          points: skill.skillpoints
+        }
+      return skills
+    .then (skills)->
+      ids = (parseInt skill.id for id, skill of skills)
+      mongoose.model('SkillGroup')
+        .find()
+        .select('id name skills')
+        .populate({
+          path: 'skills'
+          select: 'id name description rank'
+          match: {
+            "id": {$in: ids}
+            "published": true
+          }
+        })
+        .exec()
+        .then (result)->
+          result
+            .map (group)->
+              {
+                id:  group.id
+                name: group.name
+                skills: group.skills.map (skill)->
+                  {
+                    id:          skill.id
+                    name:        skill.name
+                    description: skill.description
+                    rank:        skill.rank
+                    level:       skills[skill.id].level
+                    points:      skills[skill.id].points
+                  }
+                }
+            .filter (group)->
+              return group.skills.length > 0
+
+CharacterSchema
   .method "refresh", ->
     Q.ninvoke @, "populate", {path: "apikey"}
       .then =>

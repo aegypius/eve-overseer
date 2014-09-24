@@ -49,93 +49,12 @@ router.route "/:id/skills"
     Character
       .findOne {id : req.params.id }
       .populate "apikey"
-      .exec (err, character)->
-        api = character.apikey.getClient()
-        api.fetch "char:CharacterSheet", {
-          characterID: character.id
-        }
-        .then (result)->
-          skills = {}
-          for id, skill of result.skills
-            skills[id] = {
-              id:     id
-              level:  skill.level
-              points: skill.skillpoints
-            }
-          return skills
-        .then (skills)->
-          ids = (parseInt skill.id for id, skill of skills)
-          SkillGroup
-            .find()
-            .select('id name skills')
-            .populate({
-              path: 'skills'
-              select: 'id name description rank'
-              match: {
-                "id": {$in: ids}
-                "published": true
-              }
-            })
-            .exec()
-            .then (result)->
-              result
-                .map (group)->
-                  {
-                    id:  group.id
-                    name: group.name
-                    skills: group.skills.map (skill)->
-                      {
-                        id:          skill.id
-                        name:        skill.name
-                        description: skill.description
-                        rank:        skill.rank
-                        level:       skills[skill.id].level
-                        points:      skills[skill.id].points
-                      }
-                    }
-                .filter (group)->
-                  return group.skills.length > 0
-
-
-          .then (response)->
-            res.json response
-
-router.route "/:id/certificates"
-  .get ensureAuthenticated
-  .get (req, res, next)->
-    Character
-      .findOne {id : req.params.id }
-      .populate "apikey"
-      .exec (err, character)->
-        api = character.apikey.getClient()
-        api.fetch "char:CharacterSheet", {
-          characterID: character.id
-        }
-        .then (result)->
-          certs = []
-          for id, cert of result.certificates
-            certs.push {
-              id: id
-            }
-
-          ids = (cert.id for id, cert of certs)
-          if ids.length > 0
-            return api.fetch 'eve:TypeName', {
-              ids: ids
-            }
-            .then (result)->
-              types = result.types
-              for id, job of certs
-                for k, v of types when k is job.id
-                  job.name = v.typeName
-              return certs
-          else
-            return certs
-
-        .done (certs)->
-          res.json certs
-
-
+      .exec()
+      .then (character)->
+        character
+          .getSkillTree()
+          .then (tree)->
+            res.json tree
 
 # Returns character skill queue
 # =============================
