@@ -4,21 +4,41 @@ should    = (require "chai").should()
 assert    = require "assert"
 supertest = require "supertest"
 mongoose  = require "mongoose"
+util      = require "util"
+Q         = require "q"
 
-app      = require "../lib"
+{server}  = require "../lib"
 
-agent = supertest.agent(app)
+agent = supertest.agent(server)
+
+before (done)->
+  if process.env.NODE_ENV is "test"
+    mongoose.connection.on "open", (ref)->
+
+      # Drop collections
+      Q.all [
+        'sessions'
+        'users'
+        "apikeys"
+        "characters"
+      ].map (collection)->
+        return Q.ninvoke mongoose.connection.db, "dropCollection", collection
+          .fail ->
+      # Update database with static data
+      .then ->
+        {SkillGroup} = require "../lib/models/skill-group"
+        return Q
+          .when SkillGroup.synchronize
+
+      .fail (err)->
+        throw err
+      # Database is ready for the tests
+      .then ->
+        done()
+  else
+    done()
 
 describe "Account Management", ->
-
-  before (done)->
-    if process.env.NODE_ENV is "test"
-      mongoose.connection.on "open", (ref)->
-        mongoose.connection.db.dropDatabase (err)->
-          throw err if err
-          done()
-    else
-      done()
 
   describe "User Registration", ->
 
@@ -217,7 +237,7 @@ describe "Account Management", ->
               done()
 
 describe "EVE API", ->
-  agent = supertest.agent(app)
+  agent = supertest.agent(server)
 
   describe "Characters", ->
     characterId = ""
@@ -284,7 +304,7 @@ describe "EVE API", ->
 
     describe "Skills", ->
 
-      it "should be able to get skills for a character", (done)->
+      it "should be able to get learned skills for a character", (done)->
 
         agent
           .get "/api/characters/#{characterId}/skills"
@@ -294,7 +314,6 @@ describe "EVE API", ->
 
             res.body.should.be.an.array
 
-            console.log res.body
             res.body[0].should.be.an.object
             group = res.body[0]
 
@@ -302,29 +321,15 @@ describe "EVE API", ->
             group.should.have.property "name"
             group.should.have.property "skills"
 
-            done()
+            group.skills.should.be.an.array
+            skill = group.skills[0]
 
-    describe "Certificates", ->
-
-      it "should be able to get certificates for a character", (done)->
-
-        agent
-          .get "/api/characters/#{characterId}/certificates"
-          .expect 200
-          .end (err, res)->
-            should.not.exist err
-
-            res.body.should.be.an.array
-
-            if res.body.length > 0
-              res.body[0].should.be.an.object
-              certificate = res.body[0]
-
-              certificate.should.have.property "id"
-              certificate.should.have.property "name"
-              certificate.should.have.property "description"
-              certificate.should.have.property "group"
-              certificate.should.have.property "level"
-              certificate.should.have.property "points"
+            skill.should.be.an.object
+            skill.should.have.property "id"
+            skill.should.have.property "name"
+            skill.should.have.property "description"
+            skill.should.have.property "rank"
+            skill.should.have.property "level"
+            skill.should.have.property "points"
 
             done()
