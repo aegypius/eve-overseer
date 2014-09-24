@@ -1,7 +1,5 @@
 eve-overseer
 ============
-[![wercker status](https://app.wercker.com/status/58cfa027e6e90ef5170148c3d0b3d700/s "wercker status")](https://app.wercker.com/project/bykey/58cfa027e6e90ef5170148c3d0b3d700)
-
 This project aims to replace software like EVEMon in a browser.
 
 ### Requirements
@@ -57,3 +55,8 @@ You still need to launch server with ```npm run brunch```
 To run test suite simply run :
 
 ```NODE_ENV=test npm test```
+
+---
+[![wercker status](https://app.wercker.com/status/58cfa027e6e90ef5170148c3d0b3d700/s "wercker status")](https://app.wercker.com/project/bykey/58cfa027e6e90ef5170148c3d0b3d700)
+[![depencencies status](http://img.shields.io/david/aegypius/eve-overseer.svg?style=flat-square "dependencies status")](https://david-dm.org/aegypius/eve-overseer)
+[![devDepencencies status](http://img.shields.io/david/dev/aegypius/eve-overseer.svg?style=flat-square "devDependencies status")](https://david-dm.org/aegypius/eve-overseer#info=devDependencies)
