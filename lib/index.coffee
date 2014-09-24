@@ -63,6 +63,7 @@ app.use (req, res, next)->
   return res.status(404).json { error: "Not Found" } if req.accepts "json"
   return res.status(404).type("txt").send "Not Found"
 
-module.exports = server
-module.exports.startServer = (port, publicDir, callback)->
-  server.listen port, callback
+module.exports =
+  server: server
+  startServer: (port, publicDir, callback)->
+    server.listen port, callback
