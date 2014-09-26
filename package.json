@@ -51,6 +51,7 @@
   },
   "devDependencies": {
     "decking": "^0.2.1",
+    "faker": "^1.1.0",
     "raml2html": "^1.0.2"
   }
 }

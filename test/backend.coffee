@@ -1,53 +1,27 @@
  # coffeelint: disable=max_line_length
 
-should    = (require "chai").should()
-assert    = require "assert"
-supertest = require "supertest"
-mongoose  = require "mongoose"
-util      = require "util"
-Q         = require "q"
+{server} = require "../lib"
+port     = process.env.PORT || 3333
 
-{server}  = require "../lib"
-
-agent = supertest.agent(server)
+# Fake data
+email    = faker.Internet.email()
 
 before (done)->
-  if process.env.NODE_ENV is "test"
-    mongoose.connection.on "open", (ref)->
-
-      # Drop collections
-      Q.all [
-        'sessions'
-        'users'
-        "apikeys"
-        "characters"
-      ].map (collection)->
-        return Q.ninvoke mongoose.connection.db, "dropCollection", collection
-          .fail ->
-      # Update database with static data
-      .then ->
-        {SkillGroup} = require "../lib/models/skill-group"
-        return Q
-          .when SkillGroup.synchronize
-
-      .fail (err)->
-        throw err
-      # Database is ready for the tests
-      .then ->
-        done()
-  else
-    done()
+  server
+    .then (api)->
+      api.listen port, done
 
 describe "Account Management", ->
+  agent = supertest.agent "http://localhost:#{port}"
 
   describe "User Registration", ->
 
     it "should be able to register new users", (done)->
 
       user = {
-        email:    "test@example.com"
-        username: "John Doe"
-        password: "test"
+        email:    email
+        username: faker.Internet.userName()
+        password: "password"
       }
 
       agent
@@ -56,16 +30,19 @@ describe "Account Management", ->
         .expect 200
         .end (err, res)->
           should.not.exist err
-          res.body.should.have.property "email", user.email
+
+          res.body.should.have.property "email",    user.email.toLowerCase()
           res.body.should.have.property "username", user.username
+          res.body.should.have.property "avatar"
+
           done()
 
     it "should throw an error when registering a user with a duplicate email", (done)->
 
       user = {
-        email:    "test@example.com"
-        username: "Jane Doe"
-        password: "test2"
+        email:    email
+        username: faker.Internet.userName()
+        password: "password"
       }
 
       agent
@@ -74,6 +51,8 @@ describe "Account Management", ->
         .expect 400
         .end (err, res)->
           should.not.exist err
+
+          res.body.should.have.property "name", "ValidationError"
           done()
 
 
@@ -83,7 +62,7 @@ describe "Account Management", ->
 
       agent
         .delete "/session"
-        .expect 200
+        .expect 200, ""
         .end (err, res)->
           should.not.exist err
           done()
@@ -99,8 +78,8 @@ describe "Account Management", ->
 
     it "should be able to login with valid credentials", (done)->
       user = {
-        email: "test@example.com"
-        password: "test"
+        email:    email
+        password: "password"
       }
 
       agent
@@ -109,6 +88,11 @@ describe "Account Management", ->
         .expect 200
         .end (err, res)->
           should.not.exist err
+
+          res.body.should.have.property "username"
+          res.body.should.have.property "email", email.toLowerCase()
+          res.body.should.have.property "avatar"
+
           done()
 
     it "should be able to get current user info", (done)->
@@ -117,9 +101,12 @@ describe "Account Management", ->
         .expect 200
         .end (err, res)->
           should.not.exist err
+
           res.body.should.have.property "_id"
-          res.body.should.have.property "email",    "test@example.com"
-          res.body.should.have.property "username", "John Doe"
+          res.body.should.have.property "email",   email.toLowerCase()
+          res.body.should.have.property "username"
+          res.body.should.have.property "avatar"
+
           done()
 
   describe "User Update", ->
@@ -162,7 +149,7 @@ describe "Account Management", ->
     it "should not be able to update its email", (done)->
       agent
         .put "/api/users/#{user_id}"
-        .send { email: "test2@example.com" }
+        .send { email: faker.Internet.email() }
         .expect 400
         .end (err, res)->
           should.not.exist err
@@ -171,12 +158,12 @@ describe "Account Management", ->
 
   describe "API Key Management", ->
     user_id=null
-
     before (done)->
       agent
         .get "/session"
         .end (err, res)->
           user_id = res.body._id
+          user_id.should.not.be.undefined
           done()
 
     it "should be able to add a new apikey", (done)->
@@ -186,7 +173,7 @@ describe "Account Management", ->
           keyId:            process.env.TEST_EVEONLINE_API_ID
           verificationCode: process.env.TEST_EVEONLINE_VERIFICATION_CODE
         }
-        .expect 200
+        .expect 200, "OK"
         .end (err, res)->
           should.not.exist err
 
@@ -237,7 +224,7 @@ describe "Account Management", ->
               done()
 
 describe "EVE API", ->
-  agent = supertest.agent(server)
+  agent = supertest.agent "http://localhost:#{port}"
 
   describe "Characters", ->
     characterId = ""
@@ -245,11 +232,13 @@ describe "EVE API", ->
     # Login
     before (done)->
       agent
-        .get "/session"
+        .post "/session"
+        .send { email: email, password: "new-password" }
         .expect 200
         .end (err, res)->
           res.body.should.have.property._id
           user_id = res.body._id
+          expect(user_id).not.undefined
 
           # Add an api key
           agent
