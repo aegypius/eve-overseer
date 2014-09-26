@@ -1,6 +1,7 @@
-passport      = require "passport"
-LocalStrategy = (require "passport-local").Strategy
-{User}        = require "../models/user"
+passport       = require "passport"
+LocalStrategy  = (require "passport-local").Strategy
+BearerStrategy = (require "passport-http-bearer").Strategy
+{User}         = require "../models/user"
 
 passport.serializeUser (user, done)->
   done null, user._id
@@ -32,5 +33,15 @@ passport.use "local", new LocalStrategy({
 
       return done null, user
 )
+
+passport.use "bearer", new BearerStrategy (token, done)->
+  process.nextTick ->
+    User.findOne { token: token }, (err, user)->
+      if err
+        done err
+      unless user
+        done null, false
+      else
+        done null, user, { scope: 'all' }
 
 module.exports = passport

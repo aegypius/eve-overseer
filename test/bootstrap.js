@@ -1,17 +1,26 @@
+(require('dotenv')).load();
+
 global.chai      = require("chai");
 global.should    = chai.should();
 global.expect    = chai.expect;
 global.assert    = require("assert");
 global.supertest = require("supertest");
-global.faker     = faker = require("faker");
+global.mongoose  = mongoose = require("mongoose");
+global.casual    = casual = require("casual");
+global.debug     = debug = require("debug")('test');
+global.port      = process.env.PORT || 3333;
+
+mongoose.connection.on("error", function (err) {
+  debug("error ignored from mongoose : ", err);
+});
+
+
 global.user      = {
-  email:    faker.Internet.email(),
-  username: faker.Internet.userName(),
+  email:    casual.email,
+  username: casual.username,
   password: "password",
 };
-
-/**
- * Mock EVE API
- */
-var nock        = require("nock"),
-    eveapi      = nock("https://api.eveonline.com");
+global.apiKey = {
+  keyId:            process.env.TEST_EVEONLINE_API_ID,
+  verificationCode: process.env.TEST_EVEONLINE_VERIFICATION_CODE,
+};

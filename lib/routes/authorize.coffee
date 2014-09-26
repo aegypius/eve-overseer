@@ -3,16 +3,9 @@ passport              = require "passport"
 {ensureAuthenticated} = require "../config/auth"
 {User}                = require "../models/user"
 
-session = new Router
+authorize = new Router
 
-session.route '/'
-
-  .get ensureAuthenticated
-  .get (req, res, next)->
-    User.findById { _id: req.user._id }, (err, user)->
-      return res.status(400).json(err) if err
-      res.json user.user_info
-
+authorize.route '/'
   .post (req, res, next)->
     passport.authenticate('local', (err, user, info)->
       error = err or info
@@ -25,7 +18,6 @@ session.route '/'
 
     )(req, res, next);
 
-
   .delete (req, res, next)->
     return res.status(400).json "Not logged in" unless req.user
 
@@ -33,4 +25,4 @@ session.route '/'
     res.status 200
     res.end()
 
-module.exports = session
+module.exports = authorize

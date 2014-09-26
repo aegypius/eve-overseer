@@ -22,7 +22,7 @@ UserSchema = new Schema {
     type: String
     default: 'local'
   }
-  tokens: []
+  tokens: [{ type:String }]
   apikeys: [{
     type: Schema.ObjectId
     ref: 'ApiKey'
@@ -54,7 +54,7 @@ UserSchema
     @_password
 
 UserSchema
-  .virtual "user_info"
+  .virtual "card"
   .get ()->
     {
       "_id":      @_id

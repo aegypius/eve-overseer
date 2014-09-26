@@ -7,12 +7,6 @@ path         = require "path"
 
 config       = require "./config"
 
-# Session management
-cookieParser = require "cookie-parser"
-session      = require "express-session"
-MongoStore   = (require "connect-mongo") { session: session }
-flash        = require "express-flash"
-
 # Setup server
 app     = express()
 server  = (require "http").createServer app
@@ -24,22 +18,9 @@ app.use morgan('short') unless process.env.NODE_ENV is "test"
 app.use bodyParser.json()
 app.use bodyParser.urlencoded { extended: true }
 app.use express.static(path.join __dirname, "../public")
-app.use cookieParser process.env.COOKIE_SECRET or pkg.name
-app.use session {
-  resave:            true
-  saveUninitialized: true
-  secret:            process.env.SESSION_SECRET or pkg.name
-  store: new MongoStore({
-    url: config.database.url
-    collection: "sessions"
-    auto_reconnect: true
-  })
-}
 
 passport = config.passport
 app.use passport.initialize()
-app.use passport.session()
-app.use flash()
 
 # View Engine
 app.set 'views', path.join __dirname, './views'

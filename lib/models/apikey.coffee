@@ -108,15 +108,18 @@ ApiKeySchema
 
     User
       .find { "apikeys": @_id }
-      .exec (err, users)->
+      .exec()
+      .then (users)->
         for user in users
           user.apikeys = user.apikeys.filter (apikey)->
             apikey is @_id
           user.save()
 
+
     Character
       .find { apikey: @_id }
-      .exec (err, characters)->
+      .exec()
+      .then (characters)->
         for character in characters
           character.remove()
         next()

@@ -14,7 +14,7 @@ user
     User.findById req.params.id, (err, user)->
       return res.status(400).json(err) if err
 
-      res.json user.user_info
+      res.json user.card
 
   .put '/:id', (req, res, next)->
     User.findById req.params.id, (err, user)->
@@ -32,7 +32,7 @@ user
 
       user.save (err, user)->
         return res.status(400).json(err) if err
-        res.json user.user_info
+        res.json user.card
 
   .post '/', (req, res, next)->
     user = new User req.body
@@ -42,7 +42,7 @@ user
 
       req.login user, (err)->
         return next(err) if err
-        res.json user.user_info
+        res.json user.card
 
 user
   .get "/:id/apikey", (req, res, next)->
