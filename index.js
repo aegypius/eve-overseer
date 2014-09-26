@@ -12,6 +12,6 @@ module.exports = overseer;
 
 if (require.main === module) {
   overseer.startServer(port, "public", function () {
-    console.log("Server listening on http://localhost:" + port);
+    require('debug')('overseer:http')(("Server listening on http://localhost:" + port));
   });
 }
