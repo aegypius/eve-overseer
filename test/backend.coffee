@@ -3,9 +3,6 @@
 {server} = require "../lib"
 port     = process.env.PORT || 3333
 
-# Fake data
-email    = faker.Internet.email()
-
 before (done)->
   server
     .then (api)->
@@ -18,36 +15,36 @@ describe "Account Management", ->
 
     it "should be able to register new users", (done)->
 
-      user = {
-        email:    email
+      account = {
+        email:    user.email
         username: faker.Internet.userName()
-        password: "password"
+        password: "test"
       }
 
       agent
         .post "/api/users"
-        .send user
+        .send account
         .expect 200
         .end (err, res)->
           should.not.exist err
 
-          res.body.should.have.property "email",    user.email.toLowerCase()
-          res.body.should.have.property "username", user.username
+          res.body.should.have.property "email",    account.email.toLowerCase()
+          res.body.should.have.property "username", account.username
           res.body.should.have.property "avatar"
 
           done()
 
     it "should throw an error when registering a user with a duplicate email", (done)->
 
-      user = {
-        email:    email
+      account = {
+        email:    user.email
         username: faker.Internet.userName()
-        password: "password"
+        password: "123456789"
       }
 
       agent
         .post "/api/users"
-        .send user
+        .send account
         .expect 400
         .end (err, res)->
           should.not.exist err
@@ -77,20 +74,19 @@ describe "Account Management", ->
           done()
 
     it "should be able to login with valid credentials", (done)->
-      user = {
-        email:    email
-        password: "password"
-      }
 
       agent
         .post "/session"
-        .send user
+        .send {
+          email:    user.email
+          password: "test"
+        }
         .expect 200
         .end (err, res)->
           should.not.exist err
 
           res.body.should.have.property "username"
-          res.body.should.have.property "email", email.toLowerCase()
+          res.body.should.have.property "email", user.email.toLowerCase()
           res.body.should.have.property "avatar"
 
           done()
@@ -103,7 +99,7 @@ describe "Account Management", ->
           should.not.exist err
 
           res.body.should.have.property "_id"
-          res.body.should.have.property "email",   email.toLowerCase()
+          res.body.should.have.property "email",   user.email.toLowerCase()
           res.body.should.have.property "username"
           res.body.should.have.property "avatar"
 
@@ -123,17 +119,17 @@ describe "Account Management", ->
 
       agent
         .put "/api/users/#{user_id}"
-        .send { username: "John F. Doe" }
+        .send { username: user.username }
         .expect 200
         .end (err, res)->
           should.not.exist err
-          res.body.should.have.property "username", "John F. Doe"
+          res.body.should.have.property "username", user.username
           done()
 
     it "should be able to update its password", (done)->
       agent
         .put "/api/users/#{user_id}"
-        .send { password: "new-password" }
+        .send { password: user.password }
         .expect 200
         .end (err, res)->
           should.not.exist err
@@ -173,7 +169,7 @@ describe "Account Management", ->
           keyId:            process.env.TEST_EVEONLINE_API_ID
           verificationCode: process.env.TEST_EVEONLINE_VERIFICATION_CODE
         }
-        .expect 200, "OK"
+        .expect 200, ""
         .end (err, res)->
           should.not.exist err
 
