@@ -14,6 +14,7 @@ passport.use "local", new LocalStrategy({
   passwordField: "password"
 }, (email, password, done)->
   process.nextTick ()->
+    email = email.toLowerCase()
     User.findOne { email: email }, (err, user)->
       return done err if err
 
