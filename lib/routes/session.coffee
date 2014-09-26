@@ -27,7 +27,7 @@ session.route '/'
 
 
   .delete (req, res, next)->
-    return res.send 400, "Not logged in" unless req.user
+    return res.status(400).json "Not logged in" unless req.user
 
     req.logout()
     res.status 200
