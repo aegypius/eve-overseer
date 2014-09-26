@@ -1,4 +1,4 @@
-{ensureAuthenticated} = require "../config/auth"
+{ensureAuthenticated} = require "../../config/auth"
 
 module.exports = (app, passeport)->
 

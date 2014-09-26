@@ -5,10 +5,10 @@
 #
 
 {Router}              = require "express"
-{ensureAuthenticated} = require "../config/auth"
-{ApiKey}              = require "../models/apikey"
-{Character}           = require "../models/character"
-{SkillGroup}          = require "../models/skill-group"
+{ensureAuthenticated} = require "../../config/auth"
+{ApiKey}              = require "../../models/apikey"
+{Character}           = require "../../models/character"
+{SkillGroup}          = require "../../models/skill-group"
 
 router = new Router
 

@@ -1,7 +1,7 @@
 {Router} = require "express"
 passport = require "passport"
-{User}   = require "../models/user"
-{ApiKey} = require "../models/apikey"
+{User}   = require "../../models/user"
+{ApiKey} = require "../../models/apikey"
 
 
 user = new Router

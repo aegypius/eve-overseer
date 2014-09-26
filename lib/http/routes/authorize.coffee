@@ -1,7 +1,7 @@
 {Router}              = require "express"
 passport              = require "passport"
-{ensureAuthenticated} = require "../config/auth"
-{User}                = require "../models/user"
+{ensureAuthenticated} = require "../../config/auth"
+{User}                = require "../../models/user"
 
 authorize = new Router
 

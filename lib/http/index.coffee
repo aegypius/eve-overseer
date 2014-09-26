@@ -1,11 +1,11 @@
-pkg          = require "../package.json"
+pkg          = require "../../package.json"
 
 express      = require "express"
 bodyParser   = require "body-parser"
 morgan       = require "morgan"
 path         = require "path"
 
-config       = require "./config"
+config       = require "../config"
 
 # Setup server
 app     = express()
@@ -17,7 +17,7 @@ app.set "env",  process.env.NODE_ENV or "development"
 app.use morgan('short') unless process.env.NODE_ENV is "test"
 app.use bodyParser.json()
 app.use bodyParser.urlencoded { extended: true }
-app.use express.static(path.join __dirname, "../public")
+app.use express.static(path.join __dirname, "../../public")
 
 passport = config.passport
 app.use passport.initialize()
