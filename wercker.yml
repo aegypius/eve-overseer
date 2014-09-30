@@ -4,9 +4,4 @@ services:
 build:
   steps:
     - npm-install
-
-    - script:
-        name: Upgrade database
-        code: ./bin/overseer upgrade
-
     - npm-test

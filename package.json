@@ -14,7 +14,7 @@
     "start": "node index.js",
     "brunch": "$(npm bin)/brunch watch --server",
     "postinstall": "$(npm bin)/bower install",
-    "prestart": "$(npm bin)/brunch build --production && ./bin/overseer upgrade",
+    "prestart": "$(npm bin)/brunch build --production",
     "test": "mocha"
   },
   "author": "Nicolas LAURENT <innercircle@aegypius.com>",
