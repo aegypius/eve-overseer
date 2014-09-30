@@ -7,9 +7,6 @@ passport = require "passport"
 user = new Router
 
 user
-  .get '/', (req, res, next)->
-    res.render "index"
-
   .get '/:id', (req, res, next)->
     User.findById req.params.id, (err, user)->
       return res.status(400).json(err) if err

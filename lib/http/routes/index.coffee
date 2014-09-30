@@ -5,9 +5,6 @@ module.exports = (app, passeport)->
   app.use "/api/authorize", require "./authorize"
   app.use "/api/users",     require "./user"
 
-  app.get "/", (req, res)->
-    res.render "index"
-
-  app.get "/logout", (req, res)->
+  app.get "/logout", (req, res, next)->
     req.logout()
-    res.redirect "/"
+    next()

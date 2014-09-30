@@ -4,7 +4,6 @@ if ('production' === process.env.NODE_ENV) {
 
 require('coffee-script/register');
 var overseer = require('./lib'),
-    server = overseer.server,
     port   = process.env.PORT || 3333
 ;
 
