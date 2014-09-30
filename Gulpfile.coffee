@@ -46,11 +46,11 @@ gulp.task "less:compile", ["less:configure"],  ->
       "public/lib/bootstrap/less/theme.less"
     ]
     .pipe sourcemaps.init()
-    .pipe concat('app.less')
+    .pipe concat "app.less"
     .pipe less()
     .pipe sourcemaps.write "./"
     .pipe gulp.dest "public/"
-    .pipe refresh lr
+    .pipe gulpif env is "development", refresh lr
 
 
 # Configure and compiles javascripts files
@@ -64,11 +64,11 @@ gulp.task "javascript:compile", ["bower"], ->
     ]
     .pipe sourcemaps.init()
     .pipe annotate()
-    .pipe concat('app.js')
+    .pipe concat "app.js"
     .pipe uglify()
     .pipe sourcemaps.write "./"
     .pipe gulp.dest "public/"
-    .pipe refresh lr
+    .pipe gulpif env is "development", refresh lr
 
 
 # Copy assets
@@ -82,8 +82,8 @@ gulp.task "copy:assets", ["bower"], ->
     .pipe rename (path)->
       path.dirname = "fonts" if /(.*)\/fonts/.test path.dirname
       path
-    .pipe gulpif /index\.html/, embedlr port: liveReloadPort
-    .pipe gulpif /(?!index\.html)/, refresh lr
+    .pipe gulpif env is "development"
+      , gulpif /index\.html/, embedlr port: liveReloadPort, refresh lr
     .pipe gulp.dest "public/"
 
 
@@ -121,7 +121,13 @@ gulp.task "build", [
     "less:compile"
     "javascript:compile"
     "copy:assets"
-  ]
+  ], (done)->
+
+  if env is "production"
+    del ["public/lib"], done
+  else
+    done()
+
 
 
 # Default task
