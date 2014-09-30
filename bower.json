@@ -24,6 +24,18 @@
     "bootstrap": "~3.2.0",
     "angular-http-auth": "~1.2.1",
     "underscore.string": "#master",
-    "moment": "~2.8.3"
-  }
+    "moment": "~2.8.3",
+    "fontawesome": "~4.2.0"
+  },
+  "overrides": {
+    "bootstrap": {
+      "main": [
+        "less/!(variables|theme).less",
+        "less/mixins/*.less",
+        "dist/fonts/*",
+        "dist/js/*"
+      ]
+    }
+  },
+  "devDependencies": {}
 }
