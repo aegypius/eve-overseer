@@ -30,7 +30,7 @@ describe "Account Management", ->
 
         done()
 
-  it "should throw an error when registering a user with a duplicate email", (done)->
+  it "should not be able to use an existing email while registering", (done)->
 
     account = {
       email:    user.email
@@ -46,6 +46,9 @@ describe "Account Management", ->
         should.not.exist err
 
         res.body.should.have.property "name", "ValidationError"
+        should.exist res.body.errors.email
+        res.body.errors.email.should.have.property "message", "An account allready exist for this email"
+
         done()
 
   it "should be able to logout", (done)->

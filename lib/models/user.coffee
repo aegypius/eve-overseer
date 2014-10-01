@@ -39,7 +39,9 @@ UserSchema = new Schema {
 }
 
 UserSchema.plugin Timestampable
-UserSchema.plugin UniqueValidator
+UserSchema.plugin UniqueValidator, {
+  message: "An account allready exist for this {PATH}"
+}
 
 
 # Virtuals
