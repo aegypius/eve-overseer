@@ -1,6 +1,7 @@
-{Router} = require "express"
-mongoose = require "mongoose"
-account  = new Router
+{Router}              = require "express"
+mongoose              = require "mongoose"
+{ensureAuthenticated} = require "../../config/auth"
+account               = new Router
 
 account
 
@@ -19,20 +20,23 @@ account
 
   # Get current logged user profile
   # ===============================
+  .get ensureAuthenticated
   .get    '/', (req, res, next)->
-    res.status 400
-      .send "Unauthorized"
+    res.status 200
+      .send "OK"
 
   # Delete current logged user
   # ==========================
+  .get ensureAuthenticated
   .delete '/', (req, res, next)->
-    res.status 400
-      .send "Unauthorized"
+    res.status 200
+      .send "OK"
 
   # Update current logged user
   # ==========================
+  .get ensureAuthenticated
   .put    '/', (req, res, next)->
-    res.status 400
-      .send "Unauthorized"
+    res.status 200
+      .send "OK"
 
 module.exports = account

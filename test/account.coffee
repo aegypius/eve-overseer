@@ -6,69 +6,52 @@ before (done)->
     .then (api)->
       api.listen port, done
 
-describe "Account Management", ->
+describe "Account", ->
   agent = supertest.agent "http://localhost:#{port}"
+  describe "Registration", ->
+    it "should be able to register new users", (done)->
 
-  it "should be able to register new users", (done)->
-
-    account = {
-      email:    user.email
-      username: casual.username
-      password: "test"
-    }
-
-    agent
-      .post "/api/account"
-      .send account
-      .expect 200
-      .end (err, res)->
-        should.not.exist err
-
-        res.body.should.have.property "email",    account.email.toLowerCase()
-        res.body.should.have.property "username", account.username
-        res.body.should.have.property "avatar"
-
-        done()
-
-  it "should not be able to use an existing email while registering", (done)->
-
-    account = {
-      email:    user.email
-      username: casual.username
-      password: "123456789"
-    }
-
-    agent
-      .post "/api/account"
-      .send account
-      .expect 400
-      .end (err, res)->
-        should.not.exist err
-
-        res.body.should.have.property "name", "ValidationError"
-        should.exist res.body.errors.email
-        res.body.errors.email.should.have.property "message", "An account allready exist for this email"
-
-        done()
-
-  it "should be able to logout", (done)->
-
-    agent
-      .delete "/api/authorize"
-      .expect 200, ""
-      .end (err, res)->
-        should.not.exist err
-        done()
-
-    it "should return 401 if user is not authorized", (done)->
+      account = {
+        email:    user.email
+        username: casual.username
+        password: "test"
+      }
 
       agent
-        .get "/api/account"
-        .expect 401, ""
+        .post "/api/account"
+        .send account
+        .expect 200
         .end (err, res)->
           should.not.exist err
+
+          res.body.should.have.property "email",    account.email.toLowerCase()
+          res.body.should.have.property "username", account.username
+          res.body.should.have.property "avatar"
+
           done()
 
+    it "should not be able to use an existing email while registering", (done)->
+
+      account = {
+        email:    user.email
+        username: casual.username
+        password: "123456789"
+      }
+
+      agent
+        .post "/api/account"
+        .send account
+        .expect 400
+        .end (err, res)->
+          should.not.exist err
+
+          res.body.should.have.property "name", "ValidationError"
+          should.exist res.body.errors.email
+          res.body.errors.email.should.have.property "message", "An account allready exist for this email"
+
+          done()
+
+  describe "Login / Logout", ->
     it "should be able to login with valid username and password", (done)->
 
       agent
@@ -80,13 +63,32 @@ describe "Account Management", ->
         .expect 200
         .end (err, res)->
           should.not.exist err
-
           res.body.should.have.property "username"
           res.body.should.have.property "token"
           res.body.should.have.property "email", user.email.toLowerCase()
           res.body.should.have.property "avatar"
 
           done()
+
+    it "should be able to logout", (done)->
+
+      agent
+        .delete "/api/authorize"
+        .expect 200, ""
+        .end (err, res)->
+          should.not.exist err
+          done()
+
+      it "should return 401 if user is not authorized", (done)->
+
+        agent
+          .get "/api/account"
+          .expect 401, ""
+          .end (err, res)->
+            should.not.exist err
+            done()
+
+  describe "Profile", ->
 
     it "should be able to get current user card", (done)->
       agent
