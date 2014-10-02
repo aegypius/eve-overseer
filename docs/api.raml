@@ -5,12 +5,37 @@ baseUri:   http://example.com/api
 mediaType: application/json
 
 securitySchemes:
-  - http_basic:
-      description: Http Basic Authentification
-      type: "Basic Authentication"
-  - token:
-      description: Bearer Token Based Authentification
-      type: "x-bearer-token"
+  - oauth_2_0:
+      description: |
+        EVE Overseer supports OAuth 2.0 for authentificating all API requests
+      type: OAuth 2.0
+      describedBy:
+        headers:
+          Authorization:
+            description: |
+              Used to send a valid OAuth 2 access token. Do not use
+              with the "access_token" query string parameter.
+            type: string
+        queryParameters:
+          access_token:
+            description: |
+              Used to send a valid OAuth 2 access token. Do not use together with
+              the "Authorization" header
+            type: string
+        responses:
+          401:
+            description: |
+              Bad or expired token. This can happen if the user or Dropbox
+              revoked or expired an access token. To fix, you should re-
+              authenticate the user.
+          403:
+            description: |
+              Bad OAuth request (wrong consumer key, bad nonce, expired
+              timestamp...). Unfortunately, re-authenticating the user won't help here.
+      settings:
+        authorizationUri: http://example.com/oauth/token
+        accessTokenUri: http://example.com/oauth/token
+        authorizationGrants: [ code, token ]
 
 /account:
   post:
@@ -36,7 +61,7 @@ securitySchemes:
 
   get:
     description: Get current user info
-    securedBy: [ http_basic ]
+    securedBy: [ oauth_2_0 ]
     responses:
       200:
         body:
@@ -50,7 +75,7 @@ securitySchemes:
 
   put:
     description: Update user profile
-    securedBy: [ http_basic ]
+    securedBy: [ oauth_2_0 ]
     body:
       application/json:
         example: |
@@ -70,17 +95,17 @@ securitySchemes:
 
   delete:
     description: Delete permanently the user
-    securedBy: [ http_basic ]
+    securedBy: [ oauth_2_0 ]
 
 /apikeys:
 
   get:
     description: Get list of apikeys
-    securedBy: [ http_basic ]
+    securedBy: [ oauth_2_0 ]
 
   post:
     description: Add a new EVE Online ApiKey
-    securedBy: [ http_basic ]
+    securedBy: [ oauth_2_0 ]
     body:
       application/json:
         example: |
@@ -104,14 +129,14 @@ securitySchemes:
 
   delete:
     description: Delete an ApiKey
-    securedBy: [ http_basic ]
+    securedBy: [ oauth_2_0 ]
 
 
 /characters:
 
   get:
     description: Get a list of characters
-    securedBy: [ http_basic ]
+    securedBy: [ oauth_2_0 ]
     responses:
       200:
         body:
@@ -145,7 +170,7 @@ securitySchemes:
 
     get:
       description: Get detailed informations for a character
-      securedBy: [ http_basic ]
+      securedBy: [ oauth_2_0 ]
       responses:
         200:
           body:
@@ -219,7 +244,7 @@ securitySchemes:
 
       get:
         description: Get list of skills
-        securedBy: [ http_basic ]
+        securedBy: [ oauth_2_0 ]
         queryParameters:
           queued:
             description: Filter for skill queue only
