@@ -18,11 +18,6 @@ UserSchema = new Schema {
     require: true
     lowercase: true
   }
-  provider: {
-    type: String
-    default: 'local'
-  }
-  tokens: [{ type:String }]
   apikeys: [{
     type: Schema.ObjectId
     ref: 'ApiKey'
@@ -56,10 +51,9 @@ UserSchema
     @_password
 
 UserSchema
-  .virtual "card"
+  .virtual "profile"
   .get ()->
     {
-      "_id":      @_id
       "username": @username
       "email":    @email
       "avatar":   @gravatar(120)

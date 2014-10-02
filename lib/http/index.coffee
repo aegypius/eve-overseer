@@ -4,6 +4,7 @@ express      = require "express"
 bodyParser   = require "body-parser"
 morgan       = require "morgan"
 path         = require "path"
+oauth2server = require "oauth2-server"
 
 config       = require "../config"
 
@@ -14,25 +15,36 @@ app.set "port", process.env.PORT     or 3333
 app.set "env",  process.env.NODE_ENV or "development"
 app.set "root", path.join __dirname, "../../public"
 
-app.use morgan('short') unless process.env.NODE_ENV is "test"
+app.disable "x-powered-by" if "production" is app.get "env"
+
+app.use morgan('short') unless "test" is app.get "env"
 app.use bodyParser.json()
 app.use bodyParser.urlencoded { extended: true }
-app.use express.static app.get "root"
+# app.use express.static app.get "root"
 
-passport = config.passport
-app.use passport.initialize()
+# oAuth2 Authorization server
+# ===========================
+app.oauth = oauth2server {
+  model:  require "../models/oauth"
+  grants: ["password"]
+  debug: "production" isnt app.get "env"
+}
 
-if app.get("env") is "production"
-  app.disable "x-powered-by"
+app.all "/oauth/token", app.oauth.grant()
 
-app.use "/api", require "./api"
-(require "./routes")(app)
+app.get "/", app.oauth.authorise(), (req, res)->
+  res.send "Secret Area"
+
+app.use app.oauth.errorHandler()
+
+# app.use "/api", require "./api"
+# (require "./routes")(app)
 
 # Handles Error Pages
-app.use (req, res, next)->
-  if req.accepts("html") and /\/api\//.test(req.path) isnt true
-    return res.sendFile (app.get "root") + "/index.html"
-  return res.status(404).json { error: "Not Found" } if req.accepts "json"
-  return res.status(404).type("txt").send "Not Found"
+# app.use (req, res, next)->
+#   if req.accepts("html") and /\/api\//.test(req.path) isnt true
+#     return res.sendFile (app.get "root") + "/index.html"
+#   return res.status(404).json { error: "Not Found" } if req.accepts "json"
+#   return res.status(404).type("txt").send "Not Found"
 
 module.exports = app
