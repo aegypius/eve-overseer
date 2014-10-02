@@ -1,4 +1,4 @@
-pkg = require "../../package.json"
+pkg = require "../package.json"
 
 if process.env.NODE_ENV is "test"
   url = "mongodb://#{process.env.WERCKER_MONGODB_HOST}/#{pkg.name}-tests"
@@ -10,4 +10,5 @@ else
   url = "mongodb://localhost/#{pkg.name}"
 
 module.exports =
-  url: url
+  database:
+    url: url
