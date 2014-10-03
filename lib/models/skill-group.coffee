@@ -4,7 +4,7 @@ Timestampable   = require "mongoose-timestamp"
 UniqueValidator = require "mongoose-unique-validator"
 Q               = require "q"
 {EveClient}     = require "neow"
-{Skill}         = require "./skill"
+Skill           = mongoose.model "Skill"
 
 SkillGroupSchema  = new Schema {
   id: {
@@ -26,7 +26,7 @@ SkillGroupSchema.statics.synchronize = ->
     .then (result)->
       (value for id, value of result.skillGroups)
     .then (groups)->
-      SkillGroup = mongoose.model('SkillGroup')
+      SkillGroup = mongoose.model "SkillGroup"
       Q.all groups.map (group)->
         # Update skill group
         SkillGroup.findOneAndUpdate {
@@ -95,6 +95,7 @@ SkillGroupSchema.statics.synchronize = ->
                 }
                 .exec()
 
-module.exports =
-  SkillGroup:       mongoose.model('SkillGroup', SkillGroupSchema)
-  SkillGroupSchema: SkillGroupSchema
+
+mongoose.model "SkillGroup", SkillGroupSchema
+
+module.exports = SkillGroupSchema

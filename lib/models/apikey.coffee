@@ -3,9 +3,12 @@ mongoose        = require "mongoose"
 Timestampable   = require "mongoose-timestamp"
 UniqueValidator = require "mongoose-unique-validator"
 {EveClient}     = require "neow"
-User            = mongoose.model("User")
-{Character}     = require "./character"
+
+User            = mongoose.model "User"
+Character       = mongoose.model "Character"
+
 Q               = require "q"
+Q.longStackSupport = true
 
 ApiKeySchema  = new Schema {
   _user: {
@@ -38,7 +41,9 @@ ApiKeySchema  = new Schema {
 }
 
 ApiKeySchema.plugin Timestampable
-ApiKeySchema.plugin UniqueValidator
+ApiKeySchema.plugin UniqueValidator, {
+  message: "This ApiKey is already registered"
+}
 
 ApiKeySchema
   .path "keyId"
@@ -140,6 +145,6 @@ ApiKeySchema
         next()
 
 
-module.exports =
-  ApiKey:       mongoose.model("ApiKey", ApiKeySchema)
-  ApiKeySchema: ApiKeySchema
+mongoose.model "ApiKey", ApiKeySchema
+
+module.exports = ApiKeySchema

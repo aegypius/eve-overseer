@@ -1,10 +1,14 @@
 mongoose = require "mongoose"
 {Schema} = mongoose
-{User}   = require "./user"
 debug    = (require "debug")("overseer:oauth2")
 
+User     = mongoose.model "User"
+
 OAuthAccessTokensSchema = new Schema {
-  accessType: String
+  accessToken:
+    type: String
+    required: true
+    unique: true
   clientId: String
   userId: String
   expires: Date
@@ -75,11 +79,14 @@ module.exports =
     debug "get user id for username: #{username} with password"
 
     OAuthUsers.findOne {
-      username: username
-      password: password
+      email:    username.toLowerCase()
     }, (err, user)->
-      return callback err if err
-      callback null, user._id
+      callback err, false if err
+
+      if user.authentificate password
+        callback err, user._id
+      else
+        callback err, false
 
   saveRefreshToken: (token, clientId, expires, userId, callback)->
     debug "save refreshToken for #{userId} using #{clientId}"
@@ -97,3 +104,8 @@ module.exports =
     debug "get refreshToken #{refreshToken}"
 
     OAuthRefreshTokens.findOne { refreshToken : refreshToken }, callback
+
+  getUserFromClient: (clientId, clientSecret, callback)->
+    debug "request user for #{clientId}"
+
+    callback false, 'anon.'

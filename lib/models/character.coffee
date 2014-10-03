@@ -176,6 +176,6 @@ CharacterSchema
       .then =>
         @
 
-module.exports =
-  Character:       mongoose.model("Character", CharacterSchema)
-  CharacterSchema: CharacterSchema
+mongoose.model "Character", CharacterSchema
+
+module.exports = CharacterSchema
