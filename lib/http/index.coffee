@@ -26,15 +26,16 @@ app.use bodyParser.urlencoded { extended: true }
 # ===========================
 app.oauth = oauth2server {
   model:  require "../models/oauth"
-  grants: ["password"]
-  debug: "production" isnt app.get "env"
+  grants: [
+    "password"
+    "refresh_token"
+    "client_credentials"
+  ]
+  debug: "development" is app.get "env"
 }
 
 app.all "/oauth/token", app.oauth.grant()
-
-app.get "/", app.oauth.authorise(), (req, res)->
-  res.send "Secret Area"
-
+app.use "/api", app.oauth.authorise(), require "./routes"
 app.use app.oauth.errorHandler()
 
 # app.use "/api", require "./api"

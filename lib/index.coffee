@@ -4,8 +4,9 @@ pkg      = require "../package.json"
 
 debug "Booting %s in '%s' mode", pkg.name, process.env.NODE_ENV || 'dev'
 
-Q        = require "q"
-config   = require "./config"
+Q                  = require "q"
+config             = require "./config"
+Q.longStackSupport = true
 
 server = Q()
   .then ->
@@ -17,12 +18,10 @@ server = Q()
       mongoose.connection.db
         .on "open",  resolve
         .on "error", fail
-
   .then ->
+    {SkillGroup} = require "./models"
+  .then (SkillGroup)->
     debug "Upgrading database"
-
-    {SkillGroup} = require "./models/skill-group"
-
     return Q
       .when SkillGroup.synchronize
 

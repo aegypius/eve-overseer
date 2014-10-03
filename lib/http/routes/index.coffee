@@ -1,11 +1,7 @@
-{ensureAuthenticated} = require "../../config/auth"
+{Router} = require "express"
 
-module.exports = (app, passeport)->
+api = new Router
 
-  app.use "/api/authorize", require "./authorize"
-  app.use "/api/users",     require "./user"
-  app.use "/api/account",   require "./account"
+api.use "/account",   require "./account"
 
-  app.get "/logout", (req, res, next)->
-    req.logout()
-    next()
+module.exports = api
