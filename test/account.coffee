@@ -168,7 +168,7 @@ describe "Account", ->
 
     it "should be able to add a new apikey", (done)->
       agent
-        .post "/api/account/apikeys"
+        .post "/api/apikeys"
         .set Authorization: "Bearer #{token.access_token}"
         .send apiKey
         .expect 201, ""
@@ -178,7 +178,7 @@ describe "Account", ->
 
     it "should throw an error if the same apikey allready exists", (done)->
       agent
-        .post "/api/account/apikeys"
+        .post "/api/apikeys"
         .set Authorization: "Bearer #{token.access_token}"
         .send apiKey
         .expect 400
@@ -194,7 +194,7 @@ describe "Account", ->
 
     it "should be able to list apikeys", (done)->
       agent
-        .get "/api/account/apikeys"
+        .get "/api/apikeys"
         .set Authorization: "Bearer #{token.access_token}"
         .expect 200
         .end (err, res)->
@@ -216,7 +216,7 @@ describe "Account", ->
 
     it "should be able to get details of an apikey", (done)->
       agent
-        .get "/api/account/apikeys/#{apiKey.keyId}"
+        .get "/api/apikeys/#{apiKey.keyId}"
         .set Authorization: "Bearer #{token.access_token}"
         .expect 200
         .end (err, res)->
@@ -243,7 +243,7 @@ describe "Account", ->
 
     it "should be able to delete an apikey", (done)->
       agent
-        .delete "/api/account/apikeys/#{apiKey.keyId}"
+        .delete "/api/apikeys/#{apiKey.keyId}"
         .set Authorization: "Bearer #{token.access_token}"
         .expect 200, ""
         .end (err, res)->
