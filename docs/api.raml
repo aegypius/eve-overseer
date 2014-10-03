@@ -102,7 +102,19 @@ securitySchemes:
   get:
     description: Get list of apikeys
     securedBy: [ oauth_2_0 ]
-
+    responses:
+      200:
+        body:
+          example: |
+            [
+              {
+                "keyId":            "123456",
+                "verificationCode": "123456789123aze456sdf78989987sdfsdf",
+                "accessMask":        1234567,
+                "expires":           "2014-10-30 22:59:16",
+                "characters":        2
+              }
+            ]
   post:
     description: Add a new EVE Online ApiKey
     securedBy: [ oauth_2_0 ]
@@ -113,23 +125,37 @@ securitySchemes:
             "keyId": "123456",
             "verificationCode": "123456789123aze456sdf78989987sdfsdf",
           }
-    responses:
-      200:
-        body:
-          example: |
-            {
-              "keyId":            "123456",
-              "verificationCode": "123456789123aze456sdf78989987sdfsdf",
-              "accessMask":        1234567,
-              "characters":        [
-                "541dd56205631a938b8c967",
-                "541dd56205631a938b8ccd7"
-              ],
-            }
 
-  delete:
-    description: Delete an ApiKey
-    securedBy: [ oauth_2_0 ]
+  /{apiKeyId}:
+
+    get:
+      description: Get details about an apikey
+      securedBy:   [oauth_2_0]
+      responses:
+        200:
+          body:
+            example: |
+              {
+                "keyId":            "123456",
+                "verificationCode": "123456789123aze456sdf78989987sdfsdf",
+                "accessMask":        1234567,
+                "expires":           "2014-10-30 22:59:16",
+                "characters":        [
+                  {
+                    "id":   1365215823,
+                    "name": "Alexis Prey"
+                  }
+                ],
+                "account": {
+                  "logonMinutes": 220,
+                  "logonCount": 56,
+                  "paidUntil": "2014-12-31 23:56:00"
+                }
+              }
+
+    delete:
+      description: Delete an ApiKey
+      securedBy: [ oauth_2_0 ]
 
 
 /characters:
