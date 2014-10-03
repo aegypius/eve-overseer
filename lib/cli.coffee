@@ -8,7 +8,7 @@ program
   .command     "upgrade"
   .description "Upgrade static collections"
   .action ->
-    {SkillGroup} = require "./models/skill-group"
+    {SkillGroup} = require "./models"
 
     Q()
       .then ->
