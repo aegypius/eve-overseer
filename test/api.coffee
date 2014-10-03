@@ -1,5 +1,5 @@
 describe "EVE API", ->
-  agent = supertest.agent "http://localhost:#{port}"
+  agent = request "http://localhost:#{port}"
 
   describe "Characters", ->
     characterId = ""
