@@ -112,21 +112,22 @@ ApiKeySchema
   .pre "remove", (next)->
 
     User
-      .find { "apikeys": @_id }
+      .findOne { "apikeys": @_id }
       .exec()
-      .then (users)->
-        for user in users
-          user.apikeys = user.apikeys.filter (apikey)->
-            apikey is @_id
-          user.save()
+      .then (user)->
+        user.apikeys = user.apikeys.filter (apikey)->
+          apikey is @_id
+        user.save()
 
+      .then =>
+        Character
+          .find { apikey: @_id }
+          .exec()
+          .then (characters)->
+            Q.all characters.map (character)->
+              return Q.ninvoke character, "remove"
 
-    Character
-      .find { apikey: @_id }
-      .exec()
-      .then (characters)->
-        for character in characters
-          character.remove()
+      .then ->
         next()
 
   # Cascade create related documents

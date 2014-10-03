@@ -8,6 +8,8 @@ Q                  = require "q"
 config             = require "./config"
 Q.longStackSupport = true
 
+{SkillGroup} = require "./models"
+
 server = Q()
   .then ->
     debug "Connecting to database '#{config.database.url}'"
@@ -19,12 +21,8 @@ server = Q()
         .on "open",  resolve
         .on "error", fail
   .then ->
-    {SkillGroup} = require "./models"
-  .then (SkillGroup)->
     debug "Upgrading database"
-    return Q
-      .when SkillGroup.synchronize
-
+  .then SkillGroup.synchronize
   .then ->
     require "./http"
 

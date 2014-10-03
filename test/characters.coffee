@@ -1,32 +1,22 @@
 describe "EVE API", ->
   agent = request "http://localhost:#{port}"
 
+  before (done)->
+    agent
+      .post "/api/apikeys"
+      .set Authorization: "Bearer #{oauth.token.access_token}"
+      .send apiKey
+      .end (err, res)->
+        should.not.exist err
+        done()
+
+
   describe "Characters", ->
-    characterId = ""
-
-    # Login
-    before (done)->
-      agent
-        .post "/session"
-        .send { email: user.email, password: user.password }
-        .expect 200
-        .end (err, res)->
-          res.body.should.have.property._id
-          user_id = res.body._id
-          should.exist user_id
-
-          # Add an api key
-          agent
-            .post "/api/users/#{user_id}/apikey"
-            .send apiKey
-            .expect 200
-            .end (err, res)->
-              should.not.exist err
-              done()
-
+    characterId = null
     it "should be able to list all characters", (done)->
       agent
         .get "/api/characters"
+        .set Authorization: "Bearer #{oauth.token.access_token}"
         .expect 200
         .end (err, res)->
           should.not.exist err
@@ -44,6 +34,7 @@ describe "EVE API", ->
     it "should be able to get character info", (done)->
       agent
         .get "/api/characters/#{characterId}"
+        .set Authorization: "Bearer #{oauth.token.access_token}"
         .expect 200
         .end (err, res)->
           should.not.exist err
@@ -70,6 +61,7 @@ describe "EVE API", ->
 
         agent
           .get "/api/characters/#{characterId}/skills"
+          .set Authorization: "Bearer #{oauth.token.access_token}"
           .expect 200
           .end (err, res)->
             should.not.exist err

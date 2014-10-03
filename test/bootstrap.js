@@ -9,7 +9,7 @@ global.mongoose  = mongoose = require("mongoose");
 global.casual    = casual = require("casual");
 global.debug     = debug = require("debug")('overseer:test');
 global.port      = process.env.PORT || 3333;
-
+global.server    = require("..").server;
 global.oauth = {
   clientId:     "test-client",
   clientSecret: "test-client-secret"

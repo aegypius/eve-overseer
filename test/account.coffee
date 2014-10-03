@@ -1,12 +1,11 @@
  # coffeelint: disable=max_line_length
 
-{server} = require "../lib"
-
 before (done)->
   server
     .then (http)->
       OAuthClient = mongoose.model "OAuthClients"
       ApiKey      = mongoose.model "ApiKey"
+      Character   = mongoose.model "Character"
 
       OAuthClient.remove().exec()
         .then ->
@@ -17,15 +16,16 @@ before (done)->
           }
         .then ->
           ApiKey.remove().exec()
-            .then ->
-              return http
+          Character.remove().exec()
+        .then ->
+          return http
 
     .then (http)->
       http.listen port, done
 
+
 describe "Account", ->
   agent = request "http://localhost:#{port}"
-  token = {}
 
   describe "Registration", ->
     it "should be able to get an access_token to register new users", (done)->
@@ -44,7 +44,7 @@ describe "Account", ->
           res.body.should.have.property "access_token"
           res.body.should.have.property "expires_in"
           res.body.should.have.property "refresh_token"
-          token = res.body
+          oauth.token = res.body
           done()
 
     it "should be able to register new users", (done)->
@@ -57,7 +57,7 @@ describe "Account", ->
 
       agent
         .post "/api/account"
-        .set Authorization: "Bearer #{token.access_token}"
+        .set Authorization: "Bearer #{oauth.token.access_token}"
         .send account
         .expect 201, ""
         .end (err, res)->
@@ -74,7 +74,7 @@ describe "Account", ->
 
       agent
         .post "/api/account"
-        .set Authorization: "Bearer #{token.access_token}"
+        .set Authorization: "Bearer #{oauth.token.access_token}"
         .send account
         .expect 400
         .end (err, res)->
@@ -106,7 +106,7 @@ describe "Account", ->
           res.body.should.have.property "access_token"
           res.body.should.have.property "expires_in"
           res.body.should.have.property "refresh_token"
-          token = res.body
+          oauth.token = res.body
           done()
 
   describe "Profile", ->
@@ -114,7 +114,7 @@ describe "Account", ->
     it "should be able to get current user card", (done)->
       agent
         .get "/api/account"
-        .set Authorization: "Bearer #{token.access_token}"
+        .set Authorization: "Bearer #{oauth.token.access_token}"
         .expect 200
         .end (err, res)->
           should.not.exist err
@@ -131,7 +131,7 @@ describe "Account", ->
 
       agent
         .put "/api/account"
-        .set Authorization: "Bearer #{token.access_token}"
+        .set Authorization: "Bearer #{oauth.token.access_token}"
         .send { username: user.username }
         .expect 202, ""
         .end (err, res)->
@@ -141,7 +141,7 @@ describe "Account", ->
     it "should be able to update its password", (done)->
       agent
         .put "/api/account"
-        .set Authorization: "Bearer #{token.access_token}"
+        .set Authorization: "Bearer #{oauth.token.access_token}"
         .send { password: user.password }
         .expect 202, ""
         .end (err, res)->
@@ -151,7 +151,7 @@ describe "Account", ->
     it "should not be able to update its email", (done)->
       agent
         .put "/api/account"
-        .set Authorization: "Bearer #{token.access_token}"
+        .set Authorization: "Bearer #{oauth.token.access_token}"
         .send { email: casual.email }
         .expect 400
         .end (err, res)->
@@ -169,7 +169,7 @@ describe "Account", ->
     it "should be able to add a new apikey", (done)->
       agent
         .post "/api/apikeys"
-        .set Authorization: "Bearer #{token.access_token}"
+        .set Authorization: "Bearer #{oauth.token.access_token}"
         .send apiKey
         .expect 201, ""
         .end (err, res)->
@@ -179,7 +179,7 @@ describe "Account", ->
     it "should throw an error if the same apikey allready exists", (done)->
       agent
         .post "/api/apikeys"
-        .set Authorization: "Bearer #{token.access_token}"
+        .set Authorization: "Bearer #{oauth.token.access_token}"
         .send apiKey
         .expect 400
         .end (err, res)->
@@ -195,7 +195,7 @@ describe "Account", ->
     it "should be able to list apikeys", (done)->
       agent
         .get "/api/apikeys"
-        .set Authorization: "Bearer #{token.access_token}"
+        .set Authorization: "Bearer #{oauth.token.access_token}"
         .expect 200
         .end (err, res)->
           should.not.exist err
@@ -217,7 +217,7 @@ describe "Account", ->
     it "should be able to get details of an apikey", (done)->
       agent
         .get "/api/apikeys/#{apiKey.keyId}"
-        .set Authorization: "Bearer #{token.access_token}"
+        .set Authorization: "Bearer #{oauth.token.access_token}"
         .expect 200
         .end (err, res)->
           should.not.exist err
@@ -244,8 +244,20 @@ describe "Account", ->
     it "should be able to delete an apikey", (done)->
       agent
         .delete "/api/apikeys/#{apiKey.keyId}"
-        .set Authorization: "Bearer #{token.access_token}"
+        .set Authorization: "Bearer #{oauth.token.access_token}"
         .expect 200, ""
         .end (err, res)->
           should.not.exist err
+          done()
+
+    it "should not remain some orphaned characters", (done)->
+
+      Characters = mongoose.model "Character"
+      Characters
+        .find()
+        .populate('apikey')
+        .exec (err, characters)->
+          should.not.exist err
+          characters.should.be.an.array
+          characters.should.have.length 0
           done()

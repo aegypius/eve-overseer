@@ -81,8 +81,12 @@ apikeys
           res.status 404
           res.end()
         else
-          apikey.remove().then ->
-            res.status 200
-            res.end()
+          apikey.remove (err)->
+            if err
+              res.status 400
+              res.send err
+            else
+              res.status 200
+              res.end()
 
 module.exports = apikeys
