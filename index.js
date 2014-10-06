@@ -1,5 +1,7 @@
 if ('production' === process.env.NODE_ENV) {
-  require("newrelic");
+  try {
+    require("newrelic");
+  } catch (e) {}
 }
 
 require('coffee-script/register');
