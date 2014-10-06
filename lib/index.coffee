@@ -1,14 +1,14 @@
 (require "dotenv").load()
 debug    = (require "debug")('overseer:bootstrap')
 pkg      = require "../package.json"
+env      = process.env.NODE_ENV || 'development'
 
-debug "Booting %s in '%s' mode", pkg.name, process.env.NODE_ENV || 'dev'
+debug "Booting %s in '%s' mode", pkg.name, env
 
 Q                  = require "q"
 config             = require "./config"
 Q.longStackSupport = true
-
-{SkillGroup} = require "./models"
+models             = require "./models"
 
 server = Q()
   .then ->
@@ -20,9 +20,16 @@ server = Q()
       mongoose.connection.db
         .on "open",  resolve
         .on "error", fail
+
   .then ->
-    debug "Upgrading database"
-  .then SkillGroup.synchronize
+    if "production" is env
+      {SkillGroup} = models
+      debug "Loading : Skill Tree"
+      SkillGroup.synchronize()
+
+  .then ->
+    debug "Upgrade completed" if "production" is env
+
   .then ->
     require "./http"
 
