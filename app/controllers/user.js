@@ -1,6 +1,6 @@
 angular
   .module('eve-overseer')
-  .controller('LoginCtrl', ['$scope', 'md5', 'Auth', '$location', function ($scope, md5, Auth, $location) {
+  .controller('LoginCtrl', ['$scope', 'md5', 'AccessToken', '$location', function ($scope, md5, AccessToken, $location) {
     var gt;
     $scope.user     = {};
     $scope.errors   = {};
@@ -15,7 +15,7 @@ angular
     });
 
     $scope.login = function (form) {
-      Auth.login('password', {
+      AccessToken.get({
         'email'    : $scope.user.email,
         'password' : $scope.user.password
       }, function (err) {
@@ -36,7 +36,7 @@ angular
     };
 
   }])
-  .controller('SignupCtrl', ['$scope', 'md5', 'Auth', '$location', function ($scope, md5, Auth, $location) {
+  .controller('SignupCtrl', ['$scope', 'md5', 'User', '$location', function ($scope, md5, User, $location) {
     var gt;
     $scope.user     = {};
     $scope.errors   = {};
@@ -51,7 +51,7 @@ angular
     });
 
     $scope.register = function (form) {
-      Auth.createUser({
+      User.register({
           email: $scope.user.email,
           username: $scope.user.username,
           password: $scope.user.password

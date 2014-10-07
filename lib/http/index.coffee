@@ -38,13 +38,13 @@ app.all "/oauth/token", app.oauth.grant()
 app.use "/api", app.oauth.authorise(), require "./routes"
 app.use express.static publicFiles
 
-app.use app.oauth.errorHandler
+app.use app.oauth.errorHandler()
 
 # Handles Error Pages
-# app.use (req, res, next)->
-#   if req.accepts("html") and /\/api\//.test(req.path) isnt true
-#     return res.sendFile (app.get "root") + "/index.html"
-#   return res.status(404).json { error: "Not Found" } if req.accepts "json"
-#   return res.status(404).type("txt").send "Not Found"
+app.use (req, res, next)->
+  if req.accepts("html") and /\/api\//.test(req.path) isnt true
+    return res.sendFile path.join publicFiles, "/index.html"
+  return res.status(404).json { error: "Not Found" } if req.accepts "json"
+  return res.status(404).type("txt").send "Not Found"
 
 module.exports = app
