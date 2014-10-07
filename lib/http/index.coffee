@@ -11,16 +11,16 @@ config       = require "../config"
 # Setup server
 app     = express()
 
+publicFiles = path.join __dirname, "../../public"
+
 app.set "port", process.env.PORT     or 3333
 app.set "env",  process.env.NODE_ENV or "development"
-app.set "root", path.join __dirname, "../../public"
 
 app.disable "x-powered-by" if "production" is app.get "env"
 
 app.use morgan('short') unless "test" is app.get "env"
 app.use bodyParser.json()
 app.use bodyParser.urlencoded { extended: true }
-# app.use express.static app.get "root"
 
 # oAuth2 Authorization server
 # ===========================
@@ -36,10 +36,9 @@ app.oauth = oauth2server {
 
 app.all "/oauth/token", app.oauth.grant()
 app.use "/api", app.oauth.authorise(), require "./routes"
-app.use app.oauth.errorHandler()
+app.use express.static publicFiles
 
-# app.use "/api", require "./api"
-# (require "./routes")(app)
+app.use app.oauth.errorHandler
 
 # Handles Error Pages
 # app.use (req, res, next)->
