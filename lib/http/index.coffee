@@ -5,6 +5,7 @@ bodyParser   = require "body-parser"
 morgan       = require "morgan"
 path         = require "path"
 oauth2server = require "oauth2-server"
+debug        = (require "debug")("overseer:http")
 
 config       = require "../config"
 
@@ -32,13 +33,23 @@ app.oauth = oauth2server {
     "client_credentials"
   ]
   debug: "development" is app.get "env"
+  passthroughErrors: true
 }
 
 app.all "/oauth/token", app.oauth.grant()
 app.use "/api", app.oauth.authorise(), require "./routes"
 app.use express.static publicFiles
 
-app.use app.oauth.errorHandler()
+# Handles OAuth2 Errors
+app.use (err, req, res, next)->
+  next() unless err.name is 'OAuth2Error'
+
+  res.status 401
+  res.send {
+    status: "failure"
+    error:  "Unauthorized"
+  }
+  debug "#{err.name} : #{err.message}"
 
 # Handles Error Pages
 app.use (req, res, next)->

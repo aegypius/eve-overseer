@@ -13,6 +13,6 @@ module.exports = overseer;
 
 if (require.main === module) {
   overseer.startServer(port, "public", function () {
-    require('debug')('overseer:http')(("Server listening on http://localhost:" + port));
+    require('debug')('overseer:server')(("Server listening on http://localhost:" + port));
   });
 }
