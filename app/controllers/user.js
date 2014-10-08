@@ -1,6 +1,6 @@
 angular
   .module('eve-overseer')
-  .controller('LoginCtrl', ['$scope', 'md5', 'AccessToken', '$location', function ($scope, md5, AccessToken, $location) {
+  .controller('LoginCtrl', ['$scope', 'md5', 'User', '$location', function ($scope, md5, User, $location) {
     var gt;
     $scope.user     = {};
     $scope.errors   = {};
@@ -15,24 +15,23 @@ angular
     });
 
     $scope.login = function (form) {
-      AccessToken.get({
-        'email'    : $scope.user.email,
-        'password' : $scope.user.password
-      }, function (err) {
-        $scope.errors = {};
+      User
+        .login($scope.user.email, $scope.user.password)
+        .then(function (err, user) {
+          $scope.errors = {};
 
-        if (!err) {
-          $location.path('/');
-        } else {
-          angular.forEach(err.errors, function (error, field) {
-            if (form[field] !== undefined) {
-              form[field].$setValidity('mongoose', false);
-              $scope.errors[field] = error;
-            }
-          });
-          $scope.errors.other = err.message;
-        }
-      });
+          if (!err) {
+            $location.path('/');
+          } else {
+            angular.forEach(err.errors, function (error, field) {
+              if (form[field] !== undefined) {
+                form[field].$setValidity('mongoose', false);
+                $scope.errors[field] = error;
+              }
+            });
+            $scope.errors.other = err.message;
+          }
+        });
     };
 
   }])
@@ -52,7 +51,7 @@ angular
 
     $scope.register = function (form) {
       User.register({
-          email: $scope.user.email,
+          email:    $scope.user.email,
           username: $scope.user.username,
           password: $scope.user.password
         },

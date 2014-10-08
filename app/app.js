@@ -2,7 +2,7 @@ var app = angular.module('eve-overseer', [
   'ngRoute',
   'ngResource',
   'ngSanitize',
-  'oauth2-client',
+  'oauth2',
 ]);
 
 app
@@ -33,7 +33,7 @@ app
     $locationProvider.html5Mode(true);
   }])
   .run(['$rootScope', '$location', function ($rootScope, $location) {
-    $rootScope.$on('event:oauth2-invalid-request' , function () {
+    $rootScope.$on('oauth2:unauthorized' , function () {
       $location.path('/login');
     });
   }])
