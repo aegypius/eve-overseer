@@ -40,7 +40,9 @@ app.all "/oauth/token", app.oauth.grant()
 app.use "/api", app.oauth.authorise(), require "./routes"
 app.use express.static publicFiles
 
-# Handles OAuth2 Errors
+app.use app.oauth.errorHandler()
+
+# Handles Non-Grant OAuth2 Errors
 app.use (err, req, res, next)->
   next() unless err.name is 'OAuth2Error'
 
