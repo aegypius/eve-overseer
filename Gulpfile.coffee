@@ -1,3 +1,4 @@
+(require "dotenv").load()
 gulp       = require "gulp"
 bowerfiles = require "main-bower-files"
 concat     = require "gulp-concat"
@@ -9,6 +10,7 @@ sourcemaps = require "gulp-sourcemaps"
 rename     = require "gulp-rename"
 gulpif     = require "gulp-if"
 del        = require "del"
+replace    = require "gulp-replace"
 
 lr         = (require "tiny-lr")()
 refresh    = require "gulp-livereload"
@@ -48,7 +50,7 @@ gulp.task "less:compile", ["less:configure"],  ->
     .pipe sourcemaps.init()
     .pipe concat "app.less"
     .pipe less()
-    .pipe sourcemaps.write "./"
+    .pipe sourcemaps.write()
     .pipe gulp.dest "public/"
     .pipe gulpif env is "development", refresh lr
 
@@ -65,8 +67,13 @@ gulp.task "javascript:compile", ["bower"], ->
     .pipe sourcemaps.init()
     .pipe annotate()
     .pipe concat "app.js"
+
+    # Replaces ${ENV:VARNAME} pattern with VARNAME environment var
+    .pipe replace /\$\{ENV:(\b.*\b)\}/g, (match, varname)->
+      return process.env[varname] or ''
+
     .pipe uglify()
-    .pipe sourcemaps.write "./"
+    .pipe sourcemaps.write()
     .pipe gulp.dest "public/"
     .pipe gulpif env is "development", refresh lr
 

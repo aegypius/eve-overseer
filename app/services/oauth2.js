@@ -1,7 +1,16 @@
 angular
   .module('oauth2', [])
-
-    .factory('User', ['$http', function ($http) {
+    .factory('Client', function () {
+      return {
+        getId: function () {
+          return '${ENV:CLIENT_ID}';
+        },
+        getSecret: function() {
+          return '${ENV:CLIENT_SECRET}';
+        }
+      };
+    })
+    .factory('User', ['$http', 'Client', function ($http, Client) {
       return {
         login: function(username, password) {
           return $http
