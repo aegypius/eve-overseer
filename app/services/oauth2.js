@@ -18,14 +18,37 @@ angular
               grant_type:    'password',
               username:      username,
               password:      password,
-              client_id:     'azerty',
-              client_secret: 'azerty'
+              client_id:     Client.getId(),
+              client_secret: Client.getSecret()
             }), {
               headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
               }
-            }).then(function (err, response) {
-              console.log(err, response);
+            }).then(function (response) {
+              console.log(response);
+            });
+        },
+        register: function (data) {
+          return $http
+            .post('/oauth/token', $.param({
+              grant_type: 'client_credentials',
+              client_id:     Client.getId(),
+              client_secret: Client.getSecret()
+            }), {
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+              }
+            })
+            .then(function (response)  {
+              return response.data;
+            })
+            .then(function(token) {
+              return $http
+                .post("/api/account", data , {
+                  headers: {
+                    'Authorization': 'Bearer ' + token.access_token
+                  }
+                });
             });
         }
       };
