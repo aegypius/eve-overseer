@@ -45,11 +45,11 @@ app.use app.oauth.errorHandler()
 # Handles Non-Grant OAuth2 Errors
 app.use (err, req, res, next)->
   next() unless err.name is 'OAuth2Error'
-
   res.status 401
   res.send {
     status: "failure"
-    error:  "Unauthorized"
+    code:   err.code
+    error:  err.message
   }
   debug "#{err.name} : #{err.message}"
 

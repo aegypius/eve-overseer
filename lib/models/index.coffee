@@ -1,6 +1,7 @@
 mongoose = require "mongoose"
 
 require "./user"
+require "./oauth"
 require "./character"
 require "./apikey"
 require "./skill"

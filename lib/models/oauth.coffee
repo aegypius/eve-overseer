@@ -82,11 +82,12 @@ module.exports =
       email:    username.toLowerCase()
     }, (err, user)->
       callback err, false if err
-
-      if user.authentificate password
-        callback err, user._id
-      else
-        callback err, false
+      callback null, false unless user
+      if user
+        if user.authentificate password
+          callback err, user._id
+        else
+          callback err, false
 
   saveRefreshToken: (token, clientId, expires, userId, callback)->
     debug "save refreshToken for #{userId} using #{clientId}"
