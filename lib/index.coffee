@@ -9,6 +9,7 @@ Q                  = require "q"
 config             = require "./config"
 Q.longStackSupport = true
 models             = require "./models"
+commands           = require "./commands"
 
 server = Q()
   .then ->
@@ -23,12 +24,7 @@ server = Q()
 
   .then ->
     if "production" is env
-      {SkillGroup} = models
-      debug "Loading : Skill Tree"
-      SkillGroup.synchronize()
-
-  .then ->
-    debug "Upgrade completed" if "production" is env
+      return commands.database.upgrade()
 
   .then ->
     require "./http"

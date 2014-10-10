@@ -2,8 +2,9 @@ program  = require "commander"
 mongoose = require "mongoose"
 pkg      = require "../package.json"
 Q        = require "q"
-models   = require "./models"
 debug    = (require "debug")("overseer:cli")
+commands = require "./commands"
+
 
 program
   .version     pkg.version
@@ -18,10 +19,7 @@ program
       .then (config)->
         mongoose.connect config.database.url
 
-      .then ->
-        {SkillGroup} = models
-        debug "Loading : Skill Tree"
-        SkillGroup.synchronize()
+      .then commands.database.upgrade
 
       .fail (err)->
         throw err
