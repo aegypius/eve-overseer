@@ -72,7 +72,9 @@ CharacterSchema
     small:   "http://image.eveonline.com/Character/#{@id}_64.jpg"
 
 CharacterSchema
-  .method "getSkillTree", ->
+  .method "getSkillTree", (options)->
+    {@queued} = options or { queued: false }
+
     api = @apikey.getClient()
     return api.fetch "char:CharacterSheet", {
       characterID: @id

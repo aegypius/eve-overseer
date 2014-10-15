@@ -1,5 +1,7 @@
 angular
-  .module('oauth2', [])
+  .module('oauth2', [
+    'ngStorage'
+  ])
     .factory('Client', function () {
       return {
         getId: function () {
@@ -10,7 +12,23 @@ angular
         }
       };
     })
-    .factory('User', ['$http', 'Client', function ($http, Client) {
+    .factory('AuthToken', ['$sessionStorage', function ($sessionStorage) {
+      return {
+        set: function (token) {
+          var data = {
+            token_type    : token.token_type,
+            access_token  : token.access_token,
+            refresh_token : token.refresh_token,
+            expires       : moment().add(token.expires_in, 'seconds').valueOf()
+          };
+          $sessionStorage.token = data;
+        },
+        get: function () {
+          return $sessionStorage.token;
+        }
+      };
+    }])
+    .factory('User', ['$http', 'Client', 'AuthToken', '$sessionStorage', function ($http, Client, AuthToken, $sessionStorage) {
       return {
         login: function(username, password) {
           return $http
@@ -25,7 +43,13 @@ angular
                 'Content-Type': 'application/x-www-form-urlencoded'
               }
             }).then(function (response) {
-              console.log(response);
+              AuthToken.set(response.data);
+            }).then(function() {
+              $http
+                .get('/api/account')
+                .then(function (response) {
+                  $sessionStorage.user = response.data;
+                });
             });
         },
         register: function (data) {
@@ -50,6 +74,9 @@ angular
                   }
                 });
             });
+        },
+        get: function () {
+          return $sessionStorage.user;
         }
       };
     }])
@@ -60,15 +87,17 @@ angular
       $httpProvider.interceptors.push('ExpiredInterceptor');
     }])
 
-    .factory('AuthorizationInterceptor', function () {
+    .factory('AuthorizationInterceptor', ['$sessionStorage', function ($sessionStorage) {
       return {
         request: function (config) {
           config.headers = config.headers || {};
-
+          if ($sessionStorage.token) {
+            config.headers.Authorization = 'Bearer ' + $sessionStorage.token.access_token;
+          }
           return config;
         },
       };
-    })
+    }])
 
     .factory('UnauthorizedInterceptor', ['$rootScope', '$q', function ($rootScope, $q) {
 

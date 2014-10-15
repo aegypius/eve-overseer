@@ -32,9 +32,13 @@ app
 
     $locationProvider.html5Mode(true);
   }])
-  .run(['$rootScope', '$location', function ($rootScope, $location) {
+  .run(['$rootScope', '$location', '$sessionStorage', function ($rootScope, $location, $sessionStorage) {
     $rootScope.$on('oauth2:unauthorized' , function () {
-      $location.path('/login');
+      if (['/login', '/signup'].indexOf($location.path()) === -1 ) {
+        $location.path('/login');
+      }
     });
+
+    $rootScope.$storage = $sessionStorage;
   }])
 ;

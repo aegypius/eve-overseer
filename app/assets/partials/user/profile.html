@@ -132,7 +132,7 @@
                   <td>{{ key.verificationCode }}</td>
                   <td>{{ key.characters.length }}</td>
                   <td>{{ key.accessMask }}</td>
-                  <td><button class="btn btn-danger pull-right" ng-click="removeApiKey(key._id)"><span class="glyphicon glyphicon-trash"></span></button></td>
+                  <td><button class="btn btn-danger pull-right" ng-click="removeApiKey(key.keyId)"><span class="glyphicon glyphicon-trash"></span></button></td>
                 </tr>
                 <tr ng-if="apikeys.length == 0">
                   <td colspan="3"><em>No API Key defined</em></td>
