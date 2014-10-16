@@ -75,8 +75,15 @@ angular
                 });
             });
         },
+        logout: function () {
+          delete $sessionStorage.token;
+          delete $sessionStorage.user;
+        },
         get: function () {
           return $sessionStorage.user;
+        },
+        update: function (data) {
+          return $http.put('/api/account', data);
         }
       };
     }])

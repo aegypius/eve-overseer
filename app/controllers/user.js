@@ -82,9 +82,22 @@ angular
 
     $scope.user = User.get();
 
+    $scope.errors = {};
+
     ApiKey.query(function (apikeys) {
       $scope.apikeys = apikeys;
     });
+
+    $scope.update = function (form) {
+      form.confirmation.$setValidity('match', (form.password !== form.confirmation));
+
+      // Updates userprofile
+      if (form.$valid) {
+        User.update({
+          password: $scope.password
+        });
+      }
+    };
 
     $scope.addApiKey = function (form) {
       // Add a new API Key to the user

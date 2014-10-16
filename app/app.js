@@ -32,7 +32,7 @@ app
 
     $locationProvider.html5Mode(true);
   }])
-  .run(['$rootScope', '$location', '$sessionStorage', function ($rootScope, $location, $sessionStorage) {
+  .run(['$rootScope', '$location', '$sessionStorage', 'User', function ($rootScope, $location, $sessionStorage, User) {
     $rootScope.$on('oauth2:unauthorized' , function () {
       if (['/login', '/signup'].indexOf($location.path()) === -1 ) {
         $location.path('/login');
@@ -40,5 +40,9 @@ app
     });
 
     $rootScope.$storage = $sessionStorage;
+    $rootScope.logout = function () {
+      User.logout();
+      $location.path('/login');
+    };
   }])
 ;
