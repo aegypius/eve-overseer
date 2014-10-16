@@ -2,7 +2,7 @@
 
   <div class="row" ng-repeat="skill in skills track by $index | orderBy:position ">
     <div class="col-xs-3">
-        {{ skill.name }} {{ skill.level | roman_number }}
+        <strong>{{ skill.name }} {{ skill.level | roman_number }}</strong>
     </div>
 
     <div class="col-xs-7">
@@ -14,7 +14,7 @@
       </div>
     </div>
     <div class="col-xs-2">
-      <abbr title="{{ skill.timeRange.end | utc | date : 'MMM d, y HH:mm:ss' }}">{{ skill.timeRange.end | utc | countdown }}</a>
+      <abbr title="{{ skill.time.end | utc | date : 'MMM d, y HH:mm:ss' }}">{{ skill.time.end | utc | countdown }}</a>
     </div>
 
   </div>

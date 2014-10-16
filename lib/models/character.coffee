@@ -88,6 +88,27 @@ CharacterSchema
           points: skill.skillpoints
         }
       return skills
+    .then (skills)=>
+      api.fetch "char:SkillQueue", {
+        characterID: @id
+      }
+      .then (result)->
+        for position, skill of result.skillqueue
+          skills[skill.typeID].queued = skills[skill.typeID].queued or []
+          skills[skill.typeID].queued.push {
+            position: parseInt skill.queuePosition, 10
+            level:    parseInt skill.level, 10
+            points:   {
+              start: parseInt skill.startSP, 10
+              end:   parseInt skill.endSP, 10
+            }
+            time:   {
+              start: skill.startTime
+              end:   skill.endTime
+            }
+          }
+        return skills
+
     .then (skills)->
       ids = (parseInt skill.id for id, skill of skills)
       mongoose.model('SkillGroup')
@@ -116,10 +137,22 @@ CharacterSchema
                     rank:        skill.rank
                     level:       skills[skill.id].level
                     points:      skills[skill.id].points
+                    queued:      skills[skill.id].queued or false
                   }
                 }
             .filter (group)->
               return group.skills.length > 0
+    .then (skills)=>
+      if not @queued
+        return skills
+      else
+        return skills
+          .map (group)->
+            group.skills = group.skills.filter (skill)->
+              return skill.queued isnt false
+            return group
+          .filter (group)->
+            return group.skills.length > 0
 
 CharacterSchema
   .method "refresh", ->

@@ -288,18 +288,45 @@ securitySchemes:
                       {
                         "id":          1235,
                         "name":        "Mechanics",
-                        "description": "Skill at maintaining the mechanical components and structural integrity of a spaceship. 5% bonus to structure hit points per skill level."
-                        "rank":        1
-                        "level":       5
-                        "points":      123485
+                        "description": "Skill at maintaining the mechanical components and structural integrity of a spaceship. 5% bonus to structure hit points per skill level.",
+                        "rank":        1,
+                        "level":       5,
+                        "points":      123485,
+                        "queued":      false,
                       },
                       {
-                        "id":          2345
-                        "name":        "Explosive Armor Compensation"
-                        "description": "5% bonus to explosive resistance per level for Armor Coatings and Energized Platings"
-                        "rank":        2
-                        "level":       3
-                        "points":      1234
+                        "id":          2345,
+                        "name":        "Explosive Armor Compensation",
+                        "description": "5% bonus to explosive resistance per level for Armor Coatings and Energized Platings",
+                        "rank":        2,
+                        "level":       3,
+                        "points":      1234,
+                        "queued": [
+                          {
+                            "position" : 0,
+                            "level"    : 4,
+                            "points": {
+                              "start": 125662,
+                              "end":   170000,
+                            }
+                            "time": {
+                              "start": "2014-10-10 19:08:58",
+                              "end":   "2014-10-22 23:51:03",
+                            }
+                          },
+                          {
+                            "position" : 1,
+                            "level"    : 5,
+                            "points": {
+                              "start": 170000,
+                              "end":   320000,
+                            }
+                            "time": {
+                              "start": "2014-10-22 23:51:03",
+                              "end":   "2014-11-22 22:50:32",
+                            }
+                          }
+                        ]
                       }
                     ]
                   }

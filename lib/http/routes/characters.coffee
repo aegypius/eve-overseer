@@ -64,64 +64,13 @@ characters
   # Returns character skill queue
   # =============================
   .get '/:characterId/skills', (req, res, next)->
+
     req.character
-      .getSkillTree()
+      .getSkillTree {
+        queued: req.query.queued or false
+      }
       .then (tree)->
         res.status 200
         res.json tree
-
-
-#    router.route '/:id/skills/queue'
-#      .get (req, res, next)->
-#        Character
-#          .findOne  { id: req.params.id }
-#          .populate "apikey"
-#          .exec (err, character)->
-#            api = character.apikey.getClient()
-#
-#            api
-#              .fetch 'char:SkillQueue', {
-#                characterID: character.id
-#              }
-#              .then (result)->
-#                skillqueue = []
-#                for id, job of result.skillqueue
-#                  skillqueue.push job
-#
-#                ids = (job.typeID for id, job of skillqueue)
-#
-#                api.fetch 'eve:TypeName', {
-#                  ids: ids
-#                }
-#                .then (result)->
-#                  types = result.types
-#                  for id, job of skillqueue
-#                    job.typeName = v.typeName for k, v of types when k is job.typeID
-#                  return skillqueue
-#
-#              .then (skillqueue)->
-#                skillqueue.map (skill)->
-#                  {
-#                    id:       skill.typeID
-#                    name:     skill.typeName
-#                    level:    skill.level
-#                    position: skill.queuePosition
-#                    skillPoints: {
-#                      start: skill.startSP
-#                      end:   skill.endSP
-#                    }
-#                    timeRange: {
-#                      start: skill.startTime
-#                      end:   skill.endTime
-#                    }
-#                  }
-#
-#              .fail (err)->
-#                console.error err
-#                next()
-#
-#              .done (skillqueue)->
-#                res.json skillqueue
-
 
 module.exports = characters
