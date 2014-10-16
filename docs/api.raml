@@ -3,16 +3,43 @@ title:     EVE Overseer
 version:   v1
 baseUri:   http://example.com/api
 mediaType: application/json
+
 securitySchemes:
-  - http_basic:
-      description: Http Basic Authentification
-      type: "Basic Authentication"
+  - oauth_2_0:
+      description: |
+        EVE Overseer supports OAuth 2.0 for authentificating all API requests
+      type: OAuth 2.0
+      describedBy:
+        headers:
+          Authorization:
+            description: |
+              Used to send a valid OAuth 2 access token. Do not use
+              with the "access_token" query string parameter.
+            type: string
+        queryParameters:
+          access_token:
+            description: |
+              Used to send a valid OAuth 2 access token. Do not use together with
+              the "Authorization" header
+            type: string
+        responses:
+          401:
+            description: |
+              Bad or expired token. This can happen if the user or Dropbox
+              revoked or expired an access token. To fix, you should re-
+              authenticate the user.
+          403:
+            description: |
+              Bad OAuth request (wrong consumer key, bad nonce, expired
+              timestamp...). Unfortunately, re-authenticating the user won't help here.
+      settings:
+        authorizationUri: http://example.com/oauth/token
+        accessTokenUri: http://example.com/oauth/token
+        authorizationGrants: [ code, token ]
 
-/users:
-
+/account:
   post:
     description: Create a new user
-    securedBy: [ http_basic ]
     body:
       application/json:
         example: |
@@ -32,86 +59,110 @@ securitySchemes:
               "avatar":   "https://gravatar.com/avatar/74d17098589adafe4e08b2a132e768d75?s=120&d=identicon"
             }
 
-  /{userId}:
-
-    get:
-      description: Get current user info
-      securedBy: [ http_basic ]
-      responses:
-        200:
-          body:
-            example: |
-              {
-                "_id":      5416d356205631a938b8c967,
-                "username": "john",
-                "email":    "john@example.com",
-                "avatar":   "https://gravatar.com/avatar/74d17098589adafe4e08b2a132e768d75?s=120&d=identicon"
-              }
-
-    put:
-      description: Update user profile
-      securedBy: [ http_basic ]
-      body:
-        application/json:
+  get:
+    description: Get current user info
+    securedBy: [ oauth_2_0 ]
+    responses:
+      200:
+        body:
           example: |
             {
-              "password": "new_password"
+              "_id":      5416d356205631a938b8c967,
+              "username": "john",
+              "email":    "john@example.com",
+              "avatar":   "https://gravatar.com/avatar/74d17098589adafe4e08b2a132e768d75?s=120&d=identicon"
             }
+
+  put:
+    description: Update user profile
+    securedBy: [ oauth_2_0 ]
+    body:
+      application/json:
+        example: |
+          {
+            "password": "new_password"
+          }
+    responses:
+      200:
+        body:
+          example: |
+            {
+              "_id":      5416d356205631a938b8c967,
+              "username": "John Doe",
+              "email":    "john@example.com",
+              "avatar":   "https://gravatar.com/avatar/74d17098589adafe4e08b2a132e768d75?s=120&d=identicon"
+            }
+
+  delete:
+    description: Delete permanently the user
+    securedBy: [ oauth_2_0 ]
+
+/apikeys:
+
+  get:
+    description: Get list of apikeys
+    securedBy: [ oauth_2_0 ]
+    responses:
+      200:
+        body:
+          example: |
+            [
+              {
+                "keyId":            "123456",
+                "verificationCode": "123456789123aze456sdf78989987sdfsdf",
+                "accessMask":        1234567,
+                "expires":           "2014-10-30 22:59:16",
+                "characters":        2
+              }
+            ]
+  post:
+    description: Add a new EVE Online ApiKey
+    securedBy: [ oauth_2_0 ]
+    body:
+      application/json:
+        example: |
+          {
+            "keyId": "123456",
+            "verificationCode": "123456789123aze456sdf78989987sdfsdf",
+          }
+
+  /{apiKeyId}:
+
+    get:
+      description: Get details about an apikey
+      securedBy:   [oauth_2_0]
       responses:
         200:
           body:
             example: |
               {
-                "_id":      5416d356205631a938b8c967,
-                "username": "John Doe",
-                "email":    "john@example.com",
-                "avatar":   "https://gravatar.com/avatar/74d17098589adafe4e08b2a132e768d75?s=120&d=identicon"
+                "keyId":            "123456",
+                "verificationCode": "123456789123aze456sdf78989987sdfsdf",
+                "accessMask":        1234567,
+                "expires":           "2014-10-30 22:59:16",
+                "characters":        [
+                  {
+                    "id":   1365215823,
+                    "name": "Alexis Prey"
+                  }
+                ],
+                "account": {
+                  "logonMinutes": 220,
+                  "logonCount": 56,
+                  "paidUntil": "2014-12-31 23:56:00"
+                }
               }
 
     delete:
-      description: Delete permanently the user
-      securedBy: [ http_basic ]
-
-    /apikeys:
-
-      get:
-        description: Get list of apikeys
-        securedBy: [ http_basic ]
-
-      post:
-        description: Add a new EVE Online ApiKey
-        securedBy: [ http_basic ]
-        body:
-          application/json:
-            example: |
-              {
-                "keyId": "123456",
-                "verificationCode": "123456789123aze456sdf78989987sdfsdf",
-              }
-        responses:
-          200:
-            body:
-              example: |
-                {
-                  "keyId":            "123456",
-                  "verificationCode": "123456789123aze456sdf78989987sdfsdf",
-                  "accessMask":        1234567,
-                  "characters":        [
-                    "541dd56205631a938b8c967",
-                    "541dd56205631a938b8ccd7"
-                  ],
-                }
-
-      delete:
-        description: Delete an ApiKey
-        securedBy: [ http_basic ]
+      description: Delete an ApiKey
+      securedBy: [ oauth_2_0 ]
 
 
 /characters:
 
   get:
     description: Get a list of characters
-    securedBy: [ http_basic ]
+    securedBy: [ oauth_2_0 ]
     responses:
       200:
         body:
@@ -145,7 +196,7 @@ securitySchemes:
 
     get:
       description: Get detailed informations for a character
-      securedBy: [ http_basic ]
+      securedBy: [ oauth_2_0 ]
       responses:
         200:
           body:
@@ -219,7 +270,7 @@ securitySchemes:
 
       get:
         description: Get list of skills
-        securedBy: [ http_basic ]
+        securedBy: [ oauth_2_0 ]
         queryParameters:
           queued:
             description: Filter for skill queue only
@@ -237,18 +288,45 @@ securitySchemes:
                       {
                         "id":          1235,
                         "name":        "Mechanics",
-                        "description": "Skill at maintaining the mechanical components and structural integrity of a spaceship. 5% bonus to structure hit points per skill level."
-                        "rank":        1
-                        "level":       5
-                        "points":      123485
+                        "description": "Skill at maintaining the mechanical components and structural integrity of a spaceship. 5% bonus to structure hit points per skill level.",
+                        "rank":        1,
+                        "level":       5,
+                        "points":      123485,
+                        "queued":      false,
                       },
                       {
-                        "id":          2345
-                        "name":        "Explosive Armor Compensation"
-                        "description": "5% bonus to explosive resistance per level for Armor Coatings and Energized Platings"
-                        "rank":        2
-                        "level":       3
-                        "points":      1234
+                        "id":          2345,
+                        "name":        "Explosive Armor Compensation",
+                        "description": "5% bonus to explosive resistance per level for Armor Coatings and Energized Platings",
+                        "rank":        2,
+                        "level":       3,
+                        "points":      1234,
+                        "queued": [
+                          {
+                            "position" : 0,
+                            "level"    : 4,
+                            "points": {
+                              "start": 125662,
+                              "end":   170000,
+                            }
+                            "time": {
+                              "start": "2014-10-10 19:08:58",
+                              "end":   "2014-10-22 23:51:03",
+                            }
+                          },
+                          {
+                            "position" : 1,
+                            "level"    : 5,
+                            "points": {
+                              "start": 170000,
+                              "end":   320000,
+                            }
+                            "time": {
+                              "start": "2014-10-22 23:51:03",
+                              "end":   "2014-11-22 22:50:32",
+                            }
+                          }
+                        ]
                       }
                     ]
                   }

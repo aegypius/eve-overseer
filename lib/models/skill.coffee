@@ -29,6 +29,6 @@ SkillSchema  = new Schema {
   published: Boolean
 }
 
-module.exports =
-  Skill:       mongoose.model('Skill', SkillSchema)
-  SkillSchema: SkillSchema
+mongoose.model 'Skill', SkillSchema
+
+module.exports = SkillSchema

@@ -19,11 +19,22 @@
     "angular": "~1.2.23",
     "angular-route": "~1.2.23",
     "angular-resource": "~1.2.23",
-    "angular-cookies": "~1.2.23",
     "angular-sanitize": "~1.2.23",
     "bootstrap": "~3.2.0",
-    "angular-http-auth": "~1.2.1",
     "underscore.string": "#master",
-    "moment": "~2.8.3"
-  }
+    "moment": "~2.8.3",
+    "fontawesome": "~4.2.0",
+    "ngstorage": "~0.3.0"
+  },
+  "overrides": {
+    "bootstrap": {
+      "main": [
+        "less/!(variables|theme).less",
+        "less/mixins/*.less",
+        "dist/fonts/*",
+        "dist/js/*"
+      ]
+    }
+  },
+  "devDependencies": {}
 }

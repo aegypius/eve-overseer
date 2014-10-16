@@ -13,11 +13,27 @@ angular
             SkillQueue.query({id: character.id}, function (skillqueue) {
               var timer = function () {
                     var current = moment();
-                    $scope.skills = skillqueue.map(function (job) {
-                      var start   = moment.utc(job.timeRange.start),
-                          end     = moment.utc(job.timeRange.end);
 
-                      job.endTime = moment.utc(job.timeRange.end).valueOf();
+                    // Flatten skillqueue
+                    var jobs = [];
+                    skillqueue.map(function (group) {
+                      group.skills.map(function (skill) {
+                        skill.queued.map(function (queued) {
+                          queued.name = skill.name;
+                          queued.group = {
+                              id: group.id,
+                              name: group.name
+                          };
+                          jobs[parseInt(queued.position, 10)] = queued;
+                        });
+                      });
+                    });
+
+                    $scope.skills = jobs.map(function (job) {
+                      var start   = moment.utc(job.time.start),
+                          end     = moment.utc(job.time.end);
+
+                      job.endTime = moment.utc(job.time.end).valueOf();
 
                       if (current < start) {
                         job.state = 'blocked';
@@ -27,7 +43,7 @@ angular
                         job.percent = 100;
                       } else {
                         job.state = "running";
-                        job.percent = Math.round((current - start) / (end - start) * 100 *100) / 100;
+                        job.percent = Math.round((current - start) / (end - start) * 100 * 100) / 100;
                       }
                       return job;
                     });

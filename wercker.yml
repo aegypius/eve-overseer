@@ -4,9 +4,8 @@ services:
 build:
   steps:
     - npm-install
-
     - script:
-        name: Upgrade database
-        code: ./bin/overseer upgrade
-
+        name: Loading static data into database
+        code: |-
+          DEBUG=* ./bin/overseer database:upgrade
     - npm-test

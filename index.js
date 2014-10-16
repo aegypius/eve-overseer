@@ -1,10 +1,11 @@
 if ('production' === process.env.NODE_ENV) {
-  require("newrelic");
+  try {
+    require("newrelic");
+  } catch (e) {}
 }
 
 require('coffee-script/register');
 var overseer = require('./lib'),
-    server = overseer.server,
     port   = process.env.PORT || 3333
 ;
 
@@ -12,6 +13,6 @@ module.exports = overseer;
 
 if (require.main === module) {
   overseer.startServer(port, "public", function () {
-    console.log("Server listening on http://localhost:" + port);
+    require('debug')('overseer:server')(("Server listening on http://localhost:" + port));
   });
 }

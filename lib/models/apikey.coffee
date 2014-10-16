@@ -3,9 +3,12 @@ mongoose        = require "mongoose"
 Timestampable   = require "mongoose-timestamp"
 UniqueValidator = require "mongoose-unique-validator"
 {EveClient}     = require "neow"
-User            = mongoose.model("User")
-{Character}     = require "./character"
+
+User            = mongoose.model "User"
+Character       = mongoose.model "Character"
+
 Q               = require "q"
+Q.longStackSupport = true
 
 ApiKeySchema  = new Schema {
   _user: {
@@ -38,7 +41,9 @@ ApiKeySchema  = new Schema {
 }
 
 ApiKeySchema.plugin Timestampable
-ApiKeySchema.plugin UniqueValidator
+ApiKeySchema.plugin UniqueValidator, {
+  message: "This ApiKey is already registered"
+}
 
 ApiKeySchema
   .path "keyId"
@@ -107,18 +112,22 @@ ApiKeySchema
   .pre "remove", (next)->
 
     User
-      .find { "apikeys": @_id }
-      .exec (err, users)->
-        for user in users
-          user.apikeys = user.apikeys.filter (apikey)->
-            apikey is @_id
-          user.save()
+      .findOne { "apikeys": @_id }
+      .exec()
+      .then (user)->
+        user.apikeys = user.apikeys.filter (apikey)->
+          apikey is @_id
+        user.save()
 
-    Character
-      .find { apikey: @_id }
-      .exec (err, characters)->
-        for character in characters
-          character.remove()
+      .then =>
+        Character
+          .find { apikey: @_id }
+          .exec()
+          .then (characters)->
+            Q.all characters.map (character)->
+              return Q.ninvoke character, "remove"
+
+      .then ->
         next()
 
   # Cascade create related documents
@@ -137,6 +146,6 @@ ApiKeySchema
         next()
 
 
-module.exports =
-  ApiKey:       mongoose.model("ApiKey", ApiKeySchema)
-  ApiKeySchema: ApiKeySchema
+mongoose.model "ApiKey", ApiKeySchema
+
+module.exports = ApiKeySchema

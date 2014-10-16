@@ -16,7 +16,8 @@
             </div>
             <div class="col-xs-3">
               <div class="progress">
-                <div class="progress-bar progress-bar-info" style="width:{{ skill.level * 20 }}%"></div>
+                <div class="progress-bar" style="width:{{ skill.level * 20 }}%"></div>
+                <div class="progress-bar progress-bar-info " ng-class="{'progress-bar-striped active':job.position == 0}" style="width: {{ (job.level - skill.level) * 20 }}%" ng-repeat="job in skill.queued"></div>
               </div>
             </div>
           </div>

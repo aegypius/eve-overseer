@@ -1,9 +1,8 @@
 var app = angular.module('eve-overseer', [
   'ngRoute',
-  'ngCookies',
   'ngResource',
   'ngSanitize',
-  'http-auth-interceptor',
+  'oauth2',
 ]);
 
 app
@@ -33,26 +32,17 @@ app
 
     $locationProvider.html5Mode(true);
   }])
-  .run(['$rootScope', '$location', 'Auth', function ($rootScope, $location, Auth) {
-    $rootScope.$watch('_user', function (user) {
-      if (!user && ['/login', '/signup', '/logout'].indexOf($location.path()) === -1) {
-        Auth.currentUser();
+  .run(['$rootScope', '$location', '$sessionStorage', 'User', function ($rootScope, $location, $sessionStorage, User) {
+    $rootScope.$on('oauth2:unauthorized' , function () {
+      if (['/login', '/signup'].indexOf($location.path()) === -1 ) {
+        $location.path('/login');
       }
     });
 
+    $rootScope.$storage = $sessionStorage;
     $rootScope.logout = function () {
-      Auth.logout(function (err) {
-        if (!err) {
-          $location.path('/');
-        }
-      });
-    };
-
-    // On catching 401 errors, redirect to the login page.
-    $rootScope.$on('event:auth-loginRequired', function() {
+      User.logout();
       $location.path('/login');
-      return false;
-    });
-
+    };
   }])
 ;

@@ -18,11 +18,6 @@ UserSchema = new Schema {
     require: true
     lowercase: true
   }
-  provider: {
-    type: String
-    default: 'local'
-  }
-  tokens: []
   apikeys: [{
     type: Schema.ObjectId
     ref: 'ApiKey'
@@ -39,7 +34,9 @@ UserSchema = new Schema {
 }
 
 UserSchema.plugin Timestampable
-UserSchema.plugin UniqueValidator
+UserSchema.plugin UniqueValidator, {
+  message: "An account already exist for this {PATH}"
+}
 
 
 # Virtuals
@@ -54,13 +51,13 @@ UserSchema
     @_password
 
 UserSchema
-  .virtual "user_info"
+  .virtual "profile"
   .get ()->
     {
-      "_id":      @_id
       "username": @username
       "email":    @email
       "avatar":   @gravatar(120)
+      "apikeys":  @apikeys
     }
 
 # Validations
@@ -79,6 +76,9 @@ UserSchema
     .validate (email)->
       return @doesNotRequireValidation() or email.length
     , "Email cannot be blank"
+    .validate (email)->
+      return "email" not in @modifiedPaths() or @isNew
+    , "Email is read-only"
 
 UserSchema
   .path "hashed_password"
@@ -154,6 +154,6 @@ UserSchema.methods =
     return ~oAuthTypes.indexOf @provider
 
 
-module.exports =
-  User: mongoose.model("User", UserSchema)
-  UserSchema: UserSchema
+mongoose.model "User", UserSchema
+
+module.exports = UserSchema

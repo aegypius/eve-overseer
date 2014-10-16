@@ -2,27 +2,30 @@ program  = require "commander"
 mongoose = require "mongoose"
 pkg      = require "../package.json"
 Q        = require "q"
+debug    = (require "debug")("overseer:cli")
+commands = require "./commands"
+
 
 program
   .version     pkg.version
-  .command     "upgrade"
-  .description "Upgrade static collections"
+  .command     "database:upgrade"
+  .description "Upgrade database"
   .action ->
-    {SkillGroup} = require "./models/skill-group"
-
     Q()
       .then ->
+        debug "Database upgrade started"
         require "./config"
 
       .then (config)->
         mongoose.connect config.database.url
 
-      .then SkillGroup.synchronize
+      .then commands.database.upgrade
 
       .fail (err)->
         throw err
 
       .done (result)->
+        debug "Upgrade completed"
         mongoose.disconnect()
 
 module.exports = program

@@ -15,91 +15,87 @@
       </ul>
     </div>
 
-    <form name="form" role="form" ng-submit="update(form)">
-      <div class="tab-content col-xs-8">
-        <div class="tab-pane active" id="personal-information">
-          <div class="heading">
-            <h4 class="h1">Personal information</h4>
-          </div>
-
-          <img class="img-circle" ng-src="{{ user.avatar }}">
-          <p class="help-block">Change your avatar using <a href="http://gravatar.com" target="_blank">Gravatar</a>.</p>
-
-          <div class="form-group">
-            <label for="username">Username</label>
-            <input class="form-control"
-                   id="username"
-                   placeholder="Username"
-                   type="text"
-                   name="username"
-                   ng-model="user.username"
-                   disabled
-            </input>
-          </div>
-
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input class="form-control"
-                   id="email"
-                   placeholder="Email"
-                   type="email"
-                   name="email"
-                   ng-model="user.email"
-                   disabled
-            </input>
-          </div>
+    <div class="tab-content col-xs-8">
+      <div class="tab-pane active" id="personal-information">
+        <div class="heading">
+          <h4 class="h1">Personal information</h4>
         </div>
 
-        <div class="tab-pane" id="password">
-          <div class="heading">
-            <h4 class="h1">Password</h4>
-            <p class="lead">Change your password</p>
-          </div>
+        <img class="img-circle" ng-src="{{ user.avatar }}">
+        <p class="help-block">Change your avatar using <a href="http://gravatar.com" target="_blank">Gravatar</a>.</p>
 
-          <div class="form-group"
-             ng-class="{'has-warning': form.password.$dirty,
-                        'has-success': form.password.$valid && form.password.$dirty && !form.password.$error.mongoose,
-                        'has-error': form.password.$invalid && form.password.$dirty || form.password.$error.mongoose
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input class="form-control"
+                 id="username"
+                 placeholder="Username"
+                 type="text"
+                 name="username"
+                 ng-model="user.username"
+                 disabled
+          </input>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input class="form-control"
+                 id="email"
+                 placeholder="Email"
+                 type="email"
+                 name="email"
+                 ng-model="user.email"
+                 disabled
+          </input>
+        </div>
+      </div>
+
+      <div class="tab-pane" id="password">
+        <div class="heading">
+          <h4 class="h1">Password</h4>
+          <p class="lead">Change your password</p>
+        </div>
+        <form class="" name="passwordForm" role="form" ng-submit="update(passwordForm)" novalidate>
+
+          <div class="form-group" ng-class="{'has-warning': passwordForm.password.$dirty,
+                        'has-success': passwordForm.password.$valid && passwordForm.password.$dirty && !passwordForm.password.$error.mongoose,
+                        'has-error': passwordForm.password.$invalid && passwordForm.password.$dirty || passwordForm.password.$error.mongoose
                         }">
             <input class="form-control"
                    placeholder="Password"
                    type="password"
                    name="password"
-                   ng-model="user.password"
+                   required
+                   ng-model="password"
                    ng-minlength="5"
+                   ng-required="true"
                    mongoose-error/>
-            <p class="help-block"
-               ng-show="(form.password.$error.minlength || form.password.$invalid)
-                        && form.password.$dirty
-                        && !form.password.$error.required">
+            <p class="help-block" ng-show="passwordForm.password.$error.minlength">
                 Password must be at least 5 characters.
             </p>
-            <p class="help-block"
-               ng-show="form.password.$error.mongoose">
+            <p class="help-block" ng-show="passwordForm.password.$error.mongoose">
                 {{ errors.password }}
             </p>
           </div>
 
           <div class="form-group"
-             ng-class="{'has-warning': form.password.$dirty,
-                        'has-success': form.password.$valid && form.password.$dirty && !form.password.$error.mongoose,
-                        'has-error': form.password.$invalid && form.password.$dirty || form.password.$error.mongoose
+             ng-class="{'has-warning': passwordForm.password.$dirty,
+                        'has-success': passwordForm.password.$valid && passwordForm.password.$dirty && !passwordForm.password.$error.mongoose,
+                        'has-error': passwordForm.password.$invalid && passwordForm.password.$dirty || passwordForm.password.$error.mongoose
                         }">
             <input class="form-control"
                    placeholder="Confirm password"
                    type="password"
                    name="confirmation"
+                   required
+                   ng-model="confirmation"
                    ng-minlength="5"
+                   ng-required="true"
                    mongoose-error/>
-            <p class="help-block"
-               ng-show="(form.confirmation.$error.minlength || form.confirmation.$invalid)
-                        && form.confirmation.$dirty
-                        && !form.confirmation.$error.required">
+            <p class="help-block" ng-show="passwordForm.confirmation.$error.minlength">
                 Password must be at least 5 characters.
             </p>
-            <p class="help-block"
-               ng-show="form.password_confirmation.$error.mongoose">
-                {{ errors.confirmation }}
+            <p class="help-block" ng-show="passwordForm.confirmation.$error.match">
+                Passwords does not match.
             </p>
           </div>
 
@@ -108,92 +104,92 @@
           </div>
 
           <button class="btn btn-primary pull-right" type="submit">Update</button>
-        </div>
-
-        <div class="tab-pane" id="apikeys">
-          <div class="heading">
-            <h4 class="h1">API Keys</h4>
-            <p class="lead">Manage and add new API Keys</p>
-          </div>
-          <div class="row">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Key ID</th>
-                  <th>Verification Code</th>
-                  <th>Characters</th>
-                  <th>Access Mask</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr ng-repeat="key in apikeys">
-                  <td>{{ key.keyId }}</td>
-                  <td>{{ key.verificationCode }}</td>
-                  <td>{{ key.characters.length }}</td>
-                  <td>{{ key.accessMask }}</td>
-                  <td><button class="btn btn-danger pull-right" ng-click="removeApiKey(key._id)"><span class="glyphicon glyphicon-trash"></span></button></td>
-                </tr>
-                <tr ng-if="apikeys.length == 0">
-                  <td colspan="3"><em>No API Key defined</em></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div ng-form="apikey" class="row">
-
-            <div class="col-xs-3">
-              <div class="form-group"
-                ng-class="{'has-warning': apikey.keyId.$dirty,
-                           'has-success': apikey.keyId.$valid && apikey.keyId.$dirty,
-                           'has-error': apikey.keyId.$invalid && apikey.keyId.$dirty
-                           }">
-                <input class="form-control"
-                       placeholder="Key ID"
-                       type="text"
-                       ng-minlength="5"
-                       ng-model="apikey.keyId"
-                       mongoose-error/>
-
-                <p class="help-block"
-                   ng-show="(apikey.keyId.$error.minlength || apikey.keyId.$invalid)
-                            && apikey.keyId.$dirty">
-                    Key ID must be at least 5 characters.
-                </p>
-              </div>
-            </div>
-
-            <div class="col-xs-7">
-              <div class="form-group"
-                ng-class="{'has-warning': apikey.verificationCode.$dirty,
-                           'has-success': apikey.verificationCode.$valid && apikey.verificationCode.$dirty,
-                           'has-error': apikey.verificationCode.$invalid && apikey.verificationCode.$dirty
-                           }">
-                <input class="form-control"
-                       placeholder="Verification Code"
-                       type="text"
-                       ng-minlength="64"
-                       ng-maxlength="64"
-                       ng-model="apikey.verificationCode"
-                       mongoose-error/>
-
-                <p class="help-block"
-                   ng-show="(apikey.verificationCode.$error.minlength || apikey.verificationCode.$error.minlength || apikey.verificationCode.$invalid)
-                            && apikey.verificationCode.$dirty">
-                    Verification Code must be 64 characters.
-                </p>
-              </div>
-            </div>
-
-            <div class="col-xs-2">
-              <button class="btn btn-primary btn-block" ng-click="addApiKey(apikey)">Save</button>
-            </div>
-
-          </div>
-        </div>
-
+        </form>
       </div>
-    </form>
+
+      <div class="tab-pane" id="apikeys">
+        <div class="heading">
+          <h4 class="h1">API Keys</h4>
+          <p class="lead">Manage and add new API Keys</p>
+        </div>
+        <div class="row">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Key ID</th>
+                <th>Verification Code</th>
+                <th>Characters</th>
+                <th>Access Mask</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="key in apikeys">
+                <td>{{ key.keyId }}</td>
+                <td>{{ key.verificationCode }}</td>
+                <td>{{ key.characters.length }}</td>
+                <td>{{ key.accessMask }}</td>
+                <td><button class="btn btn-danger pull-right" ng-click="removeApiKey(key.keyId)"><span class="glyphicon glyphicon-trash"></span></button></td>
+              </tr>
+              <tr ng-if="apikeys.length == 0">
+                <td colspan="3"><em>No API Key defined</em></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div ng-form="apikey" class="row">
+
+          <div class="col-xs-3">
+            <div class="form-group"
+              ng-class="{'has-warning': apikey.keyId.$dirty,
+                         'has-success': apikey.keyId.$valid && apikey.keyId.$dirty,
+                         'has-error': apikey.keyId.$invalid && apikey.keyId.$dirty
+                         }">
+              <input class="form-control"
+                     placeholder="Key ID"
+                     type="text"
+                     ng-minlength="5"
+                     ng-model="apikey.keyId"
+                     mongoose-error/>
+
+              <p class="help-block"
+                 ng-show="(apikey.keyId.$error.minlength || apikey.keyId.$invalid)
+                          && apikey.keyId.$dirty">
+                  Key ID must be at least 5 characters.
+              </p>
+            </div>
+          </div>
+
+          <div class="col-xs-7">
+            <div class="form-group"
+              ng-class="{'has-warning': apikey.verificationCode.$dirty,
+                         'has-success': apikey.verificationCode.$valid && apikey.verificationCode.$dirty,
+                         'has-error': apikey.verificationCode.$invalid && apikey.verificationCode.$dirty
+                         }">
+              <input class="form-control"
+                     placeholder="Verification Code"
+                     type="text"
+                     ng-minlength="64"
+                     ng-maxlength="64"
+                     ng-model="apikey.verificationCode"
+                     mongoose-error/>
+
+              <p class="help-block"
+                 ng-show="(apikey.verificationCode.$error.minlength || apikey.verificationCode.$error.minlength || apikey.verificationCode.$invalid)
+                          && apikey.verificationCode.$dirty">
+                  Verification Code must be 64 characters.
+              </p>
+            </div>
+          </div>
+
+          <div class="col-xs-2">
+            <button class="btn btn-primary btn-block" ng-click="addApiKey(apikey)">Save</button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>

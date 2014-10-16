@@ -1,6 +1,6 @@
 angular
   .module('eve-overseer')
-  .controller('LoginCtrl', ['$scope', 'md5', 'Auth', '$location', function ($scope, md5, Auth, $location) {
+  .controller('LoginCtrl', ['$scope', 'md5', 'User', '$location', function ($scope, md5, User, $location) {
     var gt;
     $scope.user     = {};
     $scope.errors   = {};
@@ -15,28 +15,30 @@ angular
     });
 
     $scope.login = function (form) {
-      Auth.login('password', {
-        'email'    : $scope.user.email,
-        'password' : $scope.user.password
-      }, function (err) {
-        $scope.errors = {};
-
-        if (!err) {
-          $location.path('/');
-        } else {
-          angular.forEach(err.errors, function (error, field) {
-            if (form[field] !== undefined) {
-              form[field].$setValidity('mongoose', false);
-              $scope.errors[field] = error;
-            }
-          });
-          $scope.errors.other = err.message;
-        }
-      });
+      User
+        .login($scope.user.email, $scope.user.password)
+        .then(function (err, user) {
+          $scope.errors = {};
+          if (!err) {
+            $location.path('/');
+          } else {
+            angular.forEach(err.errors, function (error, field) {
+              if (form[field] !== undefined) {
+                form[field].$setValidity('mongoose', false);
+                $scope.errors[field] = error;
+              }
+            });
+            $scope.errors.other = err.message;
+          }
+        })
+        .catch (function (response) {
+          $scope.errors.other = response.data.error;
+        })
+      ;
     };
 
   }])
-  .controller('SignupCtrl', ['$scope', 'md5', 'Auth', '$location', function ($scope, md5, Auth, $location) {
+  .controller('SignupCtrl', ['$scope', 'md5', 'User', '$location', function ($scope, md5, User, $location) {
     var gt;
     $scope.user     = {};
     $scope.errors   = {};
@@ -51,41 +53,55 @@ angular
     });
 
     $scope.register = function (form) {
-      Auth.createUser({
-          email: $scope.user.email,
+
+      if (form.$valid) {
+        User.register({
+          email:    $scope.user.email,
           username: $scope.user.username,
           password: $scope.user.password
-        },
-        function(err) {
-          $scope.errors = {};
-
-          if (!err) {
-            $location.path('/');
-          } else {
-            angular.forEach(err.errors, function(error, field) {
-              if (form[field] !== undefined) {
-                form[field].$setValidity('mongoose', false);
-                $scope.errors[field] = error;
-              }
+        }).then(function () {
+          User
+            .login($scope.user.email, $scope.user.password)
+            .then(function() {
+                $location.path('/');
             });
-            $scope.errors.other = err.message;
-          }
-        }
-      );
+        }).catch(function (response) {
+          $scope.errors = {};
+          err = response.data;
+          angular.forEach(err.errors, function(error, field) {
+            if (form[field] !== undefined) {
+              form[field].$setValidity('mongoose', false);
+              $scope.errors[field] = error.message;
+            }
+          });
+        });
+      }
     };
   }])
-  .controller('ProfileCtrl', ['$rootScope', '$scope', 'User', 'ApiKey', function ($rootScope, $scope, User, ApiKey) {
-    $rootScope.$watch('_user', function (user) {
-      $scope.user = user;
-    });
+  .controller('ProfileCtrl', ['$scope', 'User', 'ApiKey', function ($scope, User, ApiKey) {
+
+    $scope.user = User.get();
+
+    $scope.errors = {};
 
     ApiKey.query(function (apikeys) {
       $scope.apikeys = apikeys;
     });
 
+    $scope.update = function (form) {
+      form.confirmation.$setValidity('match', (form.password !== form.confirmation));
+
+      // Updates userprofile
+      if (form.$valid) {
+        User.update({
+          password: $scope.password
+        });
+      }
+    };
+
     $scope.addApiKey = function (form) {
       // Add a new API Key to the user
-      if (form.$valid && form.$dirty) {
+      if (form.$valid) {
         apikey = new ApiKey({
           keyId: form.keyId,
           verificationCode: form.verificationCode,

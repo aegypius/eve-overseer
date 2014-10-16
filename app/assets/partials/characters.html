@@ -5,7 +5,7 @@
     <li class="active">Squad</a></li>
   </ol>
 
-  <div class="characters">
+  <div class="characters" ng-if="characters.length > 0">
     <div class="media" ng-repeat="character in characters">
       <a class="pull-left" href="/character/{{ character.id }}">
         <img ng-src="{{ character.picture.medium }}">
@@ -19,4 +19,14 @@
       </div>
     </div>
   </div>
+
+  <div class="row" ng-if="characters.length == 0">
+    <div class="col-xs-12">
+      <div class="alert alert-info">
+        <strong>No characters available</strong><br>
+        <a class="btn btn-primary" href="/profile">Add an API KEY now !</a>
+      </div>
+    </div>
+  </div>
+
 </div>
