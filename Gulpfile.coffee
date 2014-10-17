@@ -147,7 +147,9 @@ gulp.task "build", [
   else
     done()
 
-
+# Heroku
+# ======
+gulp.task "heroku:production", ["build"]
 
 # Default task
 # ============
