@@ -32,24 +32,45 @@ gulp.task "bower", ->
 
 # Configure and compiles less files
 # =================================
-gulp.task "less:configure", ["bower"],  ->
+gulp.task "less:configure:bootstrap", ["bower"], ->
   gulp
-    .src [
-      "app/**/variables.less"
-      "app/**/theme.less"
-    ]
+    .src "app/**/*.less"
     .pipe gulp.dest "public/lib/bootstrap"
 
-gulp.task "less:compile", ["less:configure"],  ->
+gulp.task "less:compile:bootstrap", ["less:configure:bootstrap"], ->
+  gulp
+    .src "public/lib/bootstrap/less/bootstrap.less"
+    .pipe less()
+    .pipe rename "bootstrap.css"
+    .pipe gulp.dest "public/build"
+
+gulp.task "less:compile:fontawesome", ["bower"], ->
+  gulp
+    .src "public/lib/bootstrap/less/fontawesome.less"
+    .pipe less()
+    .pipe rename "fontawesome.css"
+    .pipe gulp.dest "public/build"
+
+gulp.task "less:compile:theme", ["bower"], ->
+  gulp
+    .src "public/lib/bootstrap/less/theme.less"
+    .pipe less()
+    .pipe rename "theme.css"
+    .pipe gulp.dest "public/build"
+
+gulp.task "less:compile", [
+  "less:compile:bootstrap"
+  "less:compile:fontawesome"
+  "less:compile:theme"
+  ], ->
   gulp
     .src [
-      "public/lib/bootstrap/less/bootstrap.less"
-      "public/lib/fontawesome/less/fontawesome.less"
-      "public/lib/bootstrap/less/theme.less"
+      "public/build/bootstrap.css"
+      "public/build/fontawesome.css"
+      "public/build/theme.css"
     ]
     .pipe sourcemaps.init()
-    .pipe concat "app.less"
-    .pipe less()
+    .pipe concat "app.css"
     .pipe sourcemaps.write()
     .pipe gulp.dest "public/"
     .pipe gulpif env is "development", refresh lr
