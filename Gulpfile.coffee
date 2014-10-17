@@ -44,14 +44,7 @@ gulp.task "less:compile:bootstrap", ["less:configure:bootstrap"], ->
     .pipe rename "bootstrap.css"
     .pipe gulp.dest "public/build"
 
-gulp.task "less:compile:fontawesome", ["bower"], ->
-  gulp
-    .src "public/lib/bootstrap/less/fontawesome.less"
-    .pipe less()
-    .pipe rename "fontawesome.css"
-    .pipe gulp.dest "public/build"
-
-gulp.task "less:compile:theme", ["bower"], ->
+gulp.task "less:compile:theme", ["less:configure:bootstrap"], ->
   gulp
     .src "public/lib/bootstrap/less/theme.less"
     .pipe less()
@@ -60,13 +53,12 @@ gulp.task "less:compile:theme", ["bower"], ->
 
 gulp.task "less:compile", [
   "less:compile:bootstrap"
-  "less:compile:fontawesome"
   "less:compile:theme"
   ], ->
   gulp
     .src [
       "public/build/bootstrap.css"
-      "public/build/fontawesome.css"
+      "public/dist/fontawesome/css/fontawesome.css"
       "public/build/theme.css"
     ]
     .pipe sourcemaps.init()
@@ -74,7 +66,6 @@ gulp.task "less:compile", [
     .pipe sourcemaps.write()
     .pipe gulp.dest "public/"
     .pipe gulpif env is "development", refresh lr
-
 
 # Configure and compiles javascripts files
 # ========================================
