@@ -17,14 +17,14 @@
   ],
   "dependencies": {
     "angular": "~1.2.23",
-    "angular-route": "~1.2.23",
     "angular-resource": "~1.2.23",
     "angular-sanitize": "~1.2.23",
     "bootstrap": "~3.2.0",
     "underscore.string": "#master",
     "moment": "~2.8.3",
     "fontawesome": "~4.2.0",
-    "ngstorage": "~0.3.0"
+    "ngstorage": "~0.3.0",
+    "angular-ui-router": "~0.2.11"
   },
   "overrides": {
     "bootstrap": {
