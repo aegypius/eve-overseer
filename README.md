@@ -32,11 +32,11 @@ From your terminal:
     git clone https://github.com/aegypius/eve-overseer
     cd eve-overseer
     npm install
-    npm run brunch
+    npm run watch
 
-You can also use ```npm start``` to start server with a production build of brunch.
+You can also use ```npm start``` to start server with a production build.
 
-#### Hacking with docker
+#### Hacking with docker (optional)
 
 If you intend to use docker to manage the mongodb database, you can run
 
