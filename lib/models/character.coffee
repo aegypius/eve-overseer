@@ -173,14 +173,14 @@ CharacterSchema
   .method "getAccountsLogs", (options)->
     accountKey = options.accountKey or 1000
     from       = options.from or null
-    count      = options.count or 150
+    limit      = options.limit or 150
 
     api = @apikey.getClient()
     api.fetch "char:WalletJournal", {
       characterId: @id
       accountKey: accountKey
       fromID:     from
-      count:      count
+      rowCount:   limit
     }
 
     # Converts result object to an array

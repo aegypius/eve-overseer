@@ -352,6 +352,15 @@ securitySchemes:
         get:
           description: Get financial account journal
           securedBy: [ oauth_2_0 ]
+          queryParameters:
+            from:
+              description: Transaction reference to start from
+              type: integer
+              default: null
+            limit:
+              description: Number of results to fetch
+              type: integer
+              default: 150
           responses:
             200:
               body:
