@@ -87,3 +87,50 @@ describe "EVE API", ->
             skill.should.have.property "points"
 
             done()
+
+    describe "Accounts", ->
+      account = null
+
+      it "should return a list of accounts", (done)->
+
+        agent
+          .get "/api/characters/#{characterId}/accounts"
+          .set Authorization: "Bearer #{oauth.token.access_token}"
+          .expect 200
+          .end (err, res)->
+            should.not.exist err
+
+            res.body.should.be.an.array
+            res.body[0].should.be.an.object
+
+            account = res.body[0]
+
+            account.should.have.property "id"
+            account.should.have.property "key"
+            account.should.have.property "balance"
+
+            done()
+
+      it "should be able to get a log for an account", (done)->
+
+        agent
+          .get "/api/characters/#{characterId}/accounts/#{account.key}"
+          .set Authorization: "Bearer #{oauth.token.access_token}"
+          .expect 200
+          .end (err, res)->
+            should.not.exist err
+
+            res.body.should.be.an.array
+            res.body[0].should.be.an.object
+
+            entry = res.body[0]
+
+            entry.should.have.property "account", account.key
+            entry.should.have.property "date"
+            entry.should.have.property "reference"
+            entry.should.have.property "type"
+            entry.should.have.property "amount"
+            entry.should.have.property "balance"
+            entry.should.have.property "reason"
+
+            done()

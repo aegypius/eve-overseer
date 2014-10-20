@@ -1,5 +1,4 @@
 --compilers coffee:coffee-script/register
 --require   test/bootstrap.js
---reporter  list
 --timeout   5s
 --ui        bdd
