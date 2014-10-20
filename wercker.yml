@@ -16,4 +16,4 @@ build:
 deploy:
   steps:
     - heroku-deploy:
-        key-name: radiant-bastion-3939
+        key-name: HEROKU
