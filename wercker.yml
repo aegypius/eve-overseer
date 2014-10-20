@@ -9,3 +9,11 @@ build:
         code: |-
           DEBUG=* ./bin/overseer database:upgrade
     - npm-test
+    - script:
+        name: Build production assets
+        code: |-
+          npm run build
+deploy:
+  steps:
+    - heroku-deploy:
+        key-name: radiant-bastion-3939
