@@ -73,4 +73,23 @@ characters
         res.status 200
         res.json tree
 
+  # Returns financial accounts of a character
+  # =========================================
+  .get '/:characterId/accounts', (req, res, next)->
+    req.character
+      .getAccounts()
+      .then (list)->
+        res.status 200
+        res.json list
+
+  # Returns financial accounts of a character
+  # =========================================
+  .get '/:characterId/accounts/:accountKey', (req, res, next)->
+    req.character
+      .getAccountsLogs req.params
+      .then (list)->
+        res.status 200
+        res.json list
+
+
 module.exports = characters

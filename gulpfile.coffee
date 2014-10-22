@@ -58,7 +58,7 @@ gulp.task "less:compile", [
   gulp
     .src [
       "public/build/bootstrap.css"
-      "public/dist/fontawesome/css/fontawesome.css"
+      "public/lib/fontawesome/css/font-awesome.css"
       "public/build/theme.css"
     ]
     .pipe sourcemaps.init()
@@ -69,11 +69,21 @@ gulp.task "less:compile", [
 
 # Configure and compiles javascripts files
 # ========================================
-gulp.task "javascript:compile", ["bower"], ->
+gulp.task "javascript:compile:vendors", ["bower"], ->
+  gulp.src [
+    "public/lib/**/*.js"
+    "!public/lib/**/*.min.js"
+  ]
+  .pipe sourcemaps.init()
+  .pipe concat "vendors.js"
+  .pipe uglify()
+  .pipe sourcemaps.write()
+  .pipe gulp.dest "public/build"
+
+gulp.task "javascript:compile", ["javascript:compile:vendors"], ->
   gulp
     .src [
-      "public/lib/**/*.js"
-      "!public/lib/**/*.min.js"
+      "public/build/vendors.js"
       "app/**/*.js"
     ]
     .pipe sourcemaps.init()
@@ -143,7 +153,7 @@ gulp.task "build", [
   ], (done)->
 
   if env is "production"
-    del ["public/lib"], done
+    del ["public/lib", "public/build"], done
   else
     done()
 

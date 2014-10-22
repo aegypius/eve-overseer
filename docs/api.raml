@@ -331,3 +331,48 @@ securitySchemes:
                     ]
                   }
                 ]
+
+    /accounts:
+      get:
+        description: Get list for a character's financial accounts
+        securedBy: [ oauth_2_0 ]
+        responses:
+          200:
+            body:
+              example: |
+                [
+                  {
+                    "id":      4807144,
+                    "key":     1000,
+                    "balance": 209127823.31
+                  }
+                ]
+
+      /{accountKey}:
+        get:
+          description: Get financial account journal
+          securedBy: [ oauth_2_0 ]
+          queryParameters:
+            from:
+              description: Transaction reference to start from
+              type: integer
+              default: null
+            limit:
+              description: Number of results to fetch
+              type: integer
+              default: 150
+          responses:
+            200:
+              body:
+                example: |
+                  [
+                    {
+                      "account":    1000,
+                      "date":       "2008-08-20 05:19:00",
+                      "reference":  1572531631,
+                      "amount":     -504.00,
+                      "balance":    597984259.02,
+                      "type":       "Player Trading",
+                      "reason":     "Trade in Gerbold III"
+                    }
+                  ]

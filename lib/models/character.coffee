@@ -155,6 +155,65 @@ CharacterSchema
             return group.skills.length > 0
 
 CharacterSchema
+  .method "getAccounts", (options)->
+    api = @apikey.getClient()
+    api.fetch "char:AccountBalance", {
+      characterId: @id
+    }
+    .then (result)->
+      accounts = (account for id, account of result.accounts)
+      accounts.map (account)->
+        {
+          id:       parseInt account.accountID, 10
+          key:      parseInt account.accountKey, 10
+          balance:  parseFloat account.balance, 10
+        }
+
+CharacterSchema
+  .method "getAccountsLogs", (options)->
+    accountKey = options.accountKey or 1000
+    from       = options.from or null
+    limit      = options.limit or 150
+
+    api = @apikey.getClient()
+    api.fetch "char:WalletJournal", {
+      characterId: @id
+      accountKey: accountKey
+      fromID:     from
+      rowCount:   limit
+    }
+
+    # Converts result object to an array
+    .then (result)->
+      (transaction for id, transaction of result.transactions)
+
+    # Map transaction type with its name
+    .then (transactions)->
+      return api.fetch "eve:RefTypes", {}
+      .then (result)->
+        transactions.map (transaction)->
+          transaction.type =
+            id: parseInt transaction.refTypeID, 10
+            name: result.refTypes[transaction.refTypeID].refTypeName
+          return transaction
+
+    # Map the final result
+    .then (transactions)->
+      transactions.map (transaction)->
+        {
+          account:   parseInt accountKey, 10
+          date:      transaction.date
+          reference: transaction.refID
+          amount:    parseFloat transaction.amount, 10
+          balance:   parseFloat transaction.balance, 10
+          type:      transaction.type.name
+          reason:    transaction.reason
+        }
+
+
+
+
+CharacterSchema
   .method "refresh", ->
     Q.ninvoke @, "populate", {path: "apikey"}
       .then =>
