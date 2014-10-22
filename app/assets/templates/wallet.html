@@ -1,0 +1,26 @@
+<div id="wallet" class="wallet-overview">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Reference</th>
+        <th>Date</th>
+        <th>Type</th>
+        <th>Amount</th>
+      </tr>
+    </thead>
+    <tfoot ng-if="transactions.length > 0">
+      <tr>
+        <th class="text-right" colspan="4">Current Balance</td>
+        <th class="text-right">{{ transactions[0].balance | number }} ISK</th>
+      </tr>
+    </tfoot>
+    <tbody>
+      <tr ng-repeat="transaction in transactions">
+        <td>{{ transaction.reference }}</td>
+        <td>{{ transaction.date | utc | date : 'medium' }}</td>
+        <td>{{ transaction.type }}</td>
+        <td class="text-right">{{ transaction.amount  | number }} ISK</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
