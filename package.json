@@ -13,7 +13,6 @@
   "scripts": {
     "start": "node index.js",
     "watch": "$(npm bin)/gulp watch",
-    "postinstall": "$(npm bin)/bower install",
     "build": "$(npm bin)/gulp build",
     "test": "mocha"
   },
