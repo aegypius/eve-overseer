@@ -34,10 +34,10 @@
               <p class="text-muted" ng-bind-html="skill.description"></p>
             </div>
             <div class="col-xs-3">
-              <div class="progress">
-                <div class="progress-bar" style="width:{{ skill.level * 20 }}%"></div>
-                <div class="progress-bar progress-bar-info " ng-class="{'progress-bar-striped active':job.position == 0}" style="width: {{ (job.level - skill.level) * 20 }}%" ng-repeat="job in skill.queued"></div>
+              <div class="row">
+                <span  class="fa fa-lg" ng-class="{'fa-square': skill.level-1 >= $index,'fa-square-o': skill.level-1 < $index}" ng-repeat="n in [] | range:5">&nbsp;</span>
               </div>
+
             </div>
           </div>
         </div>
