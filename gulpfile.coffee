@@ -21,13 +21,18 @@ env            = process.env.NODE_ENV        or "development"
 port           = process.env.PORT            or 3333
 liveReloadPort = process.env.LIVERELOAD_PORT or 35729
 
+config =
+  paths:
+    build:  "build"
+    target: "public"
+
 
 # Export main files from bower components
 # =======================================
 gulp.task "bower", ->
   gulp
     .src bowerfiles(), base: 'bower_components'
-    .pipe gulp.dest "public/lib"
+    .pipe gulp.dest "#{config.paths.build}"
 
 
 # Configure and compiles less files
@@ -35,21 +40,21 @@ gulp.task "bower", ->
 gulp.task "less:configure:bootstrap", ["bower"], ->
   gulp
     .src "app/**/*.less"
-    .pipe gulp.dest "public/lib/bootstrap"
+    .pipe gulp.dest "#{config.paths.build}/bootstrap"
 
 gulp.task "less:compile:bootstrap", ["less:configure:bootstrap"], ->
   gulp
-    .src "public/lib/bootstrap/less/bootstrap.less"
+    .src "#{config.paths.build}/bootstrap/less/bootstrap.less"
     .pipe less()
     .pipe rename "bootstrap.css"
-    .pipe gulp.dest "public/build"
+    .pipe gulp.dest "#{config.paths.build}"
 
 gulp.task "less:compile:theme", ["less:configure:bootstrap"], ->
   gulp
-    .src "public/lib/bootstrap/less/theme.less"
+    .src "#{config.paths.build}/bootstrap/less/theme.less"
     .pipe less()
     .pipe rename "theme.css"
-    .pipe gulp.dest "public/build"
+    .pipe gulp.dest "#{config.paths.build}"
 
 gulp.task "less:compile", [
   "less:compile:bootstrap"
@@ -57,33 +62,33 @@ gulp.task "less:compile", [
   ], ->
   gulp
     .src [
-      "public/build/bootstrap.css"
-      "public/lib/fontawesome/css/font-awesome.css"
-      "public/build/theme.css"
+      "#{config.paths.build}/bootstrap.css"
+      "#{config.paths.build}/fontawesome/css/font-awesome.css"
+      "#{config.paths.build}/theme.css"
     ]
     .pipe sourcemaps.init()
     .pipe concat "app.css"
     .pipe sourcemaps.write()
-    .pipe gulp.dest "public/"
+    .pipe gulp.dest config.paths.target
     .pipe gulpif env is "development", refresh lr
 
 # Configure and compiles javascripts files
 # ========================================
 gulp.task "javascript:compile:vendors", ["bower"], ->
   gulp.src [
-    "public/lib/**/*.js"
-    "!public/lib/**/*.min.js"
+    "#{config.paths.build}/**/*.js"
+    "!#{config.paths.build}/**/*.min.js"
   ]
   .pipe sourcemaps.init()
-  .pipe concat "vendors.js"
+  .pipe concat "vendors.min.js"
   .pipe uglify()
   .pipe sourcemaps.write()
-  .pipe gulp.dest "public/build"
+  .pipe gulp.dest config.paths.build
 
 gulp.task "javascript:compile", ["javascript:compile:vendors"], ->
   gulp
     .src [
-      "public/build/vendors.js"
+      "#{config.paths.build}/vendors.min.js"
       "app/**/*.js"
     ]
     .pipe sourcemaps.init()
@@ -96,7 +101,7 @@ gulp.task "javascript:compile", ["javascript:compile:vendors"], ->
 
     .pipe uglify()
     .pipe sourcemaps.write()
-    .pipe gulp.dest "public/"
+    .pipe gulp.dest config.paths.target
     .pipe gulpif env is "development", refresh lr
 
 
@@ -106,23 +111,23 @@ gulp.task "copy:assets", ["bower"], ->
   gulp
     .src [
       "app/assets/**/*.*"
-      "public/lib/**/fonts/*.*"
+      "#{config.paths.build}/**/fonts/*.*"
     ]
     .pipe rename (path)->
       path.dirname = "fonts" if /(.*)\/fonts/.test path.dirname
       path
     .pipe gulpif env is "development"
       , gulpif /index\.html/, embedlr port: liveReloadPort, refresh lr
-    .pipe gulp.dest "public/"
+    .pipe gulp.dest config.paths.target
+    .pipe gulpif env is "development", refresh lr
 
 
 # Watch for modifications
 # =======================
 gulp.task "watch", ["server"], ->
-  gulp.watch ["app/**/*.less"],     ["less:compile"]
-  gulp.watch ["app/**/*.js"],       ["javascript:compile"]
-  gulp.watch ["app/assets/**/*.*"], ["copy:assets"]
-
+  gulp.watch ["app/**/*.less"],                 ["less:compile"]
+  gulp.watch ["app/**/*.js"],                   ["javascript:compile"]
+  gulp.watch ["app/assets/**/*.*"],             ["copy:assets"]
 
 # Start server
 # =======================
@@ -141,7 +146,7 @@ gulp.task "server", ["build"], (done)->
 # Cleaning
 # ========
 gulp.task "clean", (done)->
-  del ["public"], done
+  del (value for key, value of config.paths), done
 
 
 # Build task
@@ -153,11 +158,9 @@ gulp.task "build", [
   ], (done)->
 
   if env is "production"
-    del ["public/lib", "public/build"], done
+    del (value for key, value of config.paths), done
   else
     done()
-
-
 
 # Default task
 # ============

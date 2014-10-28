@@ -12,9 +12,8 @@
   },
   "scripts": {
     "start": "node index.js",
-    "watch": "gulp watch",
-    "postinstall": "bower install",
-    "prestart": "gulp build",
+    "watch": "$(npm bin)/gulp watch",
+    "build": "$(npm bin)/gulp build",
     "test": "mocha"
   },
   "author": "Nicolas LAURENT <innercircle@aegypius.com>",
