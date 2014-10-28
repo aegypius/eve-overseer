@@ -12,8 +12,18 @@ build:
     - script:
         name: Build production assets
         code: |-
+          $(npm bin)/bower install
           npm run build
 deploy:
   steps:
+    - script:
+        name: Add public dir to slug
+        code: |-
+          git config --global user.email $WERCKER_COMMIT_EMAIL
+          git config --global user.name  $WERCKER_COMMIT_NAME
+          git checkout $WERCKER_GIT_BRANCH
+          git add -f public
+          git commit -m "Add public dir to slug"
     - heroku-deploy:
         key-name: HEROKU
+        keep-repository: true
