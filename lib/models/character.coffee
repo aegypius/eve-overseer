@@ -73,7 +73,7 @@ CharacterSchema
 
 CharacterSchema
   .method "getSkillTree", (options)->
-    {@queued} = options or { queued: false }
+    {@filter} = options or { filter: false }
 
     api = @apikey.getClient()
     return api.fetch "char:CharacterSheet", {
@@ -109,18 +109,22 @@ CharacterSchema
           }
         return skills
 
-    .then (skills)->
+    .then (skills)=>
       ids = (parseInt skill.id for id, skill of skills)
+
+      conditions =
+        published: true
+
+      if @filter isnt "all" and @filter isnt "unknown"
+        conditions.id = {$in: ids}
+
       mongoose.model('SkillGroup')
         .find()
         .select('id name skills')
         .populate({
           path: 'skills'
           select: 'id name description rank'
-          match: {
-            "id": {$in: ids}
-            "published": true
-          }
+          match: conditions
         })
         .exec()
         .then (result)->
@@ -135,17 +139,15 @@ CharacterSchema
                     name:        skill.name
                     description: skill.description
                     rank:        skill.rank
-                    level:       skills[skill.id].level
-                    points:      skills[skill.id].points
-                    queued:      skills[skill.id].queued or false
+                    level:       skills[skill.id]?.level  or null
+                    points:      skills[skill.id]?.points or null
+                    queued:      skills[skill.id]?.queued or false
                   }
                 }
             .filter (group)->
               return group.skills.length > 0
     .then (skills)=>
-      if not @queued
-        return skills
-      else
+      if @filter is "queued"
         return skills
           .map (group)->
             group.skills = group.skills.filter (skill)->
@@ -153,6 +155,18 @@ CharacterSchema
             return group
           .filter (group)->
             return group.skills.length > 0
+
+      if @filter is "unknown"
+        return skills
+          .map (group)->
+            group.skills = group.skills.filter (skill)->
+              return skill.level is null
+            return group
+          .filter (group)->
+            return group.skills.length > 0
+
+      return skills
+
 
 CharacterSchema
   .method "getAccounts", (options)->
