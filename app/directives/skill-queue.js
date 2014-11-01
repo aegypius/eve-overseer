@@ -7,10 +7,10 @@ angular
       scope: true,
       require: 'timer',
       templateUrl: '/templates/skill-queue.html',
-      controller: ['$scope', 'SkillQueue', function ($scope, SkillQueue) {
+      controller: ['$scope', 'Skill', function ($scope, Skill) {
         $scope.$watch('character', function (character) {
           if (undefined !== character) {
-            SkillQueue.query({id: character.id}, function (skillqueue) {
+            Skill.queued({id: character.id}, function (skillqueue) {
               var timer = function () {
                     var current = moment();
 
