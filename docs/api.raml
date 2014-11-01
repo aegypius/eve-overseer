@@ -272,10 +272,14 @@ securitySchemes:
         description: Get list of skills
         securedBy: [ oauth_2_0 ]
         queryParameters:
-          queued:
-            description: Filter for skill queue only
-            type:        boolean
-            default:     false
+          filter:
+            description: Filter skills
+            type: string
+            enum:
+              - queued
+              - learned
+              - none
+            default: learned
         responses:
           200:
             body:
