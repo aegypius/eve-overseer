@@ -2,13 +2,13 @@
   <div class="row">
     <div class="col-xs-3">
       <ul class="nav nav-pills nav-stacked" role="tablist">
-        <li ng-class="{'active': $index == 0 }" ng-repeat="group in groups | orderBy:'name'" ng-if="group.skills.length">
+        <li ng-class="{'active': $index == 0 }" ng-repeat="group in groups" ng-if="group.skills.length">
           <a role="tab" data-toggle="tab" data-target="#tab-{{ group.id }}" href>{{ group.name }}</a></li>
       </ul>
     </div>
     <div class="col-xs-9">
       <div class="tab-content">
-        <div class="tab-pane" ng-class="{'active': $index == 0 }" id="tab-{{ group.id }}" ng-repeat="group in groups | orderBy:'name'" ng-if="group.skills.length">
+        <div class="tab-pane" ng-class="{'active': $index == 0 }" id="tab-{{ group.id }}" ng-repeat="group in groups" ng-if="group.skills.length">
           <div class="row" ng-repeat="skill in group.skills | orderBy:'rank'">
             <div class="col-xs-9">
               <strong>{{ skill.name }}</strong> <small class="text-muted">(&times;{{ skill.rank }})</span>

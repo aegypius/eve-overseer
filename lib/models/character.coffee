@@ -120,12 +120,15 @@ CharacterSchema
 
       mongoose.model('SkillGroup')
         .find()
-        .select('id name skills')
-        .populate({
+        .select 'id name skills'
+        .populate {
           path: 'skills'
           select: 'id name description rank'
           match: conditions
-        })
+        }
+        .sort {
+          name: 1
+        }
         .exec()
         .then (result)->
           result
