@@ -1,14 +1,33 @@
-<div id="skill-tree" class="skill-overview">
+<fieldset id="skill-tree" class="skill-overview">
+  <legend>
+    Skills
+    <div class="btn-group pull-right">
+      <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+        <span class="sr-only">Preferences</span>
+        <span class="fa fa-cog"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li class="dropdown-header">Filters</li>
+        <li><button class="btn btn-dropdown" ng-click="preference.filter = 'learned'"><span class="fa" ng-class="{'fa-check': preference.filter == 'learned'}"></span> Known</button></li>
+        <li><button class="btn btn-dropdown" ng-click="preference.filter = 'unknown'"><span class="fa" ng-class="{'fa-check': preference.filter == 'unknown'}"></span> Unknown</button></li>
+        <li><button class="btn btn-dropdown" ng-click="preference.filter = 'all'"><span class="fa" ng-class="{'fa-check': preference.filter == 'all'}"></span> All</button></li>
+      </ul>
+    </div>
+  </legend>
+
   <div class="row">
+    <div class="col-xs-12">
+      <p class="text-muted">Display {{ preference.filter }} skills.</p>
+    </div>
     <div class="col-xs-3">
       <ul class="nav nav-pills nav-stacked" role="tablist">
-        <li ng-class="{'active': $index == 0 }" ng-repeat="group in groups | orderBy:'name'" ng-if="group.skills.length">
+        <li ng-class="{'active': $index == 0 }" ng-repeat="group in groups" ng-if="group.skills.length">
           <a role="tab" data-toggle="tab" data-target="#tab-{{ group.id }}" href>{{ group.name }}</a></li>
       </ul>
     </div>
     <div class="col-xs-9">
       <div class="tab-content">
-        <div class="tab-pane" ng-class="{'active': $index == 0 }" id="tab-{{ group.id }}" ng-repeat="group in groups | orderBy:'name'" ng-if="group.skills.length">
+        <div class="tab-pane" ng-class="{'active': $index == 0 }" id="tab-{{ group.id }}" ng-repeat="group in groups" ng-if="group.skills.length">
           <div class="row" ng-repeat="skill in group.skills | orderBy:'rank'">
             <div class="col-xs-9">
               <strong>{{ skill.name }}</strong> <small class="text-muted">(&times;{{ skill.rank }})</span>
@@ -25,4 +44,5 @@
       </div>
     </div>
   </div>
-</div>
+
+</fieldset>

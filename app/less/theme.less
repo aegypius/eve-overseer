@@ -5,6 +5,7 @@
 @import "variables.less";
 @import "mixins.less";
 @import "panels.less";
+@import "buttons.less";
 
 @import url("https://fonts.googleapis.com/css?family=Abel|Cabin+Condensed:500");
 
@@ -33,5 +34,22 @@
 
   .new-account {
     display: block;
+  }
+}
+
+//
+// Style button inside dropdown-menu
+// =================================
+.dropdown-menu {
+  li {
+    .btn-dropdown {
+      .btn-block;
+      text-align: left;
+      background-color: @body-bg;
+      font-size: @font-size-small;
+      span.fa, span.glyphicon {
+        min-width: @font-size-small;
+      }
+    }
   }
 }

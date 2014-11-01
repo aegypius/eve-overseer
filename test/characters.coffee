@@ -88,6 +88,102 @@ describe "EVE API", ->
 
             done()
 
+      it "should be able to get only queued skills for a character", (done)->
+
+        agent
+          .get "/api/characters/#{characterId}/skills/?filter=queued"
+          .set Authorization: "Bearer #{oauth.token.access_token}"
+          .expect 200
+          .end (err, res)->
+            should.not.exist err
+
+            res.body.should.be.an.array
+
+            res.body[0].should.be.an.object
+            group = res.body[0]
+
+            group.should.have.property "id"
+            group.should.have.property "name"
+            group.should.have.property "skills"
+
+            group.skills.should.be.an.array
+            skill = group.skills[0]
+
+            skill.should.be.an.object
+            skill.should.have.property "id"
+            skill.should.have.property "name"
+            skill.should.have.property "description"
+            skill.should.have.property "rank"
+            skill.should.have.property "level"
+            skill.should.have.property "points"
+            skill.should.have.property "queued"
+            skill.queued.should.be.an.object
+
+            done()
+
+      it "should be able to get every unknown skills for a character", (done)->
+
+        agent
+          .get "/api/characters/#{characterId}/skills/?filter=unknown"
+          .set Authorization: "Bearer #{oauth.token.access_token}"
+          .expect 200
+          .end (err, res)->
+            should.not.exist err
+
+            res.body.should.be.an.array
+
+            res.body[0].should.be.an.object
+            group = res.body[0]
+
+            group.should.have.property "id"
+            group.should.have.property "name"
+            group.should.have.property "skills"
+
+            group.skills.should.be.an.array
+            skill = group.skills[0]
+
+            skill.should.be.an.object
+            skill.should.have.property "id"
+            skill.should.have.property "name"
+            skill.should.have.property "description"
+            skill.should.have.property "rank"
+            skill.should.have.property "level", null
+            skill.should.have.property "points", null
+
+            done()
+
+      it "should be able to get every skills for a character", (done)->
+
+        agent
+          .get "/api/characters/#{characterId}/skills/?filter=all"
+          .set Authorization: "Bearer #{oauth.token.access_token}"
+          .expect 200
+          .end (err, res)->
+            should.not.exist err
+
+            res.body.should.be.an.array
+
+            res.body[0].should.be.an.object
+            group = res.body[0]
+
+            group.should.have.property "id"
+            group.should.have.property "name"
+            group.should.have.property "skills"
+
+            group.skills.should.be.an.array
+            skill = group.skills[0]
+
+            skill.should.be.an.object
+            skill.should.have.property "id"
+            skill.should.have.property "name"
+            skill.should.have.property "description"
+            skill.should.have.property "rank"
+            skill.should.have.property "level"
+            skill.should.have.property "points"
+
+            done()
+
+
     describe "Accounts", ->
       account = null
 
@@ -102,7 +198,6 @@ describe "EVE API", ->
 
             res.body.should.be.an.array
             res.body[0].should.be.an.object
-
             account = res.body[0]
 
             account.should.have.property "id"

@@ -65,9 +65,11 @@ characters
   # =============================
   .get '/:characterId/skills', (req, res, next)->
 
+    filter = req.query.filter or "learned"
+
     req.character
       .getSkillTree {
-        queued: req.query.queued or false
+        filter: filter
       }
       .then (tree)->
         res.status 200

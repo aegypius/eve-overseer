@@ -10,9 +10,10 @@ global.casual    = casual = require("casual");
 global.debug     = debug = require("debug")('overseer:test');
 global.port      = process.env.PORT || 3333;
 global.server    = require("..").server;
+
 global.oauth = {
-  clientId:     "test-client",
-  clientSecret: "test-client-secret"
+  clientId:     process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET
 };
 
 global.user      = {
