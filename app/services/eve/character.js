@@ -1,11 +1,11 @@
 angular
   .module('eve-overseer')
-  .factory('Character', ['$resource', function ($resource) {
+  .factory('Character', function ($resource) {
     return $resource('/api/characters/:id', {}, {
       query: {
         method: 'GET',
         isArray: true,
       }
     });
-  }])
+  })
 ;

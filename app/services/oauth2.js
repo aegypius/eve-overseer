@@ -12,7 +12,7 @@ angular
         }
       };
     })
-    .factory('AuthToken', ['$sessionStorage', function ($sessionStorage) {
+    .factory('AuthToken', function ($sessionStorage) {
       return {
         set: function (token) {
           var data = {
@@ -27,8 +27,8 @@ angular
           return $sessionStorage.token;
         }
       };
-    }])
-    .factory('User', ['$http', 'Client', 'AuthToken', '$sessionStorage', function ($http, Client, AuthToken, $sessionStorage) {
+    })
+    .factory('User', function ($http, Client, AuthToken, $sessionStorage) {
       return {
         login: function(username, password) {
           return $http
@@ -86,15 +86,15 @@ angular
           return $http.put('/api/account', data);
         }
       };
-    }])
+    })
 
-    .config(['$httpProvider', function ($httpProvider) {
+    .config(function ($httpProvider) {
       $httpProvider.interceptors.push('AuthorizationInterceptor');
       $httpProvider.interceptors.push('UnauthorizedInterceptor');
       $httpProvider.interceptors.push('ExpiredInterceptor');
-    }])
+    })
 
-    .factory('AuthorizationInterceptor', ['$sessionStorage', function ($sessionStorage) {
+    .factory('AuthorizationInterceptor', function ($sessionStorage) {
       return {
         request: function (config) {
           config.headers = config.headers || {};
@@ -104,9 +104,9 @@ angular
           return config;
         },
       };
-    }])
+    })
 
-    .factory('UnauthorizedInterceptor', ['$rootScope', '$q', function ($rootScope, $q) {
+    .factory('UnauthorizedInterceptor', function ($rootScope, $q) {
 
       return {
         responseError: function (rejection) {
@@ -123,7 +123,7 @@ angular
           return $q.reject(rejection);
         }
       };
-    }])
+    })
 
     .factory('ExpiredInterceptor', function () {
       return {};

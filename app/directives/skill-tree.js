@@ -6,7 +6,7 @@ angular
       replace: true,
       scope: true,
       templateUrl: '/templates/skill-tree.html',
-      controller: ['$scope', 'Skill', function ($scope, Skill) {
+      controller: function ($scope, Skill) {
         $scope.preference = {
           filter: 'learned'
         };
@@ -26,7 +26,7 @@ angular
             });
           }
         });
-      }]
+      }
     };
   })
 ;

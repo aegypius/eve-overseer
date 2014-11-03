@@ -6,7 +6,7 @@ angular
       replace: true,
       scope: true,
       templateUrl: '/templates/wallet.html',
-      controller: ['$scope', 'Wallet', function ($scope, Wallet) {
+      controller: function ($scope, Wallet) {
         $scope.$watch('character', function (character) {
           if (undefined !== character) {
             Wallet.query({id: character.id}, function (transactions) {
@@ -14,7 +14,7 @@ angular
             });
           }
         });
-      }]
+      }
     };
   })
 ;
