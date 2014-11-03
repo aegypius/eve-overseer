@@ -7,7 +7,7 @@ angular
       scope: true,
       require: 'timer',
       templateUrl: '/templates/skill-queue.html',
-      controller: ['$scope', 'Skill', function ($scope, Skill) {
+      controller: function ($scope, Skill) {
         $scope.$watch('character', function (character) {
           if (undefined !== character) {
             Skill.queued({id: character.id}, function (skillqueue) {
@@ -59,7 +59,7 @@ angular
             });
           }
         });
-      }]
+      }
     };
   })
 ;

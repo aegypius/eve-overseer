@@ -1,48 +1,58 @@
 var app = angular.module('eve-overseer', [
-  'ngRoute',
+  'ui.router',
   'ngResource',
   'ngSanitize',
   'oauth2',
 ]);
 
 app
-  .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
-    $routeProvider
-      .when('/', {
-        templateUrl: '/partials/characters.html',
-        controller:  'CharacterListController'
+  .config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
+
+    $urlRouterProvider.otherwise('/');
+
+    $stateProvider
+      .state('home', {
+        url: '/',
+        templateUrl: '/partials/home.html',
+        controller:  function ($scope, Character) {
+          $scope.characters = Character.query();
+        }
       })
-      .when('/login', {
-        templateUrl: '/partials/user/login.html',
-        controller:  'LoginCtrl',
-      })
-      .when('/signup', {
-        templateUrl: '/partials/user/signup.html',
-        controller:  'SignupCtrl',
-      })
-      .when('/profile', {
-        templateUrl: '/partials/user/profile.html',
-        controller:  'ProfileCtrl',
-      })
-      .when('/character/:id', {
+      .state('character', {
+        url: '/character/:id',
         templateUrl: '/partials/character/overview.html',
         controller:  'CharacterOverviewController'
       })
-      .otherwise({ redirectTo: '/'});
-
+      .state('profile', {
+        url: '/profile',
+        templateUrl: '/partials/user/profile.html',
+        controller:  'ProfileCtrl',
+      })
+      .state('login', {
+        url: '/login',
+        templateUrl: '/partials/user/login.html',
+        controller: 'LoginCtrl'
+      })
+      .state('signup', {
+        url: '/signup',
+        templateUrl: '/partials/user/signup.html',
+        controller: 'SignupCtrl'
+      })
+    ;
     $locationProvider.html5Mode(true);
-  }])
-  .run(['$rootScope', '$location', '$sessionStorage', 'User', function ($rootScope, $location, $sessionStorage, User) {
+  })
+  .run(function ($rootScope, $state, $sessionStorage, User) {
     $rootScope.$on('oauth2:unauthorized' , function () {
-      if (['/login', '/signup'].indexOf($location.path()) === -1 ) {
-        $location.path('/login');
+
+      if (!($state.is('profile.login') || $state.is('profile.signup'))) {
+        $state.transitionTo('login');
       }
     });
 
     $rootScope.$storage = $sessionStorage;
     $rootScope.logout = function () {
       User.logout();
-      $location.path('/login');
+      state.transitionTo('login');
     };
-  }])
+  })
 ;

@@ -1,6 +1,6 @@
 angular
   .module('eve-overseer')
-  .factory('Skill', ['$resource', function ($resource) {
+  .factory('Skill', function ($resource) {
     return $resource('/api/characters/:id/skills', {}, {
       query: {
         method: 'GET',
@@ -28,5 +28,5 @@ angular
         }
       }
     });
-  }])
+  })
 ;

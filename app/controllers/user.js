@@ -1,6 +1,6 @@
 angular
   .module('eve-overseer')
-  .controller('LoginCtrl', ['$scope', 'md5', 'User', '$location', function ($scope, md5, User, $location) {
+  .controller('LoginCtrl', function ($scope, md5, User, $state) {
     var gt;
     $scope.user     = {};
     $scope.errors   = {};
@@ -20,7 +20,7 @@ angular
         .then(function (err, user) {
           $scope.errors = {};
           if (!err) {
-            $location.path('/');
+            $state.transitionTo('home');
           } else {
             angular.forEach(err.errors, function (error, field) {
               if (form[field] !== undefined) {
@@ -37,8 +37,8 @@ angular
       ;
     };
 
-  }])
-  .controller('SignupCtrl', ['$scope', 'md5', 'User', '$location', function ($scope, md5, User, $location) {
+  })
+  .controller('SignupCtrl', function ($scope, md5, User, $state) {
     var gt;
     $scope.user     = {};
     $scope.errors   = {};
@@ -63,7 +63,7 @@ angular
           User
             .login($scope.user.email, $scope.user.password)
             .then(function() {
-                $location.path('/');
+                $state.transitionTo('home');
             });
         }).catch(function (response) {
           $scope.errors = {};
@@ -77,8 +77,8 @@ angular
         });
       }
     };
-  }])
-  .controller('ProfileCtrl', ['$scope', 'User', 'ApiKey', function ($scope, User, ApiKey) {
+  })
+  .controller('ProfileCtrl', function ($scope, User, ApiKey) {
 
     $scope.user = User.get();
 
@@ -125,5 +125,5 @@ angular
     };
 
 
-  }])
+  })
 ;
