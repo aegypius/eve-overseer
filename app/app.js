@@ -13,8 +13,10 @@ app
     $stateProvider
       .state('home', {
         url: '/',
-        templateUrl: '/partials/characters.html',
-        controller:  'CharacterListController'
+        templateUrl: '/partials/home.html',
+        controller:  function ($scope, Character) {
+          $scope.characters = Character.query();
+        }
       })
       .state('character', {
         url: '/character/:id',
