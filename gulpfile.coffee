@@ -11,6 +11,7 @@ rename     = require "gulp-rename"
 gulpif     = require "gulp-if"
 del        = require "del"
 replace    = require "gulp-replace"
+cache      = require "gulp-cached"
 
 lr         = (require "tiny-lr")()
 refresh    = require "gulp-livereload"
@@ -45,6 +46,7 @@ gulp.task "less:configure:bootstrap", ["bower"], ->
 gulp.task "less:compile:bootstrap", ["less:configure:bootstrap"], ->
   gulp
     .src "#{config.paths.build}/bootstrap/less/bootstrap.less"
+    .pipe cache "boostrap.css"
     .pipe less()
     .pipe rename "bootstrap.css"
     .pipe gulp.dest "#{config.paths.build}"
@@ -77,18 +79,18 @@ gulp.task "less:compile", [
 gulp.task "javascript:compile:vendors", ["bower"], ->
   gulp.src [
     "#{config.paths.build}/**/*.js"
-    "!#{config.paths.build}/**/*.min.js"
+    "!#{config.paths.build}/vendors.js"
   ]
+  .pipe cache "vendors.js"
   .pipe sourcemaps.init()
-  .pipe concat "vendors.min.js"
-  .pipe uglify()
+  .pipe concat "vendors.js"
   .pipe sourcemaps.write()
   .pipe gulp.dest config.paths.build
 
 gulp.task "javascript:compile", ["javascript:compile:vendors"], ->
   gulp
     .src [
-      "#{config.paths.build}/vendors.min.js"
+      "#{config.paths.build}/vendors.js"
       "app/**/*.js"
     ]
     .pipe sourcemaps.init()

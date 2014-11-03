@@ -32,7 +32,7 @@
         "less/!(variables|theme).less",
         "less/mixins/*.less",
         "dist/fonts/*",
-        "dist/js/*"
+        "dist/js/!(bootstrap.min).js"
       ]
     }
   },

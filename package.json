@@ -42,6 +42,7 @@
     "decking": "*",
     "del": "*",
     "gulp": "^3",
+    "gulp-cached": "^1.0.1",
     "gulp-concat": "^2",
     "gulp-debug": "^1",
     "gulp-embedlr": "*",
