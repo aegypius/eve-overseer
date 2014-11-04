@@ -12,6 +12,10 @@ AttributeType  = {
   }
 }
 
+ImplantType = {
+  id: Number
+  name: String
+}
 
 CharacterSchema  = new Schema {
   id: {
@@ -42,6 +46,21 @@ CharacterSchema  = new Schema {
     name:        String
     skillPoints: Number
   }
+
+  jump: {
+    clones:     [String]
+    implants:   [String]
+    activation: Date
+    fatigue:    Date
+    lastUpdate: Date
+  }
+
+  respec: {
+    free:  Number
+    last:  Date
+    timed: Date
+  }
+
   attributes: {
     intelligence: AttributeType
     memory:       AttributeType
@@ -49,6 +68,9 @@ CharacterSchema  = new Schema {
     perception:   AttributeType
     willpower:    AttributeType
   }
+
+  implants: [ImplantType]
+
   apikey:    {
     type: Schema.ObjectId
     ref:  "ApiKey"
@@ -242,12 +264,12 @@ CharacterSchema
             characterID: @id
           }
           .then (result)=>
-            @birthdate = result.DoB.content
-            @race      = result.race.content
-            @bloodline = result.bloodLine.content
-            @ancestry  = result.ancestry.content
-            @balance   = result.balance.content
-            @gender    = result.gender.content
+            @birthdate   = result.DoB.content
+            @race        = result.race.content
+            @bloodline   = result.bloodLine.content
+            @ancestry    = result.ancestry.content
+            @balance     = parseFloat result.balance.content, 10
+            @gender      = result.gender.content
 
             @corporation = {
               id:   result.corporationID.content
@@ -269,16 +291,30 @@ CharacterSchema
               skillPoints: result.cloneSkillPoints.content
             }
 
+            @jump = {
+              clones:     result.jumpClones
+              implants:   result.jumpClones
+              activation: result.jumpActivation.content
+              fatigue:    result.jumpFatigue.content
+              lastUpdate: result.jumpLastUpdate.content
+            }
+
+            @respec = {
+              free:  parseInt result.freeRespecs.content, 10
+              last:  result.lastRespecDate.content
+              timed: result.lastTimedRespec.content
+            }
+
             for attribute, value of result.attributes
               @attributes[attribute] = {
                 value: value.content
               }
 
-            for bonus, value of result.attributeEnhancers
-              attribute = bonus.replace /Bonus/, ''
-              @attributes[attribute].enhancer = {
-                name:  value.augmentatorName.content
-                value: value.augmentatorValue.content
+            @implants = []
+            for id, value of result.implants
+              @implants.push {
+                id: value.typeID
+                name: value.typeName
               }
 
       # Save processed result
