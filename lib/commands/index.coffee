@@ -1,10 +1,11 @@
-debug    = (require "debug")("overseer:cli")
-Q        = require "q"
-mongoose = require "mongoose"
-models   = require "../models"
-SkillGroups        = mongoose.model "SkillGroup"
-OAuthClients       = mongoose.model "OAuthClients"
-StaticData         = mongoose.model "StaticData"
+debug        = (require "debug")("overseer:cli")
+Q            = require "q"
+mongoose     = require "mongoose"
+models       = require "../models"
+
+SkillGroups  = mongoose.model "SkillGroup"
+OAuthClients = mongoose.model "OAuthClients"
+StaticData   = mongoose.model "Versions"
 
 module.exports =
   database:

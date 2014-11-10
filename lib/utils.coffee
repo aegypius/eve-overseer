@@ -82,8 +82,8 @@ class StaticDataLoader
         url      = "/#{release}/eve.db.bz2"
         deferred = Q.defer()
 
-        StaticData = mongoose.model "StaticData"
-        StaticData
+        Versions = mongoose.model "Versions"
+        Versions
           .findOne { checksum: checksum }
           .exec()
           .then (version)->

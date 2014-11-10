@@ -4,24 +4,49 @@ Q                  = require "q"
 {StaticDataLoader} = require "../utils"
 debug              = (require "debug")("overseer:static-data")
 
-StaticDataSchema = new Schema {
+VersionSchema = new Schema {
   name:     String
   version:  String
   checksum: String
 }
 
-#
-# Schema mapping for eveIcons table
-#
-StaticDataIconSchema = new Schema {
+IconSchema = new Schema {
   id: Number
   file: String
   description: String
 }
 
-StaticDataIconSchema.statics.import = (loader)->
+UnitSchema = new Schema {
+  id: Number
+  name: String
+  displayName: String
+  description: String
+}
+
+VersionSchema.statics.import = ->
+  deferred = Q.defer()
+  Loader = new StaticDataLoader
+
+  Icons = mongoose.model "Icons"
+  Units = mongoose.model "Units"
+
+  Q()
+    .then Loader.prepare
+    .then Icons.import
+    .then Units.import
+
+    .fail (err)->
+      debug "An error occured during upgrade"
+      deferred.reject err
+
+    .done ->
+      deferred.resolve()
+
+  return deferred.promise
+
+IconSchema.statics.import = (loader)->
   debug "Importing icons"
-  Icon = mongoose.model "StaticDataIcon"
+  Icon = mongoose.model "Icons"
 
   loader.fetch "eveIcons", (icon)->
     query = Q.defer()
@@ -39,19 +64,9 @@ StaticDataIconSchema.statics.import = (loader)->
       query.resolve()
     return query.promise
 
-#
-# Schema mapping for eveUnits table
-#
-StaticDataUnitSchema = new Schema {
-  id: Number
-  name: String
-  displayName: String
-  description: String
-}
-
-StaticDataUnitSchema.statics.import = (loader)->
+UnitSchema.statics.import = (loader)->
   debug "Importing units"
-  Unit  = mongoose.model "StaticDataUnit"
+  Unit  = mongoose.model "Units"
 
   loader.fetch "eveUnits", (unit)->
     query = Q.defer()
@@ -71,50 +86,6 @@ StaticDataUnitSchema.statics.import = (loader)->
     return query.promise
 
 
-InventoryCategorySchema = new Schema {
-  id: Number
-  name: String
-  description: String
-  icon: {
-    type: Schema.ObjectId
-    ref:  'StaticDataIcon'
-  }
-  published: Boolean
-}
-
-InventoryGroupSchema = new Schema {
-  id: Number
-}
-
-promises =
-  import:
-    inventory: ->
-      debug "Importing inventory"
-      deferred = Q.defer()
-      deferred.promise
-
-
-StaticDataSchema.statics.import = ->
-  deferred = Q.defer()
-  Loader = new StaticDataLoader
-
-  Icons = mongoose.model "StaticDataIcon"
-  Units = mongoose.model "StaticDataUnit"
-
-  Q()
-    .then Loader.prepare
-    .then Icons.import
-    .then Units.import
-
-    .fail (err)->
-      debug "An error occured during upgrade"
-      deferred.reject err
-
-    .done ->
-      deferred.resolve()
-
-  return deferred.promise
-
-mongoose.model "StaticData",     StaticDataSchema
-mongoose.model "StaticDataIcon", StaticDataIconSchema
-mongoose.model "StaticDataUnit", StaticDataUnitSchema
+mongoose.model "Versions",       VersionSchema
+mongoose.model "Icons",          IconSchema
+mongoose.model "Units",          UnitSchema
