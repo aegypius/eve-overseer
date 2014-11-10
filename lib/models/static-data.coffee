@@ -20,16 +20,24 @@ StaticDataIconSchema = new Schema {
 }
 
 StaticDataIconSchema.statics.import = (loader)->
-  deferred = Q.defer()
   debug "Importing icons"
+  Icon = mongoose.model "StaticDataIcon"
 
-  loader
-    .fetch "eveIcons"
-    .then (icons)->
-      icons.map (icon)->
-        debug icon
-
-  return deferred.promise
+  loader.fetch "eveIcons", (icon)->
+    query = Q.defer()
+    Icon.update {
+      id: icon.iconID
+    }, {
+      id:          icon.iconID
+      file:        icon.iconFile
+      description: icon.description
+    }, {
+      safe:   true
+      upsert: true
+    }, (err)->
+      return query.reject err if err
+      query.resolve()
+    return query.promise
 
 #
 # Schema mapping for eveUnits table
@@ -42,9 +50,25 @@ StaticDataUnitSchema = new Schema {
 }
 
 StaticDataUnitSchema.statics.import = (loader)->
-  deferred = Q.defer()
   debug "Importing units"
-  return deferred.promise
+  Unit  = mongoose.model "StaticDataUnit"
+
+  loader.fetch "eveUnits", (unit)->
+    query = Q.defer()
+    Unit.update {
+      id: unit.unitID
+    }, {
+      id:          unit.unitID
+      name:        unit.unitName
+      displayName: unit.displayName
+      description: unit.description
+    }, {
+      safe:   true
+      upsert: true
+    }, (err)->
+      return query.reject err if err
+      query.resolve()
+    return query.promise
 
 
 InventoryCategorySchema = new Schema {

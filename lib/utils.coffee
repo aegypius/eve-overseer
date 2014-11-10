@@ -8,25 +8,24 @@ crypto           = require "crypto"
 debug            = (require "debug")("overseer:utils")
 Decompress       = require "decompress"
 bzip2            = require "decompress-bzip2"
-sqlite3          = require "sqlite3"
+sqlite3          = require "q-sqlite3"
+{exec}           = require "child_process"
 
 class StaticDataLoader
   SDE_BASE_URL = "https://www.fuzzwork.co.uk/dump"
 
-  prepare: ->
+  prepare: =>
     debug "Initialize dataloader"
     deferred = Q.defer()
-    loader   = @
-    Q()
-
-      .then ->
+    return Q()
+      .then =>
         debug "Fetching version metadata"
         deferred = Q.defer()
-        https.get "#{SDE_BASE_URL}/", (response)->
+        https.get "#{SDE_BASE_URL}/", (response)=>
           body = ''
           response.on "data", (chunk)->
             body += chunk
-          response.on "end", ->
+          response.on "end", =>
             pattern = /"([a-z]+)-(\d\.\d(?:\.\d)?)-(\d{5,})\/"/gi
             latest = body
               .match pattern
@@ -47,7 +46,7 @@ class StaticDataLoader
                   return previous
 
             for key, value of latest
-              loader[key] = value
+              @[key] = value
 
             deferred.resolve latest
 
@@ -78,11 +77,10 @@ class StaticDataLoader
 
         return deferred.promise
 
-      .then (checksum)->
-        release  = "#{loader.name}-#{loader.version}-#{loader.build}"
+      .then (checksum)=>
+        release  = "#{@name}-#{@version}-#{@build}"
         url      = "/#{release}/eve.db.bz2"
         deferred = Q.defer()
-
 
         StaticData = mongoose.model "StaticData"
         StaticData
@@ -127,12 +125,15 @@ class StaticDataLoader
                 else
                   @emit "error", new Error "Checksum validation failed"
 
-
         return deferred.promise
 
       .then (bz2file)->
         debug "Uncompressing #{bz2file}"
         deferred = Q.defer()
+
+#        exec "bunzip2 --force --keep --quiet #{bz2file}", (err)->
+#          return deferred.reject err if err
+#          deferred.resolve bz2file.replace(/\.bz2$/, '')
 
         decompress = new Decompress
         decompress
@@ -141,19 +142,32 @@ class StaticDataLoader
           .use bzip2()
           .run (err, files)->
             return deferred.reject err if err
-            deferred.resolve bz2file.replace /\.bz2$/, ''
+            deferred.resolve bz2file.replace(/\.bz2$/, '')
 
         return deferred.promise
 
-      .done (dbfile)->
-        loader.db = new sqlite3.Database dbfile
-        loader.db.serialize ->
-          deferred.resolve loader
+      .then (dbfile)=>
+        debug "Loading sqlite database #{dbfile}"
+        deferred = Q.defer()
+        db = new sqlite3.createDatabase dbfile
+        db.then (db)=>
+          debug "Database loaded"
+          @db = db
+          deferred.resolve @
+
+        return deferred.promise
 
     return deferred.promise
 
-  fetch: (table)->
+  fetch: (table, callback)=>
     debug "Fetching data from #{table}"
+    @db
+      .all "SELECT * FROM `#{table}`"
+      .then (items)->
+        return Q.allSettled items.map callback
+      .then =>
+        return @
+
 
 module.exports =
   StaticDataLoader: StaticDataLoader
