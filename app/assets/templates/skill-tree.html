@@ -29,7 +29,17 @@
       <div class="tab-content">
         <div class="tab-pane" ng-class="{'active': $index == 0 }" id="tab-{{ group.id }}" ng-repeat="group in groups | orderBy:'name'" ng-if="group.skills.length">
           <div class="row" ng-repeat="skill in group.skills | orderBy:'rank'">
+<<<<<<< HEAD
             <div class="col-xs-9"><strong>{{ skill.name }}</strong> <small class="text-muted">(&times;{{ skill.rank }})</span><p class="text-muted">{{ skill.description }}</p>
+||||||| merged common ancestors
+            <div class="col-xs-9">
+              <strong>{{ skill.name }}</strong> <small class="text-muted">(&times;{{ skill.rank }})</span>
+              <p class="text-muted">{{ skill.description }}</p>
+=======
+            <div class="col-xs-9">
+              <strong>{{ skill.name }}</strong> <small class="text-muted">(&times;{{ skill.rank }})</span>
+              <p class="text-muted" ng-bind-html="skill.description"></p>
+>>>>>>> Display skills description as HTML
             </div>
             <div class="col-xs-3">
               <div class="row">
