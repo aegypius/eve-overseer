@@ -31,7 +31,7 @@
           <div class="row" ng-repeat="skill in group.skills | orderBy:'rank'">
             <div class="col-xs-9">
               <strong>{{ skill.name }}</strong> <small class="text-muted">(&times;{{ skill.rank }})</span>
-              <p class="text-muted">{{ skill.description }}</p>
+              <p class="text-muted" ng-bind-html="skill.description"></p>
             </div>
             <div class="col-xs-3">
               <div class="progress">
