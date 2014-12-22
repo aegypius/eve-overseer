@@ -11,9 +11,6 @@ module.exports =
   database:
     upgrade: ->
       Q()
-        .then StaticData.import
-        .then SkillGroups.synchronize
-
         # Register OAuth2 Clients
         .then ->
           if process.env.CLIENT_ID and process.env.CLIENT_SECRET
@@ -30,5 +27,5 @@ module.exports =
                     clientSecret: clientSecret
                     redirectUri:  '/login'
                   }
-        .then ->
-          debug " - Frontend client registered"
+        .then StaticData.import
+        .then SkillGroups.synchronize

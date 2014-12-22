@@ -131,18 +131,18 @@ class StaticDataLoader
         debug "Uncompressing #{bz2file}"
         deferred = Q.defer()
 
-#        exec "bunzip2 --force --keep --quiet #{bz2file}", (err)->
-#          return deferred.reject err if err
-#          deferred.resolve bz2file.replace(/\.bz2$/, '')
+        exec "bunzip2 --force --keep --quiet #{bz2file}", (err)->
+          return deferred.reject err if err
+          deferred.resolve bz2file.replace(/\.bz2$/, '')
 
-        decompress = new Decompress
-        decompress
-          .src bz2file
-          .dest os.tmpdir()
-          .use bzip2()
-          .run (err, files)->
-            return deferred.reject err if err
-            deferred.resolve bz2file.replace(/\.bz2$/, '')
+#        decompress = new Decompress
+#        decompress
+#          .src bz2file
+#          .dest os.tmpdir()
+#          .use bzip2()
+#          .run (err, files)->
+#            return deferred.reject err if err
+#            deferred.resolve bz2file.replace(/\.bz2$/, '')
 
         return deferred.promise
 

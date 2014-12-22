@@ -1,14 +1,7 @@
 mongoose           = require "mongoose"
 {Schema}           = mongoose
 Q                  = require "q"
-{StaticDataLoader} = require "../utils"
-debug              = (require "debug")("overseer:static-data")
-
-VersionSchema = new Schema {
-  name:     String
-  version:  String
-  checksum: String
-}
+debug              = (require "debug")("overseer:static-data:global")
 
 IconSchema = new Schema {
   id: Number
@@ -22,27 +15,6 @@ UnitSchema = new Schema {
   displayName: String
   description: String
 }
-
-VersionSchema.statics.import = ->
-  deferred = Q.defer()
-  Loader = new StaticDataLoader
-
-  Icons = mongoose.model "Icons"
-  Units = mongoose.model "Units"
-
-  Q()
-    .then Loader.prepare
-    .then Icons.import
-    .then Units.import
-
-    .fail (err)->
-      debug "An error occured during upgrade"
-      deferred.reject err
-
-    .done ->
-      deferred.resolve()
-
-  return deferred.promise
 
 IconSchema.statics.import = (loader)->
   debug "Importing icons"
@@ -85,7 +57,6 @@ UnitSchema.statics.import = (loader)->
       query.resolve()
     return query.promise
 
-
-mongoose.model "Versions",       VersionSchema
-mongoose.model "Icons",          IconSchema
-mongoose.model "Units",          UnitSchema
+module.exports =
+  IconSchema: IconSchema
+  UnitSchema: UnitSchema
