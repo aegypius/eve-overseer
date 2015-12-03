@@ -35,9 +35,9 @@
             </div>
             <div class="col-xs-3">
               <div class="row">
-                <span  class="fa fa-lg" ng-class="{'fa-square': skill.level-1 >= $index,'fa-square-o': skill.level-1 < $index}" ng-repeat="n in [] | range:5">&nbsp;</span>
-              </div>
 
+                <span  class="fa fa-lg" ng-class="{'fa-square': skill.level-1 >= $index,'fa-square-o': skill.level-1 < $index}" ng-attr-title="{{skill.level == 1 && skill.rank*250 || '' }}" ng-repeat="n in [] | range:5">&nbsp;</span>
+              </div>
             </div>
           </div>
         </div>
