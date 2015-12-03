@@ -1,6 +1,6 @@
 <fieldset id="skill-tree" class="skill-overview">
   <legend>
-    Skills
+    Skills : Display {{ preference.filter }}
     <div class="btn-group pull-right">
       <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
         <span class="sr-only">Preferences</span>
@@ -16,28 +16,26 @@
   </legend>
 
   <div class="row">
-    <div class="col-xs-12">
-      <p class="text-muted">Display {{ preference.filter }} skills.</p>
-    </div>
+
     <div class="col-xs-3">
       <ul class="nav nav-pills nav-stacked" role="tablist">
         <li ng-class="{'active': $index == 0 }" ng-repeat="group in groups" ng-if="group.skills.length">
-          <a role="tab" data-toggle="tab" data-target="#tab-{{ group.id }}" href>{{ group.name }}</a></li>
+          <a role="tab" data-toggle="tab" data-target="#tab-{{ group.id }}" href>{{ group.name }}</a>
+        </li>
       </ul>
     </div>
+
     <div class="col-xs-9">
       <div class="tab-content">
-        <div class="tab-pane" ng-class="{'active': $index == 0 }" id="tab-{{ group.id }}" ng-repeat="group in groups" ng-if="group.skills.length">
+        <div class="tab-pane" ng-class="{'active': $index == 0 }" id="tab-{{ group.id }}" ng-repeat="group in groups | orderBy:'name'" ng-if="group.skills.length">
           <div class="row" ng-repeat="skill in group.skills | orderBy:'rank'">
-            <div class="col-xs-9">
-              <strong>{{ skill.name }}</strong> <small class="text-muted">(&times;{{ skill.rank }})</span>
-              <p class="text-muted">{{ skill.description }}</p>
+            <div class="col-xs-9"><strong>{{ skill.name }}</strong> <small class="text-muted">(&times;{{ skill.rank }})</span><p class="text-muted">{{ skill.description }}</p>
             </div>
             <div class="col-xs-3">
               <div class="row">
-                <span  class="fa fa-lg" ng-class="{'fa-square': skill.level-1 >= $index,'fa-square-o': skill.level-1 < $index}" ng-repeat="n in [] | range:5">&nbsp;</span>
-              </div>
 
+                <span  class="fa fa-lg" ng-class="{'fa-square': skill.level-1 >= $index,'fa-square-o': skill.level-1 < $index}" ng-attr-title="{{skill.level == 1 && skill.rank*250 || '' }}" ng-repeat="n in [] | range:5">&nbsp;</span>
+              </div>
             </div>
           </div>
         </div>

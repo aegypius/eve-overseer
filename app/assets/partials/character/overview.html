@@ -65,18 +65,38 @@
             </div>
 
             <div class="col-xs-12">
-              <skill-tree />
+              <ul id="tabSkill" class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#skillRadar">Skill Radar</a></li>
+                <li role="presentation"><a href="#skillTree">Skills</a></li>
+                <li role="presentation"><a href="#wallet">Wallet Transactions</a></li>
+              </ul>
             </div>
+            <div class="tab-content col-xs-12">
 
-            <div class="col-xs-12">
-              <fieldset>
-                <legend>Wallet Transactions</legend>
+              <div role="tabpanel" class="tab-pane active" id="skillRadar">
+                <fieldset>
+                  <legend>Skill Radar</legend>
 
-                <wallet />
-              </fieldset>
+                  <skill-radar />
+                </fieldset>
+              </div>
+
+              <div role="tabpanel" class="tab-pane" id="skillTree">
+
+
+                  <skill-tree />
+
+              </div>
+
+              <div role="tabpanel" class="tab-pane" id="wallet">
+                <fieldset>
+                  <legend>Wallet Transactions</legend>
+
+                  <wallet />
+                </fieldset>
+              </div>
             </div>
-
-          </div>
+           </div>
         </div>
       </div>
     </div>

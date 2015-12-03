@@ -3,6 +3,7 @@ var app = angular.module('eve-overseer', [
   'ngResource',
   'ngSanitize',
   'oauth2',
+  'chartjs'
 ]);
 
 app

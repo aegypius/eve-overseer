@@ -1,0 +1,19 @@
+<div id="skill-radar" class="skill-overview">
+
+  <div class="row">
+    <div class="col-xs-3">
+    <ul class="nav nav-pills nav-stacked">
+      <li data-toggle="buttons"  ng-repeat="group in groups | orderBy:'name'" ng-if="group.skills.length">
+        <a href ng-click="listIdGroup.NotAff =  group.id" class="groupChecked">
+
+          <span class="fa" ng-class="{'fa-check': -1==$.inArray(listIdGroup.NotAff, group.id) }"></span>
+          {{ group.name }}
+        </a>
+      </li>
+    </ul>
+    </div>
+    <div class="col-xs-9">
+      <cjs-radar dataset="myData" options="someOptions" width="900" height="500" ></cjs-radar>
+    </div>
+  </div>
+</div>

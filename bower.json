@@ -24,7 +24,8 @@
     "moment": "~2.8.3",
     "fontawesome": "~4.2.0",
     "ngstorage": "~0.3.0",
-    "angular-ui-router": "~0.2.11"
+    "angular-ui-router": "~0.2.11",
+    "ng-chartjs": "~0.0.5"
   },
   "overrides": {
     "bootstrap": {
@@ -33,6 +34,11 @@
         "less/mixins/*.less",
         "dist/fonts/*",
         "dist/js/!(bootstrap.min).js"
+      ]
+    },
+    "ng-chartjs": {
+      "main": [
+        "dist/angular-chartjs.js"
       ]
     }
   },
