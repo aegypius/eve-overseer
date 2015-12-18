@@ -40,15 +40,12 @@ You can also use ```npm start``` to start server with a production build.
 
 If you intend to use docker to manage the mongodb database, you can run
 
-    sudo npm install -g decking
-    decking create dev
-    decking start dev
+    cp docker-compose.override.yml{.dev,}
+    docker-compose up -d
 
 This will create a development cluster with a persistent storage located in _.cache_
 directory, start mongodb cluster (first time can take a few minutes) and genghisapp
-container. You can access genghisapp web-ui at [http://localhost:3344](http://localhost:3344)
-
-You still need to launch server with ```npm run brunch```
+container. You can access genghisapp web-ui at [http://genghis.docker](http://genghis.docker)
 
 #### Running tests
 

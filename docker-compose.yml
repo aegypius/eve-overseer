@@ -1,0 +1,10 @@
+# Eve-Overseer stackfile
+eve-overseer:
+  build: .
+  links:
+    - mongo
+  ports:
+    - 5000
+
+mongo:
+  image: mongo:latest
