@@ -1,0 +1,36 @@
+# Development stackfile
+# ======================
+#
+# Requirements:
+#
+#  - docker
+#  - docker-compose
+#  - jwilder/nginx-proxy docker image
+#
+# Running:
+#
+#  1. `docker run -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock:ro jwilder/nginx-proxy`
+#  2. `docker-compose up --d`
+#
+
+eve-overseer:
+  environment:
+    VIRTUAL_HOST: eve-overseer.docker
+
+genghis:
+  image: aegypius/genghis:latest
+  links:
+    - mongo
+  environment:
+    VIRTUAL_HOST: genghis.docker
+
+mongo:
+  command: mongod --smallfiles
+  volumes_from:
+    - data
+
+data:
+  image: busybox:latest
+  command: sleep 2147483647
+  volumes:
+    - "./.cache:/data"
