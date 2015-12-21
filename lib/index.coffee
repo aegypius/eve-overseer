@@ -38,5 +38,5 @@ module.exports =
         http.listen port
       .done ->
         unless process.env.DEBUG
-          util.log "Starting http server on http://localhost:#{port}"
+          util.log "Starting http server on port #{port}"
         callback()
