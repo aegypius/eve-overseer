@@ -14,5 +14,3 @@ else
 module.exports = config =
   database:
     url: url
-
-console.log config
