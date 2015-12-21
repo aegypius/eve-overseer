@@ -20,7 +20,7 @@
     "angular-resource": "~1.2.23",
     "angular-sanitize": "~1.2.23",
     "bootstrap": "~3.2.0",
-    "underscore.string": "#master",
+    "underscore.string": "~3.2.2",
     "moment": "~2.8.3",
     "fontawesome": "~4.2.0",
     "ngstorage": "~0.3.0",

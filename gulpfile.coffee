@@ -13,7 +13,7 @@ del        = require "del"
 replace    = require "gulp-replace"
 cache      = require "gulp-cached"
 
-lr         = (require "tiny-lr")()
+lr = false
 refresh    = require "gulp-livereload"
 livereload = require "connect-livereload"
 embedlr    = require "gulp-embedlr"
@@ -62,17 +62,17 @@ gulp.task "less:compile", [
   "less:compile:bootstrap"
   "less:compile:theme"
   ], ->
-  gulp
-    .src [
-      "#{config.paths.build}/bootstrap.css"
-      "#{config.paths.build}/fontawesome/css/font-awesome.css"
-      "#{config.paths.build}/theme.css"
-    ]
-    .pipe sourcemaps.init()
-    .pipe concat "app.css"
-    .pipe sourcemaps.write()
-    .pipe gulp.dest config.paths.target
-    .pipe gulpif env is "development", refresh lr
+    gulp
+      .src [
+        "#{config.paths.build}/bootstrap.css"
+        "#{config.paths.build}/fontawesome/css/font-awesome.css"
+        "#{config.paths.build}/theme.css"
+      ]
+      .pipe sourcemaps.init()
+      .pipe concat "app.css"
+      .pipe sourcemaps.write()
+      .pipe gulp.dest config.paths.target
+      .pipe gulpif lr, refresh lr
 
 # Configure and compiles javascripts files
 # ========================================
@@ -104,7 +104,7 @@ gulp.task "javascript:compile", ["javascript:compile:vendors"], ->
     .pipe uglify()
     .pipe sourcemaps.write()
     .pipe gulp.dest config.paths.target
-    .pipe gulpif env is "development", refresh lr
+    .pipe gulpif lr, refresh lr
 
 
 # Copy assets
@@ -118,10 +118,10 @@ gulp.task "copy:assets", ["bower"], ->
     .pipe rename (path)->
       path.dirname = "fonts" if /(.*)\/fonts/.test path.dirname
       path
-    .pipe gulpif env is "development"
-      , gulpif /index\.html/, embedlr port: liveReloadPort, refresh lr
+    .pipe gulpif lr
+      , gulpif /index\.html/ and lr, embedlr port: liveReloadPort, refresh lr
     .pipe gulp.dest config.paths.target
-    .pipe gulpif env is "development", refresh lr
+    .pipe gulpif lr, refresh lr
 
 
 # Watch for modifications
@@ -135,6 +135,7 @@ gulp.task "watch", ["server"], ->
 # =======================
 gulp.task "server", ["build"], (done)->
   {server} = require "./index"
+  lr = (require "tiny-lr")()
 
   server
     .then (app)->
@@ -159,10 +160,10 @@ gulp.task "build", [
     "copy:assets"
   ], (done)->
 
-  if env is "production"
-    del (value for key, value of config.paths), done
-  else
-    done()
+    if env is "production"
+      del (value for key, value of config.paths), done
+    else
+      done()
 
 # Default task
 # ============
