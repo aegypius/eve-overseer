@@ -1,16 +1,24 @@
-box: nodejs
+box: node
 services:
-  - mongo:latest
+  - id: mongo:latest
 build:
   steps:
-    - npm-install
     - script:
-        name: Loading static data into database
+        name: setup environment
         code: |-
-          DEBUG=* ./bin/overseer database:upgrade
-    - npm-test
+          export NODE_ENV=${NODE_ENV:-test}
+
     - script:
-        name: Build production assets
+        name: setup global node modules
+        code: |-
+          npm install -g bower mocha
+
+    - wercker/npm-install
+
+    - wercker/npm-test
+
+    - script:
+        name: build production assets
         code: |-
           $(npm bin)/bower install
           npm run build
