@@ -1,7 +1,10 @@
 FROM node:onbuild
 MAINTAINER Nicolas LAURENT <docker@aegypius.com>
 
-RUN adduser --home /usr/src/app --disabled-password app && \
+EXPOSE 5000
+ENV PORT=5000
+
+RUN useradd --home /usr/src/app app && \
     chown -R app.app /usr/src/app
 
 USER app

@@ -8,8 +8,11 @@ else if process.env.NODE_ENV is "production"
   url = process.env.MONGOHQ_URL
 
 else
-  url = "mongodb://localhost/#{pkg.name}"
+  url = ((process.env.MONGO_PORT_27017_TCP or "mongodb://localhost").replace /^tcp:/, "mongodb:") + \
+        "/#{pkg.name}"
 
-module.exports =
+module.exports = config =
   database:
     url: url
+
+console.log config
