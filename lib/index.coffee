@@ -1,4 +1,3 @@
-(require "dotenv").load()
 debug    = (require "debug")('overseer:bootstrap')
 pkg      = require "../package.json"
 env      = process.env.NODE_ENV || 'development'
