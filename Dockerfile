@@ -7,7 +7,9 @@ ENV PORT=5000
 RUN useradd --home /usr/src/app app && \
     chown -R app.app /usr/src/app
 
+RUN npm install -g bower mocha
+
 USER app
 
-RUN npm run postinstall
+RUN bower install
 RUN npm run build

@@ -8,7 +8,6 @@
     "overseer": "./bin/overseer"
   },
   "scripts": {
-    "postinstall": "$(npm bin)/bower install",
     "start": "node index.js",
     "watch": "$(npm bin)/gulp watch",
     "build": "$(npm bin)/gulp build",
