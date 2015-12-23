@@ -48,8 +48,8 @@ CharacterSchema  = new Schema {
   }
 
   jump: {
-    clones:     [String]
-    implants:   [String]
+    clones:     Object
+    implants:   Object
     activation: Date
     fatigue:    Date
     lastUpdate: Date
@@ -293,7 +293,7 @@ CharacterSchema
 
             @jump = {
               clones:     result.jumpClones
-              implants:   result.jumpClones
+              implants:   result.jumpClonesImplants
               activation: result.jumpActivation.content
               fatigue:    result.jumpFatigue.content
               lastUpdate: result.jumpLastUpdate.content

@@ -38,9 +38,7 @@ describe "EVE API", ->
         .expect 200
         .end (err, res)->
           should.not.exist err
-          # console.log characterId, res.body
           res.body.should.be.an.object
-
           res.body.should.have.property "id"
           res.body.should.have.property "name"
           res.body.should.have.property "picture"
@@ -55,7 +53,7 @@ describe "EVE API", ->
 
           done()
 
-    describe "Skills", ->
+    describe.skip "Skills", ->
 
       it "should be able to get learned skills for a character", (done)->
 
@@ -184,7 +182,7 @@ describe "EVE API", ->
             done()
 
 
-    describe "Accounts", ->
+    describe.skip "Accounts", ->
       account = null
 
       it "should return a list of accounts", (done)->
