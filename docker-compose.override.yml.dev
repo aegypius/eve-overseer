@@ -26,7 +26,7 @@ eve-overseer: &app
 genghis:
   image: aegypius/genghis:latest
   links:
-    - mongo
+    - mongo:db
   environment:
     VIRTUAL_HOST: genghis.docker
 
@@ -48,6 +48,7 @@ test:
   environment:
     <<: *env
     NODE_ENV: test
+    DEBUG: overseer:test
   links:
     - mongo
   tty: true
