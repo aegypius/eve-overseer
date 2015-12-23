@@ -1,4 +1,3 @@
-[![Stories in Ready](https://badge.waffle.io/aegypius/eve-overseer.png?label=ready&title=Ready)](https://waffle.io/aegypius/eve-overseer)
 # eve-overseer
 
 This project aims to replace software like EVEMon in a browser.
@@ -57,3 +56,4 @@ To run test suite simply run :
 [![wercker status](https://app.wercker.com/status/58cfa027e6e90ef5170148c3d0b3d700/s/master "wercker status")](https://app.wercker.com/project/bykey/58cfa027e6e90ef5170148c3d0b3d700)
 [![depencencies status](http://img.shields.io/david/aegypius/eve-overseer.svg?style=flat-square "dependencies status")](https://david-dm.org/aegypius/eve-overseer)
 [![devDepencencies status](http://img.shields.io/david/dev/aegypius/eve-overseer.svg?style=flat-square "devDependencies status")](https://david-dm.org/aegypius/eve-overseer#info=devDependencies)
+[![Stories in Ready](https://badge.waffle.io/aegypius/eve-overseer.png?label=ready&title=Ready)](https://waffle.io/aegypius/eve-overseer)
