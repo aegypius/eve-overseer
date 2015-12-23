@@ -1,4 +1,3 @@
-(require "dotenv").load()
 gulp       = require "gulp"
 bowerfiles = require "main-bower-files"
 concat     = require "gulp-concat"

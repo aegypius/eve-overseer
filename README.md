@@ -10,8 +10,7 @@ This project aims to replace software like EVEMon in a browser.
 
 ## Environments variables
 
-This project use dotenv you can ever export your environments vars from your shell
-or use a `.env`. (Remember to **never** commit you `.env` file)
+This project supports environment variables :
 
 - `PORT`: allows you to tell the server to listen on the given port (default: 3333)
 - `NODE_ENV`: tell node to use one of these runtime environment:
