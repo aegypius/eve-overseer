@@ -50,4 +50,4 @@ test:
     NODE_ENV: test
   links:
     - mongo
-    tty: true
+  tty: true
