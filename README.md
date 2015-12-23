@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/aegypius/eve-overseer.png?label=ready&title=Ready)](https://waffle.io/aegypius/eve-overseer)
 # eve-overseer
 
 This project aims to replace software like EVEMon in a browser.
