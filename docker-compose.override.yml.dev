@@ -24,12 +24,12 @@ eve-overseer: &app
     TEST_EVEONLINE_API_ID: 123456
     TEST_EVEONLINE_VERIFICATION_CODE: 123456789123456789123456789
 
-genghis:
-  image: aegypius/genghis:latest
+mongo-ui:
+  image: knickers/mongo-express:latest
   links:
-    - mongo:db
+    - mongo
   environment:
-    VIRTUAL_HOST: genghis.docker
+    VIRTUAL_HOST: mongo.docker
 
 mongo:
   command: mongod --smallfiles
