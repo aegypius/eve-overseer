@@ -8,7 +8,6 @@ Q                  = require "q"
 config             = require "./config"
 Q.longStackSupport = true
 models             = require "./models"
-commands           = require "./commands"
 
 server = Q()
   .then ->
@@ -22,8 +21,7 @@ server = Q()
         .on "error", fail
 
   .then ->
-    if "production" is env
-      return commands.database.upgrade()
+    (require "./workers/database/upgrade")()
 
   .then ->
     require "./http"
@@ -31,11 +29,10 @@ server = Q()
 module.exports =
   server: server
   startServer: (port, publicDir, callback)->
-    util = require "util"
     server
       .then (http)->
         http.listen port
       .done ->
         unless process.env.DEBUG
-          util.log "Starting http server on port #{port}"
-        callback()
+          console.log "Starting http server on port #{port}"
+        callback() if callback
