@@ -3,16 +3,14 @@ if ('production' === process.env.NODE_ENV) {
     require("newrelic");
   } catch (e) {}
 }
-
 require('coffee-script/register');
-var overseer = require('./lib'),
-    port   = process.env.PORT || 3333
-;
 
-module.exports = overseer;
+var ronin = require('ronin');
+var path  = require('path');
+var program = ronin({
+  path: path.join(__dirname, 'lib'),
+  desc: 'Overseer',
+  delimiter: ':'
+});
 
-if (require.main === module) {
-  overseer.startServer(port, "public", function () {
-    require('debug')('overseer:server')(("Server listening on http://localhost:" + port));
-  });
-}
+program.run();
