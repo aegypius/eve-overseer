@@ -1,4 +1,5 @@
---compilers coffee:coffee-script/register
 --require   test/bootstrap.js
---timeout   5s
+--timeout   2s
 --ui        bdd
+--async-only
+--colors
