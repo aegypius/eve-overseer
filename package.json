@@ -31,7 +31,8 @@
     "newrelic": "1.24.0",
     "oauth2-server": "2.4.1",
     "q": "1.4.1",
-    "ronin": "^0.1.2"
+    "ronin": "^0.1.2",
+    "validator": "^4.5.0"
   },
   "devDependencies": {
     "bower": "1.7.1",

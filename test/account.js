@@ -68,7 +68,7 @@ describe('Account', () => {
         });
 
         it('should be able to register new users', (done)=> {
-            account = {
+            let account = {
                 email:    user.email,
                 username: casual.username,
                 password: 'test'
@@ -85,7 +85,7 @@ describe('Account', () => {
         });
 
         it('should not be able to use an existing email while registering', (done) => {
-            account = {
+            let account = {
                 email:    user.email,
                 username: casual.username,
                 password: '123456789'
@@ -98,9 +98,17 @@ describe('Account', () => {
                 .end((err, res)=> {
                     should.not.exist(err);
 
-                    res.body.should.have.property('name', 'ValidationError');
-                    should.exist(res.body.errors.email);
-                    res.body.errors.email.should.have.property('message', 'An account already exist for this email');
+                    let errors = res.body;
+
+                    errors.should.be.an.array;
+
+                    errors.should.have.length(1);
+
+                    let error = errors.pop();
+
+                    error.should.have.property('name', 'ValidationError');
+                    error.should.have.property('property', 'email');
+                    error.should.have.property('message', 'An account already exist for this email');
 
                     done();
                 });
@@ -227,7 +235,7 @@ describe('Account', () => {
                 .expect(200)
                 .end((err, res) => {
                     should.not.exist(err);
-                    res.body.should.be.an.array;
+                    res.body.should.be.an.array();
                     res.body.should.have.length(1);
 
                     apikey = res.body[0];
@@ -237,7 +245,7 @@ describe('Account', () => {
                     apikey.should.have.property('expires');
                     apikey.should.have.property('accessMask');
                     apikey.should.have.property('characters');
-                    apikey.characters.should.be.a.number;
+                    apikey.characters.should.be.a.number();
 
                     done();
                 });
@@ -250,7 +258,7 @@ describe('Account', () => {
                 .end((err, res) => {
                     should.not.exist(err);
 
-                    res.body.should.be.an.object;
+                    res.body.should.be.an.object();
                     apikey = res.body;
 
                     apikey.should.have.property('keyId',            apiKey.keyId);
@@ -274,9 +282,10 @@ describe('Account', () => {
         it('should be able to delete an apikey', (done) => {
             request(app).delete(`/api/apikeys/${apiKey.keyId}`)
                 .set({ Authorization: `Bearer ${oauth.token.access_token}` })
-                .expect(200, '')
+                .expect(200)
                 .end((err, res) => {
                     should.not.exist(err);
+
                     done();
                 });
         });
