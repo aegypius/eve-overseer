@@ -100,7 +100,7 @@ describe('Account', () => {
 
                     let errors = res.body;
 
-                    errors.should.be.an.array;
+                    errors.should.be.an('array');
 
                     errors.should.have.length(1);
 
@@ -117,29 +117,45 @@ describe('Account', () => {
 
     describe('Login / Logout', () => {
         it('should be able to login with valid username and password', (done) => {
-            request(app).post('/oauth/token')
-                .type('form')
-                .send({
-                    grant_type:    'password',
-                    client_id:      oauth.clientId,
-                    client_secret:  oauth.clientSecret,
-                    username:       user.email,
-                    password:       'test'
-                })
-                .expect(200)
-                .end((err, res) => {
-                    should.not.exist(err);
-                    res.body.should.have.property('token_type', 'bearer');
-                    res.body.should.have.property('access_token');
-                    res.body.should.have.property('expires_in');
-                    res.body.should.have.property('refresh_token');
-                    oauth.token = res.body;
-                    done();
-                });
+            request(app).post('/oauth/token').type('form').send({
+                grant_type:    'password',
+                client_id:      oauth.clientId,
+                client_secret:  oauth.clientSecret,
+                username:       user.email,
+                password:       'test'
+            })
+            .expect(200)
+            .end((err, res) => {
+                should.not.exist(err);
+                res.body.should.have.property('token_type', 'bearer');
+                res.body.should.have.property('access_token');
+                res.body.should.have.property('expires_in');
+                res.body.should.have.property('refresh_token');
+                oauth.token = res.body;
+                done();
+            });
+        });
+
+        it('should fail when invalid username is submitted', (done) => {
+            request(app).post('/oauth/token').type('form').send({
+                grant_type:    'password',
+                client_id:      oauth.clientId,
+                client_secret:  oauth.clientSecret,
+                username:       'invalid username',
+                password:       'test'
+            }).expect(401).end(done);
+        });
+
+        it('should fail when invalid password is submitted', (done) => {
+            request(app).post('/oauth/token').type('form').send({
+                grant_type:    'password',
+                client_id:      oauth.clientId,
+                client_secret:  oauth.clientSecret,
+                username:       user.email,
+                password:       'invalid password'
+            }).expect(401).end(done);
         });
     });
-
-
 
     describe('Profile', () => {
         it('should be able to get current user card', (done) => {
@@ -149,11 +165,15 @@ describe('Account', () => {
                 .end((err, res) => {
                     should.not.exist(err);
 
-                    res.body.should.have.property('email', user.email.toLowerCase());
-                    res.body.should.have.property('username');
-                    res.body.should.have.property('avatar');
-                    res.body.should.have.property('apikeys');
-                    res.body.apikeys.should.be.an.array;
+                    let userCard = res.body;
+
+                    userCard.should.have.property('email');
+                    userCard.should.have.property('username');
+                    userCard.should.have.property('avatar');
+                    userCard.should.have.property('apikeys');
+                    userCard.should.not.have.property('password');
+                    userCard.should.not.have.property('salt');
+                    userCard.apikeys.should.be.an.array;
 
                     done();
                 });
@@ -161,25 +181,22 @@ describe('Account', () => {
 
         it('should be able to update its username', (done) => {
             request(app).put('/api/account')
-            .set({Authorization: `Bearer ${oauth.token.access_token}`})
-            .send({ username: user.username })
-            .expect(202, '')
-            .end((err, res) => {
-                should.not.exist(err);
-                done();
-            });
+                .set({Authorization: `Bearer ${oauth.token.access_token}`})
+                .send({ username: user.username })
+                .expect(202)
+                .end(done);
         });
 
         it('should be able to update its password', (done) => {
             request(app).put('/api/account')
-            .set({Authorization: `Bearer ${oauth.token.access_token}`})
-            .send({ password: user.password })
-            .expect(202, '')
-            .end((err, res) => {
-                should.not.exist(err);
-                done();
+                .set({Authorization: `Bearer ${oauth.token.access_token}`})
+                .send({ password: user.password })
+                .expect(202, '')
+                .end((err, res) => {
+                    should.not.exist(err);
+                    done();
 
-            });
+                });
         });
 
         it('should not be able to update its email', (done) => {
@@ -190,10 +207,14 @@ describe('Account', () => {
                 .end((err, res) => {
                     should.not.exist(err);
 
-                    res.body.should.have.property('name', 'ValidationError');
+                    let errors = res.body;
+                    errors.should.be.an('array');
+                    errors.should.have.length(1);
+                    let error = errors.pop();
 
-                    should.exist(res.body.errors.email.message);
-                    res.body.errors.email.should.have.property('message', 'Email is read-only');
+                    error.should.have.property('name', 'ValidationError');
+                    error.should.have.property('property', 'email');
+                    error.should.have.property('message', 'Email is read-only');
 
                     done();
                 });
