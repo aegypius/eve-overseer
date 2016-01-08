@@ -11,7 +11,7 @@ before((done) => {
     });
 });
 
-describe('EVE API', () => {
+describe.skip('EVE API', () => {
 
     before((done) => {
         request(app)
@@ -71,7 +71,7 @@ describe('EVE API', () => {
         });
     });
 
-    describe.skip('Skills', () => {
+    describe('Skills', () => {
         it('should be able to get learned skills for a character', (done) => {
             request(app)
                 .get(`/api/characters/${characterId}/skills`)
@@ -209,7 +209,7 @@ describe('EVE API', () => {
 
 
 
-    describe.skip('Accounts', () => {
+    describe('Accounts', () => {
         var account = null;
 
         it('should return a list of accounts', (done) => {
