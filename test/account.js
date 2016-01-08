@@ -170,10 +170,8 @@ describe('Account', () => {
                     userCard.should.have.property('email');
                     userCard.should.have.property('username');
                     userCard.should.have.property('avatar');
-                    userCard.should.have.property('apikeys');
                     userCard.should.not.have.property('password');
                     userCard.should.not.have.property('salt');
-                    userCard.apikeys.should.be.an.array;
 
                     done();
                 });
@@ -242,9 +240,14 @@ describe('Account', () => {
             .end((err, res) => {
                 should.not.exist(err);
 
-                res.body.should.have.property('name', 'ValidationError');
-                should.exist(res.body.errors.keyId);
-                res.body.errors.keyId.should.have.property('message', 'This ApiKey is already registered');
+                let errors = res.body;
+                errors.should.be.an('array');
+                errors.should.have.length(1);
+                let error = errors.pop();
+
+                error.should.have.property('name', 'ValidationError');
+                error.should.not.have.property('property');
+                error.should.have.property('message', 'This ApiKey is already registered');
 
                 done();
             });
@@ -256,17 +259,19 @@ describe('Account', () => {
                 .expect(200)
                 .end((err, res) => {
                     should.not.exist(err);
-                    res.body.should.be.an.array();
-                    res.body.should.have.length(1);
 
-                    apikey = res.body[0];
+                    let apikeys = res.body;
+                    apikeys.should.be.an('array');
+                    apikeys.should.have.length(1);
 
-                    apikey.should.have.property('keyId', apiKey.keyId);
-                    apikey.should.have.property('verificationCode', apikey.verificationCode);
-                    apikey.should.have.property('expires');
-                    apikey.should.have.property('accessMask');
-                    apikey.should.have.property('characters');
-                    apikey.characters.should.be.a.number();
+                    apikeys.forEach((apikey) => {
+                        apikey.should.have.property('keyId', apiKey.keyId);
+                        apikey.should.have.property('verificationCode', apikey.verificationCode);
+                        apikey.should.have.property('expires');
+                        apikey.should.have.property('accessMask');
+                        apikey.should.have.property('characters');
+                        apikey.characters.should.be.a('number');
+                    });
 
                     done();
                 });
@@ -279,8 +284,8 @@ describe('Account', () => {
                 .end((err, res) => {
                     should.not.exist(err);
 
-                    res.body.should.be.an.object();
-                    apikey = res.body;
+                    let apikey = res.body;
+                    apikey.should.be.an('object');
 
                     apikey.should.have.property('keyId',            apiKey.keyId);
                     apikey.should.have.property('verificationCode', apikey.verificationCode);
@@ -288,10 +293,14 @@ describe('Account', () => {
                     apikey.should.have.property('accessMask');
 
                     apikey.should.have.property('characters');
-                    apikey.characters.should.be.an.array;
+                    apikey.characters.should.be.an('array');
+
+                    apikey.characters.forEach((character) => {
+                        character.should.be.an('object');
+                    });
 
                     apikey.should.have.property('account');
-                    apikey.account.should.be.an.object;
+                    apikey.account.should.be.an('object');
                     apikey.account.should.have.property('logonMinutes');
                     apikey.account.should.have.property('logonCount');
                     apikey.account.should.have.property('paidUntil');
@@ -306,22 +315,19 @@ describe('Account', () => {
                 .expect(200)
                 .end((err, res) => {
                     should.not.exist(err);
-
                     done();
                 });
         });
 
         it('should not remain some orphaned characters', (done) => {
             co(function* () {
-                try {
-                    let characters = yield Character.populate('apikey').find();
-                    characters.should.be.an.array;
-                    characters.should.have.length(0);
-                } catch (error) {
-                    should.not.exist(error);
-                }
+                return yield Character.populate('apikey', ApiKey).find();
+            }).then((characters) => {
+                characters.should.be.an('array');
+                characters.should.have.length(0);
                 done();
-
+            }).catch((error) => {
+                done(error);
             });
         });
     });
