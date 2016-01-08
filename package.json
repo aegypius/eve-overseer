@@ -19,7 +19,6 @@
   "dependencies": {
     "body-parser": "1.14.2",
     "co": "^4.6.0",
-    "coffee-script": "1.10.0",
     "commander": "2.9.0",
     "debug": "^2.2.0",
     "express": "4.13.3",
@@ -30,7 +29,6 @@
     "neow": "~1.0.0",
     "newrelic": "1.24.0",
     "oauth2-server": "2.4.1",
-    "q": "1.4.1",
     "ronin": "^0.1.2",
     "validator": "^4.5.0"
   },
@@ -55,10 +53,6 @@
     "gulp-uglify": "1.5.1",
     "main-bower-files": "2.11.0",
     "mocha": "2.3.4",
-    "mongoose": "^4.3.4",
-    "mongoose-timestamp": "^0.4.0",
-    "mongoose-unique-validator": "^0.6.2",
-    "raml2html": "2.1.2",
     "supertest": "1.1.0",
     "tiny-lr": "0.2.1"
   }
