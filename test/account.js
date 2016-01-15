@@ -71,7 +71,7 @@ describe('Account', () => {
             let account = {
                 email:    user.email,
                 username: casual.username,
-                password: 'test'
+                password: user.password
             };
 
             request(app).post('/api/account')
@@ -122,7 +122,7 @@ describe('Account', () => {
                 client_id:      oauth.clientId,
                 client_secret:  oauth.clientSecret,
                 username:       user.email,
-                password:       'test'
+                password:       user.password
             })
             .expect(200)
             .end((err, res) => {
@@ -269,8 +269,6 @@ describe('Account', () => {
                         apikey.should.have.property('verificationCode', apikey.verificationCode);
                         apikey.should.have.property('expires');
                         apikey.should.have.property('accessMask');
-                        apikey.should.have.property('characters');
-                        apikey.characters.should.be.a('number');
                     });
 
                     done();
@@ -291,14 +289,6 @@ describe('Account', () => {
                     apikey.should.have.property('verificationCode', apikey.verificationCode);
                     apikey.should.have.property('expires');
                     apikey.should.have.property('accessMask');
-
-                    apikey.should.have.property('characters');
-                    apikey.characters.should.be.an('array');
-
-                    apikey.characters.forEach((character) => {
-                        character.should.be.an('object');
-                    });
-
                     apikey.should.have.property('account');
                     apikey.account.should.be.an('object');
                     apikey.account.should.have.property('logonMinutes');
