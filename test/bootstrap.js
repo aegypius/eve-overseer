@@ -1,4 +1,5 @@
 require('harmonize')(['harmony_destructuring']);
+
 global.chai      = require('chai');
 global.co        = require('co');
 global.should    = chai.should();
@@ -8,7 +9,7 @@ global.casual    = casual = require('casual');
 global.debug     = debug = require('debug')('overseer:test');
 global.env       = process.env.NODE_ENV;
 global.port      = process.env.PORT || 3333;
-global.request   = require('supertest');
+global.request   = require('supertest-as-promised');
 global.server    = require('../lib');
 
 assert(env !== 'production', `Tests must not be run in production environment (NODE_ENV=${env})`);

@@ -23,6 +23,7 @@
     "debug": "^2.2.0",
     "express": "4.13.3",
     "harmonize": "^1.4.4",
+    "interactor": "^1.0.0",
     "kerberos": "0.0.17",
     "mongorito": "^1.4.6",
     "morgan": "1.6.1",
@@ -54,6 +55,7 @@
     "main-bower-files": "2.11.0",
     "mocha": "2.3.4",
     "supertest": "1.1.0",
+    "supertest-as-promised": "^2.0.2",
     "tiny-lr": "0.2.1"
   }
 }
