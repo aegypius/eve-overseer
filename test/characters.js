@@ -76,7 +76,9 @@ describe('EVE API', () => {
                         .set({ Authorization: `Bearer ${oauth.token.access_token}`})
                         .expect(200)
                         .end((err, res) => {
-                            characterId = res.body[0].id;
+                            let characters = res.body;
+                            expect(characters).to.be.an('array');
+                            characterId = characters.pop().id;
                             done();
                         });
                 } catch (err) {
