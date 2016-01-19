@@ -20,7 +20,7 @@ build:
     - script:
         name: build production assets
         code: |-
-          $(npm bin)/bower install
+          $(npm bin)/bower --allow-root install
           npm run build
 # deploy:
 #   steps:
