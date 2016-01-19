@@ -314,42 +314,40 @@ describe('EVE API', () => {
                     .set({ Authorization: `Bearer ${oauth.token.access_token}` })
                     .expect(200)
                     .end((err, res) => {
-                        should.not.exist(err);
 
-                        res.body.should.be.an.array;
-                        res.body[0].should.be.an.object;
-                        account = res.body[0];
+                        let accounts = res.body;
+                        expect(accounts).to.be.an('array');
 
-                        account.should.have.property('id');
-                        account.should.have.property('key');
-                        account.should.have.property('balance');
+                        account = accounts.pop();
+                        expect(account).to.be.an('object');
+                        expect(account).to.have.property('id');
+                        expect(account).to.have.property('key');
+                        expect(account).to.have.property('balance');
 
                         done();
                     });
             });
 
             it('should be able to get a log for an account', (done) => {
-                request(app).get(`/api/characters/#{characterId}/accounts/${account.key}`)
-                .set({ Authorization: `Bearer ${oauth.token.access_token}` })
-                .expect(200)
-                .end((err, res) => {
-                    should.not.exist(err);
+                request(app).get(`/api/characters/${characterId}/accounts/${account.key}`)
+                    .set({ Authorization: `Bearer ${oauth.token.access_token}` })
+                    .expect(200)
+                    .end((err, res) => {
+                        let logs = res.body;
+                        expect(logs).to.be.an('array');
 
-                    res.body.should.be.an.array;
-                    res.body[0].should.be.an.object;
+                        logs.map(entry => {
+                            expect(entry).to.have.property('account', account.key);
+                            expect(entry).to.have.property('date');
+                            expect(entry).to.have.property('reference');
+                            expect(entry).to.have.property('type');
+                            expect(entry).to.have.property('amount');
+                            expect(entry).to.have.property('balance');
+                            expect(entry).to.have.property('reason');
+                        });
 
-                    entry = res.body[0];
-
-                    entry.should.have.property('account', account.key);
-                    entry.should.have.property('date');
-                    entry.should.have.property('reference');
-                    entry.should.have.property('type');
-                    entry.should.have.property('amount');
-                    entry.should.have.property('balance');
-                    entry.should.have.property('reason');
-
-                    done();
-                });
+                        done();
+                    });
             });
         });
     });
