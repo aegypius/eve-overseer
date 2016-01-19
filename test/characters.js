@@ -3,6 +3,7 @@ const debug = require('debug')('overseer:test:character');
 const { OAuthClient, OAuthAccessToken, OAuthRefreshToken } = require('../lib/models/oauth');
 const User = require('../lib/models/user');
 const Character = require('../lib/models/character');
+const Skill = require('../lib/models/skill');
 const ApiKey = require('../lib/models/apikey');
 
 let app;
@@ -62,6 +63,27 @@ describe('EVE API', () => {
 
     describe('Characters', () => {
         var characterId = null;
+        var skillCount = 0;
+
+        before((done) => {
+            co(function* () {
+
+                try {
+                    skillCount = yield Skill.count({ published : true });
+
+                    request(app)
+                        .get('/api/characters')
+                        .set({ Authorization: `Bearer ${oauth.token.access_token}`})
+                        .expect(200)
+                        .end((err, res) => {
+                            characterId = res.body[0].id;
+                            done();
+                        });
+                } catch (err) {
+                    done(err);
+                }
+            });
+        });
 
         it('should be able to list all characters', (done) => {
             request(app)
@@ -78,8 +100,6 @@ describe('EVE API', () => {
                     expect(character).to.be.an('object');
 
                     character.should.have.property('id');
-                    characterId = character.id;
-
                     character.should.have.property('name');
                     character.should.have.property('picture');
 
@@ -120,14 +140,13 @@ describe('EVE API', () => {
                     .set({ Authorization: `Bearer ${oauth.token.access_token}` })
                     .expect(200)
                     .end((err, res) => {
-                        expect(err).to.be.empty;
 
                         let groups = res.body;
                         expect(groups).to.be.an('array');
                         expect(groups).not.to.have.length(0);
 
-                        let group = skills.pop();
-                        execpt(group).to.be.an('object');
+                        let group = groups.pop();
+                        expect(group).to.be.an('object');
 
                         expect(group).to.have.property('id');
                         expect(group).to.have.property('name');
@@ -156,34 +175,55 @@ describe('EVE API', () => {
                     .set({ Authorization: `Bearer ${oauth.token.access_token}` })
                     .expect(200)
                     .end((err, res) => {
-                        should.not.exist(err);
 
-                        res.body.should.be.an.array;
+                        let groups = res.body;
+                        expect(groups).to.be.an('array');
 
-                        res.body[0].should.be.an.object;
-                        group = res.body[0];
+                        let group = groups.pop();
+                        expect(group).to.be.an('object');
 
-                        group.should.have.property('id');
-                        group.should.have.property('name');
-                        group.should.have.property('skills');
+                        expect(group).to.have.property('id');
+                        expect(group).to.have.property('name');
+                        expect(group).to.have.property('skills');
 
-                        group.skills.should.be.an.array;
-                        skill = group.skills[0];
+                        let skills = group.skills;
+                        expect(skills).to.be.an('array');
+                        expect(skills).not.to.have.length(0);
 
-                        skill.should.be.an.object;
-                        skill.should.have.property('id');
-                        skill.should.have.property('name');
-                        skill.should.have.property('description');
-                        skill.should.have.property('rank');
-                        skill.should.have.property('level');
-                        skill.should.have.property('points');
-                        skill.should.have.property('queued');
-                        skill.queued.should.be.an.object;
+                        let skill = skills.pop();
+                        expect(skill).to.be.an('object');
+                        expect(skill).to.have.property('id');
+                        expect(skill).to.have.property('name');
+                        expect(skill).to.have.property('description');
+                        expect(skill).to.have.property('rank');
+                        expect(skill).to.have.property('level');
+                        expect(skill).to.have.property('points');
+                        expect(skill).to.have.property('queued');
+
+                        let queued = skill.queued;
+                        expect(queued).to.be.an('array');
+
+                        queued.map(job => {
+                            expect(job).to.be.an('object');
+                            expect(job).to.have.property('position');
+                            expect(job).to.have.property('level');
+                            expect(job).to.have.property('points');
+                            expect(job).to.have.property('time');
+
+                            let points = job.points;
+                            expect(points).to.be.an('object');
+                            expect(points).to.have.property('start');
+                            expect(points).to.have.property('end');
+
+                            let time = job.time;
+                            expect(time).to.be.an('object');
+                            expect(time).to.have.property('start');
+                            expect(time).to.have.property('end');
+                        });
 
                         done();
                     });
             });
-
 
             it('should be able to get every unknown skills for a character', (done) => {
 
@@ -192,27 +232,31 @@ describe('EVE API', () => {
                     .set({ Authorization: `Bearer ${oauth.token.access_token}` })
                     .expect(200)
                     .end((err, res) => {
-                        should.not.exist(err);
 
-                        res.body.should.be.an.array;
+                        let groups = res.body;
+                        expect(groups).to.be.an('array');
+                        expect(groups).not.to.have.length(0);
 
-                        res.body[0].should.be.an.object;
-                        group = res.body[0];
+                        let group = groups.pop();
+                        expect(group).to.be.an('object');
+                        expect(group).to.have.property('id');
+                        expect(group).to.have.property('name');
+                        expect(group).to.have.property('skills');
 
-                        group.should.have.property('id');
-                        group.should.have.property('name');
-                        group.should.have.property('skills');
+                        let skills = group.skills;
+                        expect(skills).to.be.an('array');
+                        expect(skills).not.to.have.length(0);
 
-                        group.skills.should.be.an.array;
-                        skill = group.skills[0];
-
-                        skill.should.be.an.object;
-                        skill.should.have.property('id');
-                        skill.should.have.property('name');
-                        skill.should.have.property('description');
-                        skill.should.have.property('rank');
-                        skill.should.have.property('level', null);
-                        skill.should.have.property('points', null);
+                        skills.map(skill => {
+                            expect(skill).to.be.an('object');
+                            expect(skill).to.have.property('id');
+                            expect(skill).to.have.property('name');
+                            expect(skill).to.have.property('description');
+                            expect(skill).to.have.property('rank');
+                            expect(skill).to.have.property('level', null);
+                            expect(skill).to.have.property('points', null);
+                            expect(skill).to.have.property('queued', null);
+                        });
 
                         done();
                     });
@@ -225,27 +269,35 @@ describe('EVE API', () => {
                     .set({ Authorization: `Bearer ${oauth.token.access_token}` })
                     .expect(200)
                     .end((err, res) => {
-                        should.not.exist (err);
+                        let groups = res.body;
+                        expect(groups).to.be.an('array');
+                        expect(groups).not.to.have.length(0);
 
-                        res.body.should.be.an.array;
+                        let allSkilled = 0;
+                        groups.map(group => {
+                            expect(group).to.be.an('object');
+                            expect(group).to.have.property('id');
+                            expect(group).to.have.property('name');
+                            expect(group).to.have.property('skills');
 
-                        res.body[0].should.be.an.object;
-                        group = res.body[0];
+                            let skills = group.skills;
+                            expect(skills).to.be.an('array');
+                            expect(skills).not.to.have.length(0);
 
-                        group.should.have.property('id');
-                        group.should.have.property('name');
-                        group.should.have.property('skills');
+                            skills.map(skill => {
+                                expect(skill).to.be.an('object');
+                                expect(skill).to.have.property('id');
+                                expect(skill).to.have.property('name');
+                                expect(skill).to.have.property('description');
+                                expect(skill).to.have.property('rank');
+                                expect(skill).to.have.property('level');
+                                expect(skill).to.have.property('points');
+                                expect(skill).to.have.property('queued');
+                                ++allSkilled;
+                            });
+                        });
 
-                        group.skills.should.be.an.array;
-                        skill = group.skills[0];
-
-                        skill.should.be.an.object;
-                        skill.should.have.property('id');
-                        skill.should.have.property('name');
-                        skill.should.have.property('description');
-                        skill.should.have.property('rank');
-                        skill.should.have.property('level');
-                        skill.should.have.property('points');
+                        expect(allSkilled).to.be.equal(skillCount);
 
                         done();
                     });
