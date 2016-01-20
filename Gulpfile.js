@@ -142,13 +142,17 @@ gulp.task('watch', () => {
 
 // Cleaning
 // ========
-gulp.task('clean',function clean(done) {
+const clean = function (done) {
     let paths = [];
     for (let key of Object.keys(config.paths)) {
         paths.push(config.paths[key]);
     }
     del.sync(paths);
     done();
+};
+
+gulp.task('clean', (done) => {
+    clean(done);
 });
 
 // Build task
