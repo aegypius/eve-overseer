@@ -5,15 +5,22 @@ const User = require('../lib/models/user');
 const Character = require('../lib/models/character');
 const Skill = require('../lib/models/skill');
 const ApiKey = require('../lib/models/apikey');
+const UpdateSkillTree = require('../lib/workers/UpdateSkillTree');
+
 
 let app;
 describe('EVE API', () => {
 
     before((done) => {
         co(function* () {
-            app = yield server.connect();
-
             try {
+                app = yield server.connect();
+
+                // Migrate database
+                yield [
+                    UpdateSkillTree.run()
+                ];
+
                 // Remove all data
                 yield [
                     OAuthClient.remove(),

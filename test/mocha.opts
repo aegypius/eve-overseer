@@ -1,5 +1,5 @@
 --require   test/bootstrap.js
---timeout   2s
+--timeout   10s
 --ui        bdd
 --async-only
 --colors

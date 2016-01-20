@@ -3,42 +3,45 @@ const { OAuthClient, OAuthAccessToken, OAuthRefreshToken } = require('../lib/mod
 const Character = require('../lib/models/character');
 const ApiKey = require('../lib/models/apikey');
 const User = require('../lib/models/user');
+const UpdateSkillTree = require('../lib/workers/UpdateSkillTree');
+
 let app;
 
 before((done) => {
     co(function* () {
+        try {
 
-        app = yield server.connect();
+            app = yield server.connect();
 
-        yield [
-            function* () {
-                try {
-                    // Remove all data
-                    yield [
-                        OAuthClient.remove(),
-                        OAuthAccessToken.remove(),
-                        OAuthRefreshToken.remove(),
-                        User.remove(),
-                        Character.remove(),
-                        ApiKey.remove()
-                    ];
+            // Migrate database
+            yield [
+                UpdateSkillTree.run()
+            ];
 
-                    // Create a new client for testing purpose
-                    let client = new OAuthClient({
-                        clientId:     oauth.clientId,
-                        clientSecret: oauth.clientSecret,
-                        redirectUri:  '/oauth/redirect'
-                    });
+            // Remove all data
+            yield [
+                OAuthClient.remove(),
+                OAuthAccessToken.remove(),
+                OAuthRefreshToken.remove(),
+                User.remove(),
+                Character.remove(),
+                ApiKey.remove()
+            ];
 
-                    yield client.save();
+            // Create a new client for testing purpose
+            let client = new OAuthClient({
+                clientId:     oauth.clientId,
+                clientSecret: oauth.clientSecret,
+                redirectUri:  '/oauth/redirect'
+            });
 
-                } catch (err) {
-                    console.error(err);
-                }
-            }
-        ];
+            yield client.save();
 
-        done();
+            done();
+        } catch (err) {
+            debug(err);
+            done(err);
+        }
     });
 });
 
