@@ -8,3 +8,5 @@ eve-overseer:
 
 mongo:
   image: mongo:latest
+  ports:
+    - 27017
