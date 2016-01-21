@@ -1,6 +1,6 @@
 # Eve-Overseer stackfile
-eve-overseer:
-  build: .
+app:
+  image: quay.io/aegypius/eve-overseer:latest
   links:
     - mongo
   ports:
