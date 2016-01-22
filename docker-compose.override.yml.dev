@@ -13,10 +13,11 @@
 #  2. `docker-compose up --d`
 #
 
-eve-overseer: &app
+app:
+  build: .
   volumes:
     - ".:/usr/src/app"
-  environment: &env
+  environment:
     DEBUG: overseer:*
     VIRTUAL_HOST: eve-overseer.docker
     CLIENT_ID: client-test
@@ -35,15 +36,3 @@ mongo:
   command: mongod --smallfiles
   volumes:
     - ".cache/data/db:/data/db"
-
-test:
-  build: .
-  command: mocha
-  <<: *app
-  environment:
-    <<: *env
-    NODE_ENV: test
-    DEBUG: overseer:test
-  links:
-    - mongo
-  tty: true

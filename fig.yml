@@ -1,0 +1,13 @@
+db:
+  image: mongo
+  ports:
+    - "27017:27017"
+    - "28017:28017"
+  volumes:
+    - .cache:/data
+genghis:
+  image: aegypius/genghis
+  ports:
+    - "3344:5000"
+  links:
+    - db
