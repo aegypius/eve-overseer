@@ -13,7 +13,7 @@
 #  2. `docker-compose up --d`
 #
 
-app:
+app: &app
   build: .
   volumes:
     - ".:/usr/src/app"
@@ -24,6 +24,10 @@ app:
     CLIENT_SECRET: loremipsumdolorsitametconsecteturadipisicingelitlaboresimiliquequa
     TEST_EVEONLINE_API_ID: 123456
     TEST_EVEONLINE_VERIFICATION_CODE: 123456789123456789123456789
+
+worker:
+  <<: *app
+  command: ./bin/overseer worker
 
 mongo-ui:
   image: knickers/mongo-express:latest
