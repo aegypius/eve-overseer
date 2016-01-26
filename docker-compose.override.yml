@@ -1,0 +1,56 @@
+# Development stackfile
+# ======================
+#
+# Requirements:
+#
+#  - docker
+#  - docker-compose
+#  - jwilder/nginx-proxy docker image
+#
+# Running:
+#
+#  1. `docker run -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock:ro jwilder/nginx-proxy`
+#  2. `docker-compose up --d`
+#
+
+app: &app
+  build: .
+  volumes:
+    - ".:/usr/src/app"
+  environment: &env
+    DEBUG: overseer:*
+    VIRTUAL_HOST: eve-overseer.docker
+    CLIENT_ID: client-test
+    CLIENT_SECRET: loremipsumdolorsitametconsecteturadipisicingelitlaboresimiliquequa
+    TEST_EVEONLINE_API_ID: 3720161
+    TEST_EVEONLINE_VERIFICATION_CODE: usNNE8gAU6O4jc7eTsRNqLbC6R9ZAQj1qXKqA1XYLWIcfSBXDBWh6N4SV6mzzPek
+
+mongo-ui:
+  image: knickers/mongo-express:latest
+  links:
+    - mongo
+  environment:
+    VIRTUAL_HOST: mongo.docker
+
+worker:
+  <<: *app
+  links:
+    - mongo
+  command: ./bin/overseer worker
+
+mongo:
+  command: mongod --smallfiles
+  volumes:
+    - ".cache/data/db:/data/db"
+
+# test:
+#   build: .
+#   command: mocha
+#   <<: *app
+#   environment:
+#     <<: *env
+#     NODE_ENV: test
+#     DEBUG: overseer:test
+#   links:
+#     - mongo
+#   tty: true
