@@ -27,6 +27,8 @@ app: &app
 
 worker:
   <<: *app
+  links:
+    - mongo
   command: ./bin/overseer worker
 
 mongo-ui:
