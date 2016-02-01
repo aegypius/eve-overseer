@@ -12,6 +12,8 @@ const gulpif = require('gulp-if');
 const del = require('del');
 const replace = require('gulp-replace');
 const cache = require('gulp-cached');
+const remember = require('gulp-remember');
+
 const env = (process.env.NODE_ENV || 'development');
 const config = {
     less: {
@@ -34,6 +36,8 @@ const config = {
             'node_modules/angular-sanitize/angular-sanitize.js',
             'node_modules/angular-ui-router/build/angular-ui-router.js',
             'node_modules/ng-storage/ngStorage.js',
+            'node_modules/moment/min/moment-with-locales.js',
+            'node_modules/lodash/index.js',
             'app/app.js',
             'app/**/*.js'
         ],
@@ -51,10 +55,12 @@ const config = {
 gulp.task('stylesheets', [], (done) => {
     gulp.src(config.assets.stylesheets)
         .pipe(sourcemaps.init())
-        .pipe(debug({ title: 'CSS' }))
+        .pipe(cache('stylesheets'))
+        .pipe(debug({ title: '>'}))
         .pipe(less(config.less))
-        .pipe(concat('app.css'))
         .pipe(cssnano())
+        .pipe(remember('stylesheets'))
+        .pipe(concat('app.css'))
         .pipe(sourcemaps.write('./maps'))
         .pipe(gulp.dest(config.output))
         .on('end', done)
@@ -68,7 +74,7 @@ gulp.task('javascripts', [], (done) => {
         .src(config.assets.javascripts)
         .pipe(sourcemaps.init())
         .pipe(annotate())
-        .pipe(debug({ title: 'JS' }))
+        .pipe(debug({ title: '>'}))
         .pipe(concat('app.js'))
         // Replaces ${ENV:VARNAME} pattern with VARNAME environment var
         .pipe(replace(/\$\{ENV:(\b.*\b)\}/g, (match, varname) => process.env[varname] || ''))
@@ -90,7 +96,7 @@ gulp.task('staticfiles', [], (done) => {
             }
             return path;
         }))
-        .pipe(debug({ title: 'STATIC' }))
+        .pipe(debug({ title: '>'}))
         .pipe(gulp.dest(config.output))
         .on('end', done)
     ;
@@ -100,9 +106,18 @@ gulp.task('staticfiles', [], (done) => {
 // Watch for modifications
 // =======================
 gulp.task('watch', ['build'], () => {
-    gulp.watch(config.assets.stylesheets, ['stylesheets']);
-    gulp.watch(config.assets.javascripts, ['javascripts']);
-    gulp.watch(config.assets.staticfiles, ['staticfiles']);
+    const handleCache = function (name) {
+        return function (event) {
+            if (event.type === 'deleted') {
+                delete cache.caches[name];
+                remember.forget(name, event.path);
+            }
+        };
+    };
+
+    gulp.watch(config.assets.stylesheets, ['stylesheets']).on('change', handleCache('stylesheets'));
+    gulp.watch(config.assets.javascripts, ['javascripts']).on('change', handleCache('javascripts'));
+    gulp.watch(config.assets.staticfiles, ['staticfiles']).on('change', handleCache('staticfiles'));
 });
 
 // Cleaning
