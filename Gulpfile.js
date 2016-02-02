@@ -37,11 +37,10 @@ const config = {
             'node_modules/angular-ui-router/build/angular-ui-router.js',
             'node_modules/ng-storage/ngStorage.js',
             'node_modules/moment/min/moment-with-locales.js',
-            'node_modules/lodash/index.js',
             'app/app.js',
             'app/**/*.js'
         ],
-        staticfiles: [
+        copy: [
             'app/assets/**/*.html',
             'node_modules/bootstrap/fonts/**/*.*',
             'node_modules/font-awesome/fonts/**/*.*'
@@ -58,6 +57,7 @@ gulp.task('stylesheets', [], (done) => {
         .pipe(cache('stylesheets'))
         .pipe(debug({ title: '>'}))
         .pipe(less(config.less))
+        .pipe(replace(/\.{2}\/fonts/g, './fonts'))
         .pipe(cssnano())
         .pipe(remember('stylesheets'))
         .pipe(concat('app.css'))
@@ -73,12 +73,14 @@ gulp.task('javascripts', [], (done) => {
     gulp
         .src(config.assets.javascripts)
         .pipe(sourcemaps.init())
+        .pipe(cache('javascripts'))
         .pipe(annotate())
         .pipe(debug({ title: '>'}))
-        .pipe(concat('app.js'))
         // Replaces ${ENV:VARNAME} pattern with VARNAME environment var
         .pipe(replace(/\$\{ENV:(\b.*\b)\}/g, (match, varname) => process.env[varname] || ''))
         .pipe(uglify())
+        .pipe(remember('javascripts'))
+        .pipe(concat('app.js'))
         .pipe(sourcemaps.write('./maps'))
         .pipe(gulp.dest(config.output))
         .on('end', done)
@@ -88,8 +90,8 @@ gulp.task('javascripts', [], (done) => {
 
 // Copy assets
 // =====================================
-gulp.task('staticfiles', [], (done) => {
-    gulp.src(config.assets.staticfiles)
+gulp.task('copy', [], (done) => {
+    gulp.src(config.assets.copy)
         .pipe(rename((path) => {
             if (/(glyphicons|fontawesome)/i.test(path.basename)) {
                 path.dirname = 'fonts';
@@ -117,7 +119,7 @@ gulp.task('watch', ['build'], () => {
 
     gulp.watch(config.assets.stylesheets, ['stylesheets']).on('change', handleCache('stylesheets'));
     gulp.watch(config.assets.javascripts, ['javascripts']).on('change', handleCache('javascripts'));
-    gulp.watch(config.assets.staticfiles, ['staticfiles']).on('change', handleCache('staticfiles'));
+    gulp.watch(config.assets.copy, ['copy']).on('change', handleCache('copy'));
 });
 
 // Cleaning
@@ -133,7 +135,7 @@ gulp.task('clean', (done) => {
 
 // Build task
 // ===============
-gulp.task('build', ['stylesheets', 'javascripts', 'staticfiles'], (done) => {
+gulp.task('build', ['stylesheets', 'javascripts', 'copy'], (done) => {
     if (env === 'production') {
         clean(done);
     } else {

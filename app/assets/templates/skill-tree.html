@@ -1,6 +1,6 @@
 <fieldset id="skill-tree" class="skill-overview">
   <legend>
-    Skills : Display {{ preference.filter }}
+    Skills
     <div class="btn-group pull-right">
       <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
         <span class="sr-only">Preferences</span>
@@ -15,36 +15,28 @@
     </div>
   </legend>
 
-  <div class="row">
-
-    <div class="col-xs-3">
-      <ul class="nav nav-pills nav-stacked" role="tablist">
-        <li ng-class="{'active': $index == 0 }" ng-repeat="group in groups" ng-if="group.skills.length">
-          <a role="tab" data-toggle="tab" data-target="#tab-{{ group.id }}" href>{{ group.name }}</a>
-        </li>
-      </ul>
-    </div>
-
-    <div class="col-xs-9">
-      <div class="tab-content">
-        <div class="tab-pane" ng-class="{'active': $index == 0 }" id="tab-{{ group.id }}" ng-repeat="group in groups | orderBy:'name'" ng-if="group.skills.length">
-          <div class="row" ng-repeat="skill in group.skills | orderBy:'rank'">
-<<<<<<< HEAD
-            <div class="col-xs-9"><strong>{{ skill.name }}</strong> <small class="text-muted">(&times;{{ skill.rank }})</span><p class="text-muted">{{ skill.description }}</p>
-||||||| merged common ancestors
-            <div class="col-xs-9">
-              <strong>{{ skill.name }}</strong> <small class="text-muted">(&times;{{ skill.rank }})</span>
-              <p class="text-muted">{{ skill.description }}</p>
-=======
-            <div class="col-xs-9">
-              <strong>{{ skill.name }}</strong> <small class="text-muted">(&times;{{ skill.rank }})</span>
+    <div class="row">
+        <div class="col-xs-12">
+            <p class="text-muted">Display {{ preference.filter }} skills.</p>
+        </div>
+        <div class="col-xs-3">
+            <ul class="nav nav-pills nav-stacked" role="tablist">
+                <li ng-class="{'active': $index == 0 }" ng-repeat="group in groups" ng-if="group.skills.length">
+                    <a role="tab" data-toggle="tab" data-target="#tab-{{ group.id }}" href>{{ group.name }}</a></li>
+            </ul>
+        </div>
+        <div class="col-xs-9">
+            <div class="tab-content">
+                <div class="tab-pane" ng-class="{'active': $index == 0 }" id="tab-{{ group.id }}" ng-repeat="group in groups" ng-if="group.skills.length">
+                    <div class="row" ng-repeat="skill in group.skills | orderBy:'rank'">
+                        <div class="col-xs-9">
+                            <strong>{{ skill.name }}</strong> <small class="text-muted">(&times;{{ skill.rank }})</span>
               <p class="text-muted" ng-bind-html="skill.description"></p>
->>>>>>> Display skills description as HTML
             </div>
             <div class="col-xs-3">
-              <div class="row">
-
-                <span  class="fa fa-lg" ng-class="{'fa-square': skill.level-1 >= $index,'fa-square-o': skill.level-1 < $index}" ng-attr-title="{{skill.level == 1 && skill.rank*250 || '' }}" ng-repeat="n in [] | range:5">&nbsp;</span>
+              <div class="progress">
+                <div class="progress-bar" style="width:{{ skill.level * 20 }}%"></div>
+                <div class="progress-bar progress-bar-info " ng-class="{'progress-bar-striped active':job.position == 0}" style="width: {{ (job.level - skill.level) * 20 }}%" ng-repeat="job in skill.queued"></div>
               </div>
             </div>
           </div>

@@ -87,12 +87,12 @@ angular
                 };
 
                 var wordToHex = function(lValue) {
-                    var wordToHexValue = "",
-                        wordToHexValue_temp = "",
+                    var wordToHexValue = '',
+                        wordToHexValue_temp = '',
                         lByte, lCount;
                     for (lCount = 0; lCount <= 3; lCount++) {
                         lByte = (lValue >>> (lCount * 8)) & 255;
-                        wordToHexValue_temp = "0" + lByte.toString(16);
+                        wordToHexValue_temp = '0' + lByte.toString(16);
                         wordToHexValue = wordToHexValue + wordToHexValue_temp.substr(wordToHexValue_temp.length - 2, 2);
                     }
                     return wordToHexValue;
