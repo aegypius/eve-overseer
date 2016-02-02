@@ -1,20 +1,20 @@
 <div class="skill-overview">
 
-  <div class="row" ng-repeat="skill in skills track by $index | orderBy:position ">
-    <div class="col-xs-3">
-        <strong>{{ skill.name }} {{ skill.level | roman_number }}</strong>
-    </div>
-
-    <div class="col-xs-7">
-      <div class="progress">
-        <div class="progress-bar" ng-class="{'progress-bar-striped active': skill.state = 'running', 'progress-bar-info': skill.state = 'completed'}" style="width: {{ skill.percent }}%">
-            {{ skill.percent }}%
+    <div class="row" ng-repeat="skill in skills track by $index | orderBy:position ">
+        <div class="col-xs-3">
+            <strong>{{ skill.name }} {{ skill.level | roman_number }}</strong>
         </div>
-        </timer>
-      </div>
-    </div>
-    <div class="col-xs-2">
-      <abbr title="{{ skill.time.end | utc | date : 'MMM d, y HH:mm:ss' }}">{{ skill.time.end | utc | countdown }}</a>
+
+        <div class="col-xs-7">
+            <div class="progress">
+                <div class="progress-bar" ng-class="{'progress-bar-striped active': skill.state = 'running', 'progress-bar-info': skill.state = 'completed'}" style="width: {{ skill.percent }}%">
+                    {{ skill.percent }}%
+                </div>
+                </timer>
+            </div>
+        </div>
+        <div class="col-xs-2">
+            <abbr title="{{ skill.time.end | utc | date : 'MMM d, y HH:mm:ss' }}">{{ skill.time.end | utc | countdown }}</a>
     </div>
 
   </div>

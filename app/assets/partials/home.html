@@ -1,32 +1,34 @@
 <nav ng-include="'/partials/navigation.html'"></nav>
 
 <div class="container-fluid">
-  <ol class="breadcrumb">
-    <li class="active">Squad</a></li>
-  </ol>
+    <ol class="breadcrumb">
+        <li class="active">Squad</a>
+        </li>
+    </ol>
 
-  <div class="characters" ng-if="characters.length > 0">
-    <div class="media" ng-repeat="character in characters">
-      <a class="pull-left" href="/character/{{ character.id }}">
-        <img ng-src="{{ character.picture.medium }}">
-      </a>
-      <div class="media-body">
-        <h4 class="media-heading"><a href="/character/{{ character.id }}">{{ character.name }}</a></h4>
-        <ul class="list-unstyled text-muted">
-          <li>{{ character.corporation.name }}</li>
-          <li ng-if="character.balance">{{ character.balance | number }} ISK</li>
-        </ul>
-      </div>
+    <div class="characters" ng-if="characters.length > 0">
+        <div class="media" ng-repeat="character in characters">
+            <a class="pull-left" href="/character/{{ character.id }}">
+                <img ng-src="{{ character.picture.medium }}">
+            </a>
+            <div class="media-body">
+                <h4 class="media-heading"><a href="/character/{{ character.id }}">{{ character.name }}</a></h4>
+                <ul class="list-unstyled text-muted">
+                    <li>{{ character.corporation.name }}</li>
+                    <li ng-if="character.balance">{{ character.balance | number }} ISK</li>
+                </ul>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div class="row" ng-if="characters.length == 0">
-    <div class="col-xs-12">
-      <div class="alert alert-info">
-        <strong>No characters available</strong><br>
-        <a class="btn btn-primary" href="/profile">Add an API KEY now !</a>
-      </div>
+    <div class="row" ng-if="characters.length == 0">
+        <div class="col-xs-12">
+            <div class="alert alert-info">
+                <strong>No characters available</strong>
+                <br>
+                <a class="btn btn-primary" href="/profile">Add an API KEY now !</a>
+            </div>
+        </div>
     </div>
-  </div>
 
 </div>
