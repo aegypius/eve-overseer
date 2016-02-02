@@ -1,12 +1,9 @@
-/**
- *  Use underscore.string (http://epeli.github.io/underscore.string/)
- *  as angular filter
- */
 angular
-  .module('eve-overseer')
-    .filter('capitalize', function () {
-      return function (str) {
-        return _.str.capitalize(str);
-      };
-    })
-;
+    .module('eve-overseer')
+    .filter('capitalize', function() {
+        return function(str) {
+            return str.replace(/(^|[^a-zA-Z\u00C0-\u017F'])([a-zA-Z\u00C0-\u017F])/g, function (m) {
+                return m.toUpperCase();
+            });
+        };
+    });

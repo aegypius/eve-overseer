@@ -11,7 +11,7 @@ build:
     - script:
         name: setup global node modules
         code: |-
-          npm install -g bower mocha
+          npm install -g mocha
 
     - wercker/npm-install
 
@@ -20,7 +20,6 @@ build:
     - script:
         name: build production assets
         code: |-
-          $(npm bin)/bower --allow-root install
           NODE_ENV=production npm run build
 # deploy:
 #   steps:
