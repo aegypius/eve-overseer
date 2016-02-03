@@ -36,6 +36,7 @@ const config = {
             'node_modules/angular-sanitize/angular-sanitize.js',
             'node_modules/angular-ui-router/build/angular-ui-router.js',
             'node_modules/ng-storage/ngStorage.js',
+            'node_modules/chart.js/Chart.js',
             'node_modules/angular-chartjs/dist/angular-chartjs.js',
             'node_modules/moment/min/moment-with-locales.js',
             'app/app.js',
