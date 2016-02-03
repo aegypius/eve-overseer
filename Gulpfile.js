@@ -1,112 +1,88 @@
 'use strict';
 const gulp = require('gulp');
-const bowerfiles = require('main-bower-files');
 const concat = require('gulp-concat');
 const less = require('gulp-less');
 const debug = require('gulp-debug');
 const annotate = require('gulp-ng-annotate');
 const uglify = require('gulp-uglify');
+const cssnano = require('gulp-cssnano');
 const sourcemaps = require('gulp-sourcemaps');
 const rename = require('gulp-rename');
 const gulpif = require('gulp-if');
 const del = require('del');
 const replace = require('gulp-replace');
 const cache = require('gulp-cached');
+const remember = require('gulp-remember');
+
 const env = (process.env.NODE_ENV || 'development');
 const config = {
-    paths: {
-        build:  'build',
-        target: 'public'
-    }
+    less: {
+        paths: [
+            'app/less',
+            'node_modules/bootstrap/less',
+            'node_modules/font-awesome/less',
+            'node_modules'
+        ]
+    },
+    assets: {
+        stylesheets : [
+            'app/**/*.less',
+        ],
+        javascripts: [
+            'node_modules/jquery/dist/jquery.js',
+            'node_modules/bootstrap/dist/js/bootstrap.js',
+            'node_modules/angular/angular.js',
+            'node_modules/angular-resource/angular-resource.js',
+            'node_modules/angular-sanitize/angular-sanitize.js',
+            'node_modules/angular-ui-router/build/angular-ui-router.js',
+            'node_modules/ng-storage/ngStorage.js',
+            'node_modules/moment/min/moment-with-locales.js',
+            'app/app.js',
+            'app/**/*.js'
+        ],
+        copy: [
+            'app/assets/**/*.html',
+            'node_modules/bootstrap/fonts/**/*.*',
+            'node_modules/font-awesome/fonts/**/*.*'
+        ]
+    },
+    output: 'public'
 };
-
-
-// Export main files from bower components
-// =======================================
-gulp.task('bower', (done) => {
-    gulp.src(bowerfiles(), { base: 'bower_components' })
-        .pipe(gulp.dest(config.paths.build))
-        .on('end', done)
-    ;
-});
-
 
 // Configure and compiles less files
 // =================================
-gulp.task('less:configure:bootstrap', ['bower'], (done) => {
-    gulp.src('app/**/*.less')
-        .pipe(gulp.dest(`${config.paths.build}/bootstrap`))
-        .on('end', done)
-    ;
-});
-
-gulp.task('less:compile:bootstrap', ['less:configure:bootstrap'], (done) => {
-    gulp.src(`${config.paths.build}/bootstrap/less/bootstrap.less`)
-        .pipe(cache('boostrap.css'))
-        .pipe(less())
-        .pipe(rename('bootstrap.css'))
-        .pipe(gulp.dest(config.paths.build))
-        .on('end', done)
-    ;
-});
-
-gulp.task('less:compile:theme', ['less:configure:bootstrap'], (done) => {
-    gulp.src(`${config.paths.build}/bootstrap/less/theme.less`)
-        .pipe(less())
-        .pipe(rename('theme.css'))
-        .pipe(gulp.dest(config.paths.build))
-        .on('end', done)
-    ;
-});
-
-gulp.task('styles:compile', ['less:compile:bootstrap', 'less:compile:theme'], (done) => {
-    gulp
-        .src([
-            `${config.paths.build}/bootstrap.css`,
-            `${config.paths.build}/fontawesome/css/font-awesome.css`,
-            `${config.paths.build}/theme.css`
-        ])
+gulp.task('stylesheets', [], (done) => {
+    gulp.src(config.assets.stylesheets)
         .pipe(sourcemaps.init())
-        .pipe(debug({ title: 'CSS' }))
+        .pipe(cache('stylesheets'))
+        .pipe(debug({ title: '>'}))
+        .pipe(less(config.less))
+        .pipe(replace(/\.{2}\/fonts/g, './fonts'))
+        .pipe(cssnano())
+        .pipe(remember('stylesheets'))
         .pipe(concat('app.css'))
-        .pipe(sourcemaps.write())
-        .pipe(gulp.dest(config.paths.target))
+        .pipe(sourcemaps.write('./maps'))
+        .pipe(gulp.dest(config.output))
         .on('end', done)
     ;
 });
 
 // Configure and compiles javascripts files
 // ========================================
-gulp.task('javascript:compile:vendors', ['bower'], (done) => {
+gulp.task('javascripts', [], (done) => {
     gulp
-        .src([
-            `${config.paths.build}/**/*.js`,
-            `!${config.paths.build}/vendors.js`
-        ])
-        .pipe(cache('vendors.js'))
+        .src(config.assets.javascripts)
         .pipe(sourcemaps.init())
-        .pipe(concat('vendors.js'))
-        .pipe(sourcemaps.write())
-        .pipe(gulp.dest(config.paths.build))
-        .on('end', done)
-    ;
-});
-
-gulp.task('javascript:compile', ['javascript:compile:vendors'], (done) => {
-    gulp
-        .src([
-            `${config.paths.build}/vendors.js`,
-            `app/**/*.js`
-        ])
-        .pipe(sourcemaps.init())
+        .pipe(cache('javascripts'))
         .pipe(annotate())
-        .pipe(debug({ title: 'JS' }))
-        .pipe(concat('app.js'))
+        .pipe(debug({ title: '>'}))
         // Replaces ${ENV:VARNAME} pattern with VARNAME environment var
         .pipe(replace(/\$\{ENV:(\b.*\b)\}/g, (match, varname) => process.env[varname] || ''))
         .pipe(uglify())
-        .pipe(sourcemaps.write())
-        .pipe(gulp.dest(config.paths.target))
+        .pipe(remember('javascripts'))
+        .pipe(concat('app.js'))
+        .pipe(sourcemaps.write('./maps'))
+        .pipe(gulp.dest(config.output))
         .on('end', done)
     ;
 });
@@ -114,19 +90,16 @@ gulp.task('javascript:compile', ['javascript:compile:vendors'], (done) => {
 
 // Copy assets
 // =====================================
-gulp.task('copy:assets', ['bower'], (done) => {
-    gulp
-        .src([
-            'app/assets/**/*.*',
-            `${config.paths.build}/**/fonts/*.*`,
-        ])
+gulp.task('copy', [], (done) => {
+    gulp.src(config.assets.copy)
         .pipe(rename((path) => {
-            if (/(.*)\/fonts/.test(path.dirname)) {
+            if (/(glyphicons|fontawesome)/i.test(path.basename)) {
                 path.dirname = 'fonts';
             }
             return path;
         }))
-        .pipe(gulp.dest(config.paths.target))
+        .pipe(debug({ title: '>'}))
+        .pipe(gulp.dest(config.output))
         .on('end', done)
     ;
 });
@@ -134,20 +107,25 @@ gulp.task('copy:assets', ['bower'], (done) => {
 
 // Watch for modifications
 // =======================
-gulp.task('watch', () => {
-    gulp.watch(['app/**/*.less'], ['styles:compile']);
-    gulp.watch(['app/**/*.js'], ['javascript:compile']);
-    gulp.watch(['app/assets/**/*.*'], ['copy:assets']);
+gulp.task('watch', ['build'], () => {
+    const handleCache = function (name) {
+        return function (event) {
+            if (event.type === 'deleted') {
+                delete cache.caches[name];
+                remember.forget(name, event.path);
+            }
+        };
+    };
+
+    gulp.watch(config.assets.stylesheets, ['stylesheets']).on('change', handleCache('stylesheets'));
+    gulp.watch(config.assets.javascripts, ['javascripts']).on('change', handleCache('javascripts'));
+    gulp.watch(config.assets.copy, ['copy']).on('change', handleCache('copy'));
 });
 
 // Cleaning
 // ========
 const clean = function (done) {
-    let paths = [];
-    for (let key of Object.keys(config.paths)) {
-        paths.push(config.paths[key]);
-    }
-    del.sync(paths);
+    del.sync(config.output);
     done();
 };
 
@@ -157,7 +135,7 @@ gulp.task('clean', (done) => {
 
 // Build task
 // ===============
-gulp.task('build', ['styles:compile', 'javascript:compile', 'copy:assets'], (done) => {
+gulp.task('build', ['stylesheets', 'javascripts', 'copy'], (done) => {
     if (env === 'production') {
         clean(done);
     } else {

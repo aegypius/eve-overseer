@@ -1,22 +1,21 @@
 <div class="navbar navbar-default" role="navigation">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="/">EVE Online Overseer</a>
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">EVE Online Overseer</a>
+        </div>
+        <div class="collapse navbar-collapse" ng-if="$storage.user">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="" class="dropdown-toggle" data-toggle="dropdown">
+                        <img class="img-thumbnail img-circle" ng-src="{{ $storage.user.avatar }}" width="30"> Howdy {{ $storage.user.username }} ! <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="/profile">Profile</a></li>
+                        <li class="divider"></li>
+                        <li><a href="" ng-click="logout()">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
-    <div class="collapse navbar-collapse" ng-if="$storage.user">
-      <ul class="nav navbar-nav navbar-right">
-        <li class="dropdown">
-          <a href="" class="dropdown-toggle" data-toggle="dropdown">
-            <img class="img-thumbnail img-circle" ng-src="{{ $storage.user.avatar }}" width="30">
-            Howdy {{ $storage.user.username }} ! <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="/profile">Profile</a></li>
-            <li class="divider"></li>
-            <li><a href="" ng-click="logout()">Logout</a></li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-  </div>
 </div>
