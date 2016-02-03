@@ -63,6 +63,7 @@
     "ng-storage": "^0.3.2",
     "supertest": "1.1.0",
     "supertest-as-promised": "^2.0.2",
-    "underscore.string": "^3.2.3"
+    "underscore.string": "^3.2.3",
+    "angular-chartjs" : "^0.0.5"
   }
 }
