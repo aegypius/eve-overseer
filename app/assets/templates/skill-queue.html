@@ -1,11 +1,11 @@
 <div class="skill-overview">
 
     <div class="row" ng-repeat="skill in skills track by $index | orderBy:position ">
-        <div class="col-xs-3">
+        <div class="col-xs-4">
             <strong>{{ skill.name }} {{ skill.level | roman_number }}</strong>
         </div>
 
-        <div class="col-xs-7">
+        <div class="col-xs-6">
             <div class="progress">
                 <div class="progress-bar" ng-class="{'progress-bar-striped active': skill.state = 'running', 'progress-bar-info': skill.state = 'completed'}" style="width: {{ skill.percent }}%">
                     {{ skill.percent }}%

@@ -27,6 +27,7 @@ const config = {
     assets: {
         stylesheets : [
             'app/**/*.less',
+            'node_modules/angular-multi-select/dist/angular-multi-select.css',
         ],
         javascripts: [
             'node_modules/jquery/dist/jquery.js',
@@ -39,6 +40,8 @@ const config = {
             'node_modules/chart.js/Chart.js',
             'node_modules/angular-chartjs/dist/angular-chartjs.js',
             'node_modules/moment/min/moment-with-locales.js',
+            'node_modules/angular-filter/dist/angular-filter.js',
+            'node_modules/angular-multi-select/dist/angular-multi-select.js',
             'app/app.js',
             'app/**/*.js'
         ],

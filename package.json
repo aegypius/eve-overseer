@@ -37,6 +37,8 @@
   "devDependencies": {
     "angular": "^1.4.9",
     "angular-chartjs": "^0.0.5",
+    "angular-filter": "^0.5.8",
+    "angular-multi-select": "^5.5.8",
     "angular-resource": "^1.4.9",
     "angular-sanitize": "^1.4.9",
     "angular-ui-router": "^0.2.16",

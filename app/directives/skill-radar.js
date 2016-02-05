@@ -25,7 +25,7 @@ angular
             }
           ]
         };
-
+        $scope.modernBrowsers = [];
         $scope.someOptions = {
           scaleShowLine : true,
           responsive: true,
@@ -88,24 +88,11 @@ angular
         if ($scope.listIdGroup == undefined) {
 
           $scope.listIdGroup = {
-            NotAff : {}
+            NotAff : []
           };
         }
 
-        // ,
-        // {
-        //   label: "Max",
-        //   fillColor: "rgba(99,0,0,0.2)",
-        //   strokeColor: "rgba(99,0,0,1)",
-        //   pointColor: "rgba(99,0,0,1)",
-        //   pointStrokeColor: "#fff",
-        //   pointHighlightFill: "#fff",
-        //   pointHighlightStroke: "rgba(99,0,0,1)",
-        //   pointLabelFontFamily : "'Abel'",
-        //             //Number - Point label font size in pixels
-        //   pointLabelFontSize : 14,
-        //   data: []//15872000 ,4352000  ,3840000  ,7168000  ,20480000 ,12800000 ,24064000 ,7424000  ,47360000 ,19456000 ,7424000  ,11776000 ,48384000 ,150528000,21504000 ,11776000 ,5376000  ,15872000 ,24064000 ,27904000
-        // }
+
 
         var calculateRadar = function(character){
            if (undefined !== character) {
@@ -130,10 +117,12 @@ angular
 
             Skill.query({id: character.id, filter: 'all'}, function (groups) {
               $scope.groups = groups;
-              var limit = 5;
+              var limit = 5,
+              countModernBrowsers = $scope.modernBrowsers.length;
               angular.forEach(groups, function(group) {
-                console.log($.inArray($scope.listIdGroup.NotAff, group.id), group.id);
-                if(-1==$.inArray($scope.listIdGroup.NotAff, group.id)) {
+
+
+                if(-1!=$.inArray(group.id, $scope.listIdGroup.NotAff ) || countModernBrowsers==0) {
 
                 // if (limit>0) {
                   group.points = group.skills.map(function(skill){
@@ -147,35 +136,47 @@ angular
                   }).reduce(function(a,b){return a+b});
 
                   $scope.myData.labels.push(group.name);
-
-                  $scope.myData.datasets[0].data.push(((group.points*100)/group.Totalpoints).toFixed(2));
+                  var total = ((group.points*100)/group.Totalpoints).toFixed(2);
+                  $scope.myData.datasets[0].data.push(total);
+                  if (countModernBrowsers==0){
+                    $scope.modernBrowsers.push({'id' : group.id,'name' : group.name, 'value': total, 'checked': true });
+                    $scope.listIdGroup.NotAff.push(group.id);
+                  }
                 }
               });
-              console.log($scope.myData);
+
             });
           }
         }
-        $scope.$watch('listIdGroup.NotAff', function (item) {
-          if (undefined !== $scope.character) {
-            // group.id not in list we add it
-            console.log($.inArray($scope.listIdGroup.NotAff, item), item);
-            if(-1!=$.inArray($scope.listIdGroup.NotAff, item)) {
-              $scope.listIdGroup.NotAff.push(item);
-            } else {
-
+        unpush = function(arr, id) {
+          var bfr = [];
+          for(var i = 0; i < arr.length; i++) {
+            if(arr[i] != id) {
+               bfr.push(arr[i]);
             }
-            console.log($scope.listIdGroup);
-            calculateRadar($scope.character);
           }
-        });
+          return bfr;
+        };
+
+        $scope.fClick = function(item) {
+          console.log('On-item-click', item);
+
+          if(-1==$.inArray(item.id, $scope.listIdGroup.NotAff)) {
+            $scope.listIdGroup.NotAff.push(item.id);
+
+          } else {
+           $scope.listIdGroup.NotAff = unpush( $scope.listIdGroup.NotAff, item.id);
+
+          }
+
+            calculateRadar($scope.character);
+        }
 
         $scope.$watch('character', function (character) {
-          console.log($scope.listIdGroup.NotAff);
           calculateRadar(character);
-
-
         });
       }]
     };
   })
 ;
+
