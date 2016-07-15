@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+  gateway:
+    build: gateway
+    networks:
+      - default
+      - proxy
+    environment:
+      VIRTUAL_HOST: eve-overseer.docker, eve-overseer.$DOCKER_HOST_SUFFIX
+
+  rabbitmq:
+    image: rabbitmq:3
+
+  mongo:
+    image: mongo:3
+    volumes:
+      - mongo:/data/db
+
+networks:
+  proxy:
+    external:
+      name: dev_proxy
+
+volumes:
+  mongo:
+    driver: local
