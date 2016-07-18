@@ -11,5 +11,4 @@ RUN npm install -g bower mocha
 
 USER app
 
-RUN bower install
 RUN npm run build

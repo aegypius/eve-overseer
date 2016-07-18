@@ -1,12 +1,28 @@
-# Eve-Overseer stackfile
-app:
-  image: quay.io/aegypius/eve-overseer:latest
-  links:
-    - mongo
-  ports:
-    - 5000
+version: '2'
 
-mongo:
-  image: mongo:latest
-  ports:
-    - 27017
+services:
+
+  # Eve-Overseer stackfile
+  app:
+    image: quay.io/aegypius/eve-overseer:latest
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - default
+      - proxy
+
+  mongo:
+    image: mongo:latest
+    networks:
+      - default
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - mongo:/data/db
+
+networks:
+  proxy:
+    external: true
+
+volumes:
+  mongo:
+    driver: local
