@@ -1,23 +1,16 @@
 {
-  "name": "eve-overseer-gateway",
-  "version": "0.0.1",
-  "description": "HTTP Gateway for EVE Overseer",
+  "name": "time-service",
+  "version": "1.0.0",
+  "description": "Expose the time",
   "main": "index.js",
   "scripts": {
-    "test": "xo",
-    "build": "babel src -d lib",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "babel-node index.js"
   },
   "author": "Nicolas LAURENT <innercircle@aegypius.com>",
   "license": "MIT",
   "dependencies": {
     "amqp": "^0.2.6",
-    "body-parser": "^1.15.2",
-    "compression": "^1.6.2",
-    "cors": "^2.7.1",
-    "express": "^4.14.0",
-    "mongorito": "^2.1.2",
-    "morgan": "^1.7.0",
     "winston": "^2.2.0",
     "winston-amqp": "0.0.3"
   },

@@ -1,4 +1,4 @@
-import { Model } from 'mongorito';
+import {Model} from 'mongorito';
 
 class User extends Model {
 

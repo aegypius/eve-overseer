@@ -1,21 +1,44 @@
 version: '2'
 
 services:
+  #
+  # HTTP Gateway
+  # Follows request to RabbitMQ and expect a response from a service
+  #
   gateway:
     build: gateway
     networks:
       - default
       - proxy
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
     environment:
       VIRTUAL_HOST: eve-overseer.docker, eve-overseer.$DOCKER_HOST_SUFFIX
 
+  #
+  # AMQP Broker
+  #
   rabbitmq:
     image: rabbitmq:3
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
 
+  #
+  # Persistent Database
+  #
   mongo:
     image: mongo:3
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - mongo:/data/db
+
+  #
+  # Microservice: time
+  #
+  time-service:
+    build: time-service
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
 
 networks:
   proxy:

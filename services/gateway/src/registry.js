@@ -1,33 +1,33 @@
-import config from './config';
-import { Router } from 'express';
+import {Router} from 'express';
 import mongorito from 'mongorito';
+import config from './config';
 
 /**
  * Connect to MongoDB
  */
 mongorito.connect(config.mongodbHost);
 
-let registry = new Router;
+const registry = new Router();
 
 // Lists all services
-registry.get('/', function(req, res, next) {
+registry.get('/', (req, res) => {
   res.send(process.env.HOSTNAME);
 });
 
 // Add a new service
-registry.post('/', function (req, res, next) {
+registry.post('/', (req, res, next) => {
   next();
 });
 
-registry.patch('/', function (req, res, next) {
+registry.patch('/', (req, res, next) => {
   next();
 });
 
-registry.put('/', function (req, res, next) {
+registry.put('/', (req, res, next) => {
   next();
 });
 
-registry.delete('/', function (req, res, next) {
+registry.delete('/', (req, res, next) => {
   next();
 });
 
