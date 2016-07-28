@@ -1,0 +1,3 @@
+export default async () => {
+  // Service code goes here ...
+};
