@@ -1,11 +1,19 @@
 language: node_js
+
 node_js:
   - '6'
+
 services:
   - mongodb
-install:
-  - npm install
-  - for service in services/*; do sh -c 'cd $service; npm install'; done
-script:
-  - npm test
-  - for service in services/*; do sh -c 'cd $service; npm test'; done
+
+env:
+  - SERVICE=.
+  - SERVICE=service/authentication
+  - SERVICE=service/gateway
+  - SERVICE=service/generator-goodly-microservice
+  - SERVICE=service/registry
+  - SERVICE=service/time-service
+
+install: cd $SERVICE && npm install
+
+script: cd $SERVICE && npm test
