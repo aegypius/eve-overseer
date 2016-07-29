@@ -5,7 +5,7 @@ services:
   - mongodb
 install:
   - npm install
-  - for service in services/*; do npm install; done
+  - for service in services/*; do sh -c 'cd $service; npm install'; done
 script:
   - npm test
-  - for service in services/*; do npm test; done
+  - for service in services/*; do sh -c 'cd $service; npm test'; done
