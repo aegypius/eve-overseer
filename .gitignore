@@ -1,13 +1,5 @@
-*.log
-.*
-_*
-
-node_modules
-bower_components
-
-build
 public
-
+node_modules
 docker-compose.override.yml
-lib/models/old
-scripts
+*.log
+.v8flags*.json

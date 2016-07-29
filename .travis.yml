@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+  - '6'
+services:
+  - mongodb
+install:
+  - npm install
+  - for service in services/*; do npm install; done
+script:
+  - npm test
+  - for service in services/*; do npm test; done
