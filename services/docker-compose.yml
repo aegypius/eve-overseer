@@ -3,7 +3,8 @@ version: '2'
 services:
   #
   # HTTP Gateway
-  # Follows request to RabbitMQ and expect a response from a service
+  #
+  #   Follows request to RabbitMQ and expect a response from a service
   #
   gateway:
     build: gateway
