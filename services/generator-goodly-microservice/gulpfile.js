@@ -8,6 +8,7 @@ var istanbul = require('gulp-istanbul');
 var nsp = require('gulp-nsp');
 var plumber = require('gulp-plumber');
 var coveralls = require('gulp-coveralls');
+var babel = require('gulp-babel');
 
 gulp.task('static', function () {
   return gulp.src('**/*.js')
@@ -24,6 +25,7 @@ gulp.task('nsp', function (cb) {
 gulp.task('pre-test', function () {
   return gulp.src('generators/**/*.js')
     .pipe(excludeGitignore())
+    .pipe(babel())
     .pipe(istanbul({
       includeUntested: true
     }))
