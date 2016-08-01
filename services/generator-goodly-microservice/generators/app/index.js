@@ -19,6 +19,7 @@ module.exports = yeoman.Base.extend({
       description: this.pkg.description,
       version: this.pkg.version,
       homepage: this.pkg.homepage,
+      license: 'MIT',
       babel: Boolean(this.options.babel)
     };
 
@@ -122,9 +123,6 @@ module.exports = yeoman.Base.extend({
     var templatePkg = this.fs.readJSON(this.templatePath('package.json'), {});
     var currentPkg = this.fs.readJSON(this.destinationPath('package.json'), {});
 
-    console.log(templatePkg);
-    console.log(currentPkg);
-
     var pkg = Object.assign(templatePkg, currentPkg, {
       name: _.kebabCase(this.props.name),
       version: '0.0.0',
@@ -165,14 +163,16 @@ module.exports = yeoman.Base.extend({
   },
 
   default: function () {
-    this.composeWith('license', {
-      options: {
-        name: this.props.authorName,
-        email: this.props.authorEmail,
-        website: this.props.authorUrl
-      }
-    }, {
-      local: require.resolve('generator-license/app')
-    });
+    if (this.props.license && !this.pkg.license) {
+      this.composeWith('license', {
+        options: {
+          name: this.props.authorName,
+          email: this.props.authorEmail,
+          website: this.props.authorUrl
+        }
+      }, {
+        local: require.resolve('generator-license/app')
+      });
+    }
   }
 });
