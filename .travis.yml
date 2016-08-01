@@ -8,11 +8,11 @@ services:
 
 env:
   - SERVICE=.
-  - SERVICE=service/authentication
-  - SERVICE=service/gateway
-  - SERVICE=service/generator-goodly-microservice
-  - SERVICE=service/registry
-  - SERVICE=service/time-service
+  - SERVICE=services/authentication
+  - SERVICE=services/gateway
+  - SERVICE=services/generator-goodly-microservice
+  - SERVICE=services/registry
+  - SERVICE=services/time-service
 
 install: cd $SERVICE && npm install
 
