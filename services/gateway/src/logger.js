@@ -7,10 +7,9 @@ winston.emitErrs = true;
 const logger = new Logger({exitOnError: false});
 
 logger.setLevels(winston.config.syslog.levels);
-
 logger.add(winston.transports.Console, {
   timestamp: true,
-  level: config.logLevel,
+  level: config.application.logLevel,
   handleExceptions: false,
   json: false,
   colorize: true
@@ -18,8 +17,8 @@ logger.add(winston.transports.Console, {
 
 logger.add(AMQP, {
   name: 'gateway',
-  level: config.logLevel,
-  host: config.amqpHost,
+  level: config.application.logLevel,
+  host: config.amqp.url,
   exchange: 'log',
   routingKey: 'gateway'
 });
@@ -27,5 +26,7 @@ logger.add(AMQP, {
 logger.stream = {
   write: message => logger.debug(message.replace(/\n$/, ''))
 };
+
+// logger.debug(config);
 
 export default logger;
