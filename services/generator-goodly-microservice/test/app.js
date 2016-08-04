@@ -1,12 +1,14 @@
 var assert = require('yeoman-assert');
 var helpers = require('yeoman-test');
 var path = require('path');
+var casual = require('casual');
 
 before(function () {
   return helpers.run(path.join(__dirname, '../generators/app'))
     .withOptions({foo: 'bar'})      // Mock options passed in
     .withArguments(['name-x'])      // Mock the arguments
     .withPrompts({
+      email: casual.email,
       license: 'MIT'
     })                              // Mock the prompt answers
     .toPromise();                   // Get a Promise back for when the generator finishes
